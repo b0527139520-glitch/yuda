@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כריכה — לימוד תורה כאמצעי לדבקות בה'</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: 'Segoe UI', 'Assistant', 'Noto Sans Hebrew', Arial, sans-serif;
+    background: #ece9f7;
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 30px;
+  }
+
+  .page {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    max-width: 100%;
+    background: linear-gradient(155deg, #4c1d95 0%, #7e22ce 30%, #ec4899 68%, #f59e0b 100%);
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    overflow: hidden;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* decorative star-of-david pattern, low opacity */
+  .pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.08;
+    background-image:
+      repeating-linear-gradient(60deg, transparent, transparent 38px, #fff 38px, #fff 40px),
+      repeating-linear-gradient(-60deg, transparent, transparent 38px, #fff 38px, #fff 40px);
+    pointer-events: none;
+  }
+
+  .frame {
+    position: absolute;
+    inset: 14mm;
+    border: 1.5px solid rgba(255,255,255,0.55);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32mm 20mm 18mm;
+  }
+
+  .top-block { margin-top: 6mm; }
+  .kuntres-label {
+    letter-spacing: 8px;
+    font-size: 1.1em;
+    opacity: 0.9;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .star {
+    font-size: 2.4em;
+    margin-bottom: 14px;
+    opacity: 0.95;
+  }
+
+  .middle-block { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+  .main-title {
+    font-size: 3.1em;
+    font-weight: 800;
+    line-height: 1.25;
+    text-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    margin-bottom: 22px;
+  }
+  .subtitle {
+    font-size: 1.35em;
+    font-weight: 400;
+    opacity: 0.95;
+    max-width: 130mm;
+    margin: 0 auto 30px;
+    line-height: 1.6;
+  }
+
+  .divider {
+    width: 90px;
+    height: 3px;
+    background: rgba(255,255,255,0.75);
+    border-radius: 3px;
+    margin: 10px auto 30px;
+  }
+
+  .teaser {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 14px;
+    padding: 22px 26px;
+    max-width: 140mm;
+    margin: 0 auto;
+    backdrop-filter: blur(2px);
+  }
+  .teaser h4 {
+    font-size: 1.05em;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    opacity: 0.95;
+  }
+  .teaser ul {
+    list-style: none;
+    text-align: right;
+    font-size: 0.98em;
+    line-height: 1.85;
+  }
+  .teaser li::before { content: "✦ "; opacity: 0.8; }
+
+  .bottom-block {
+    margin-top: 10mm;
+  }
+  .author {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .author-sub {
+    font-size: 0.95em;
+    opacity: 0.9;
+    margin-bottom: 4px;
+  }
+  .contact {
+    font-size: 0.9em;
+    opacity: 0.85;
+    margin-top: 6px;
+  }
+
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    html, body { background: #fff !important; padding: 0 !important; }
+    .page { box-shadow: none !important; border-radius: 0 !important; width: 210mm; height: 297mm; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+
+  @media (max-width: 768px) {
+    .page { transform: scale(0.85); transform-origin: top center; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="pattern"></div>
+    <div class="frame"></div>
+    <div class="content">
+
+      <div class="top-block">
+        <div class="star">✡</div>
+        <div class="kuntres-label">קונטרס</div>
+      </div>
+
+      <div class="middle-block">
+        <div class="main-title">לימוד תורה<br>כאמצעי<br>לדבקות בה'</div>
+        <div class="divider"></div>
+        <div class="subtitle">כיצד הופכת יגיעת התורה לאהבה חיה — מן ההגדרה ההלכתית ועד תענוג של דבקות</div>
+
+        <div class="teaser">
+          <h4>📖 בקונטרס זה:</h4>
+          <ul>
+            <li>מנין שלימוד תורה חייב להביא לאהבת ה'</li>
+            <li>מקורות שתכלית כל המצוות היא אהבת ה'</li>
+            <li>מדוע לא כל לימוד באמת מביא לדבקות</li>
+            <li>היסוד שהאדם נברא להתענג על ה'</li>
+            <li>מדוע עיקר מצוות לימוד התורה היא השמחה בה</li>
+            <li>האם מוטלת עלינו חובה להיות בשמחה תמיד</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bottom-block">
+        <div class="author">מאת: הרב יהודה טאוב</div>
+        <div class="author-sub">קרית אתא</div>
+        <div class="contact">📞 0527139520 &nbsp;·&nbsp; 🌐 www.kol-toda.co.il</div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

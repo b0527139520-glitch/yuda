@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>כריכה — הנה בריתי אתך</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'Assistant', 'Noto Sans Hebrew', Arial, sans-serif;
+    background: #f5f7fa;
+  }
+  .page {
+    width: 210mm;
+    height: 297mm;
+    margin: 20px auto;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, #7e22ce 0%, #a21caf 35%, #ec4899 65%, #f59e0b 100%);
+    color: #fff;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 50px;
+  }
+  .bg-pattern {
+    position: absolute;
+    inset: 0;
+    opacity: 0.10;
+    background-image:
+      repeating-linear-gradient(45deg, #fff 0, #fff 2px, transparent 2px, transparent 40px),
+      repeating-linear-gradient(-45deg, #fff 0, #fff 2px, transparent 2px, transparent 40px);
+    pointer-events: none;
+  }
+  .star {
+    position: relative;
+    font-size: 2.6em;
+    margin-top: 10px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25));
+  }
+  .top-block { text-align: center; z-index: 1; margin-top: 10px; }
+  .bsd { font-size: 1em; opacity: 0.85; letter-spacing: 1px; margin-bottom: 30px; }
+
+  .middle-block { text-align: center; z-index: 1; max-width: 90%; }
+  .main-title {
+    font-size: 4.4em;
+    font-weight: 800;
+    margin: 0;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    line-height: 1.15;
+  }
+  .subtitle {
+    font-size: 1.6em;
+    margin-top: 18px;
+    font-weight: 500;
+    opacity: 0.95;
+  }
+  .divider {
+    width: 220px;
+    height: 3px;
+    background: rgba(255,255,255,0.7);
+    margin: 30px auto;
+    border-radius: 3px;
+  }
+  .blurb {
+    font-size: 1.15em;
+    line-height: 1.9;
+    background: rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 30px 35px;
+    margin-top: 10px;
+    text-align: justify;
+    backdrop-filter: blur(2px);
+  }
+  .blurb strong { color: #fff9db; }
+
+  .toc-mini {
+    margin-top: 25px;
+    font-size: 1.05em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 22px;
+  }
+  .toc-mini span {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 18px;
+    border-radius: 30px;
+  }
+
+  .bottom-block { text-align: center; z-index: 1; margin-bottom: 10px; }
+  .author-name { font-size: 1.6em; font-weight: 700; }
+  .author-sub { font-size: 1em; opacity: 0.9; margin-top: 6px; }
+
+  @media print {
+    @page { size: A4 portrait; margin: 0; }
+    html, body { background: #fff !important; }
+    .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bg-pattern"></div>
+
+  <div class="top-block">
+    <div class="bsd">בס"ד</div>
+    <div class="star">✡</div>
+  </div>
+
+  <div class="middle-block">
+    <h1 class="main-title">הנה בריתי אתך</h1>
+    <div class="subtitle">באור ההסכם שבברית המילה</div>
+    <div class="divider"></div>
+    <div class="blurb">
+      מהי בעצם ברית המילה שאנו כורתים ביום השמיני? ספר זה מגלה שמעבר להסרת הערלה מסתתר <strong>הסכם שותפות</strong> עצום בין האדם לקב"ה — ברית הנחתמת בגוף, ומחייבת שמירה כל ימי החיים.
+      חמישה פרקים המלווים את הקורא מגודל המצווה ומשמעות הברית, דרך סעודת המילה והשמחה שבה, ועד לקשר העמוק שבין הברית לתורה, לחופה ולקריעת ים סוף — ולבסוף נוסח הברית עצמו.
+    </div>
+    <div class="toc-mini">
+      <span>פרק א — מה כוללת הברית</span>
+      <span>פרק ב — סעודת המילה</span>
+      <span>פרק ג — ענין השמחה</span>
+      <span>פרק ד — כשם שנכנס לברית</span>
+      <span>פרק ה — סדר הברית</span>
+    </div>
+  </div>
+
+  <div class="bottom-block">
+    <div class="author-name">הרב יהודה טאוב</div>
+    <div class="author-sub">קרית אתא &nbsp;•&nbsp; 052-7139520 &nbsp;•&nbsp; קול תודה — www.kol-toda.co.il</div>
+  </div>
+
+</div>
+</body>
+</html>

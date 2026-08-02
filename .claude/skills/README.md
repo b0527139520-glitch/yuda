@@ -11,3 +11,10 @@ its trigger conditions and usage.
 
 To update: re-clone the upstream repo and copy the skill directories
 (each `<category>/<skill-name>/`) here as `<skill-name>/`.
+
+## Locally authored skills
+
+- **`llm-council`** — not vendored from the upstream repo. Guides running
+  a multi-model "council" deliberation pattern (dispatch → anonymous peer
+  review → chairman synthesis) for high-stakes questions that benefit
+  from cross-model judgment. See `llm-council/SKILL.md`.

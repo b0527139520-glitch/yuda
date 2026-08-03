@@ -311,12 +311,35 @@
     transition: border-color 0.2s;
   }
   .person-card:hover { border-color: #a78bfa; }
+  /* contain, not cover: these crops are tall portraits, and cover was slicing
+     the head and feet off the preview even though the saved file was complete */
   .person-card img {
     width: 100%;
     display: block;
-    object-fit: cover;
-    max-height: 220px;
+    object-fit: contain;
+    height: 300px;
     background: #0a0a1a;
+    cursor: zoom-in;
+  }
+  /* Lightbox */
+  .lightbox {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.9); z-index: 300;
+    align-items: center; justify-content: center; padding: 24px;
+    flex-direction: column; gap: 14px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%; max-height: 82vh;
+    object-fit: contain; border-radius: 10px;
+    background: #0a0a1a;
+  }
+  .lightbox-caption { color: #ccc; font-size: 0.9rem; }
+  .lightbox-close {
+    position: absolute; top: 20px; left: 20px;
+    background: #2a2a4a; border: 1px solid #3a3a6a; color: #ddd;
+    border-radius: 8px; padding: 8px 14px; cursor: pointer;
+    font-family: inherit; font-size: 0.9rem;
   }
   .person-card-footer {
     padding: 10px 12px;
@@ -539,6 +562,22 @@
     <hr class="divider">
 
     <div class="help-section">
+      <h3>החברות נכנסות לתמונה — איך מסלקים אותן</h3>
+      <p>חיתוך הוא תמיד <strong>מלבן</strong>, ובתמונה צפופה מלבן סביב בת אחת תמיד יכיל חלקים מהבנות שלידה. הקטנת הרווח לא פותרת — היא רק חותכת לבת עצמה את הידיים. הפתרון האמיתי הוא לחתוך <strong>לפי קו הגוף</strong> ולא לפי מלבן. בהגדרות יש <strong>"בידוד לפי צללית"</strong> עם שלוש אפשרויות:</p>
+      <ul>
+        <li><strong>עמעום השכנות</strong> — הרקע נשאר, אבל הבנות האחרות מועמעמות בדיוק לפי הצללית שלהן. התמונה נראית טבעית והבת שלך בולטת.</li>
+        <li><strong>טשטוש השכנות</strong> — כמו אפקט "פורטרט" במצלמה: הבת חדה, השכנות מטושטשות.</li>
+        <li><strong>הסרת רקע מלאה</strong> — PNG שקוף עם הבת בלבד. הכי נקי, מצוין להדבקה במסמך או במצגת.</li>
+      </ul>
+      <div class="tip-box">
+        <p>הכל רץ במחשב שלך, בחינם, בלי מפתח API ובלי לשלוח את התמונה לשום מקום. בפעם הראשונה יורד מודל קטן (~5MB) ולכן החילוץ הראשון לוקח קצת יותר זמן.</p>
+      </div>
+      <p style="margin-top:8px;">רוצה את האיכות הגבוהה ביותר? <strong>SAM 2</strong> (בהסרת רקע) עדיין מדויק יותר, אבל דורש מפתח Replicate בתשלום ושולח את התמונה לשרת חיצוני.</p>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
       <h3>זיהוי רב-שכבתי (Tiled Detection)</h3>
       <p>בתמונות גדולות עם הרבה אנשים קטנים (תמונת כיתה שלמה, אסיפה וכו') זיהוי AI רגיל לפעמים מפספס אנשים קטנים או חופפים כי הוא "רואה" את כל התמונה בבת אחת ברזולוציה נמוכה. כשהאפשרות <strong>"זיהוי רב-שכבתי"</strong> פעילה, האפליקציה גם סורקת אזורים חופפים בתמונה בנפרד (כמו זכוכית מגדלת), מה שמעלה משמעותית את כמות האנשים שמזוהים בתמונות גדולות/צפופות — במחיר זמן עיבוד קצת ארוך יותר.</p>
     </div>
@@ -640,6 +679,13 @@
   </div>
 </div>
 
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">סגור ✕</button>
+  <img id="lightboxImg" alt="">
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
 <!-- Help button -->
 <button class="help-btn" onclick="openHelp()" title="עזרה">?</button>
 
@@ -715,7 +761,20 @@
       <label>עוצמת ההדגשה (0 = בלי עמעום כלל)</label>
       <input type="number" id="spotlightStrength" value="35" min="0" max="80" step="5" oninput="persistSettings()">
     </div>
+    <div class="form-group">
+      <label>בידוד לפי צללית — מקומי וחינם 🪄</label>
+      <select id="isolateMode" onchange="persistSettings()">
+        <option value="off">כבוי — חיתוך ריבועי בלבד</option>
+        <option value="dim">עמעום השכנות לפי הצללית שלהן</option>
+        <option value="blur">טשטוש השכנות (רקע מטושטש, כמו במצלמה)</option>
+        <option value="cutout">הסרת רקע מלאה — PNG שקוף</option>
+      </select>
+    </div>
   </div>
+  <p style="font-size:0.8rem;color:#7c7c9a;margin-top:10px;line-height:1.6;">
+    🪄 <strong>בידוד לפי צללית</strong> חותך את הבת לפי קו הגוף שלה במקום ריבוע, ולכן מסלק את החברות שנכנסו לתמונה
+    בלי לחתוך לה את הידיים. רץ לגמרי במחשב שלך, בחינם וללא מפתח API — בפעם הראשונה יורד מודל קטן (~5MB).
+  </p>
 
   <div style="margin-top:20px;">
     <div class="toggle-row">
@@ -1266,22 +1325,29 @@ function getGroupName(imgObj) {
 }
 
 // ─── Crop with padding + optional spotlight ───────────────────────────────────
-function cropPerson(img, bbox, padPct, opts = {}) {
+// Shared so callers can map the person's box into crop-local coordinates.
+function cropRect(img, bbox, padPct) {
   const [x, y, w, h] = bbox;
   const iw = img.naturalWidth || img.width;
   const ih = img.naturalHeight || img.height;
-
   const padX = w * padPct;
   const padY = h * padPct;
   const topExtra = h * 0.08;
-
   const x1 = Math.max(0, Math.floor(x - padX));
   const y1 = Math.max(0, Math.floor(y - padY - topExtra));
   const x2 = Math.min(iw, Math.ceil(x + w + padX));
   const y2 = Math.min(ih, Math.ceil(y + h + padY));
+  return { x1, y1, cw: x2 - x1, ch: y2 - y1 };
+}
 
-  const cw = x2 - x1;
-  const ch = y2 - y1;
+// The person's own box, expressed relative to the crop.
+function subjectRectIn(img, bbox, padPct) {
+  const { x1, y1 } = cropRect(img, bbox, padPct);
+  return { x: bbox[0] - x1, y: bbox[1] - y1, w: bbox[2], h: bbox[3] };
+}
+
+function cropPerson(img, bbox, padPct, opts = {}) {
+  const { x1, y1, cw, ch } = cropRect(img, bbox, padPct);
 
   const canvas = document.createElement('canvas');
   canvas.width  = cw;
@@ -1341,6 +1407,167 @@ function applySpotlight(cropCanvas, targetBox, allBoxes, cropOriginX, cropOrigin
   if (typeof ctx.filter === 'string') ctx.filter = `blur(${blurPx}px)`;
   ctx.drawImage(layer, 0, 0);
   ctx.restore();
+}
+
+// ─── Silhouette isolation (BodyPix, runs locally) ─────────────────────────────
+// A rectangular crop around one girl in a packed row always contains slices of
+// the girls beside her, and tightening the rectangle just amputates her own
+// arms. Cutting along the silhouette is the only way to drop the neighbours
+// while keeping her whole. The model is fetched on first use so people who
+// never enable this do not pay for the download.
+let bodyPixNet = null;
+let bodyPixLoading = null;
+
+function loadScriptOnce(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('לא ניתן לטעון את מודל הצללית — בדוק חיבור לאינטרנט'));
+    document.head.appendChild(s);
+  });
+}
+
+async function ensureBodyPix() {
+  if (bodyPixNet) return bodyPixNet;
+  if (!bodyPixLoading) {
+    bodyPixLoading = (async () => {
+      setStatus('טוען מודל בידוד צללית (פעם אחת בלבד)...', 8);
+      await loadScriptOnce('https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.1/dist/body-pix.min.js');
+      bodyPixNet = await bodyPix.load({
+        architecture: 'MobileNetV1', outputStride: 16, multiplier: 0.75, quantBytes: 2
+      });
+      return bodyPixNet;
+    })().catch(e => { bodyPixLoading = null; throw e; });
+  }
+  return bodyPixLoading;
+}
+
+// Returns { subject, others } as per-pixel Uint8 flags over the crop, or null
+// when the model found nobody.
+async function segmentCrop(cropCanvas, subjectRect) {
+  const net = await ensureBodyPix();
+  const segs = await net.segmentMultiPerson(cropCanvas, {
+    internalResolution: 'high',
+    segmentationThreshold: 0.7,
+    maxDetections: 12,
+    scoreThreshold: 0.2,
+    nmsRadius: 20
+  });
+  if (!segs || !segs.length) return null;
+
+  const w = cropCanvas.width, h = cropCanvas.height;
+  const sampler = seg => {
+    const sw = seg.width, sh = seg.height;
+    return (x, y) => seg.data[Math.min(sh - 1, (y * sh / h) | 0) * sw + Math.min(sw - 1, (x * sw / w) | 0)];
+  };
+
+  // The subject is whichever silhouette sits most squarely inside the box we
+  // detected for her; pixels outside it count against, so a neighbour leaning in
+  // does not win.
+  let best = null, bestScore = -Infinity;
+  segs.forEach(seg => {
+    const at = sampler(seg);
+    let inside = 0, outside = 0;
+    for (let y = 0; y < h; y += 2) {
+      for (let x = 0; x < w; x += 2) {
+        if (!at(x, y)) continue;
+        const within = x >= subjectRect.x && x <= subjectRect.x + subjectRect.w &&
+                       y >= subjectRect.y && y <= subjectRect.y + subjectRect.h;
+        if (within) inside++; else outside++;
+      }
+    }
+    const score = inside - outside * 0.5;
+    if (score > bestScore) { bestScore = score; best = seg; }
+  });
+  if (!best || bestScore <= 0) return null;
+
+  const subject = new Uint8Array(w * h);
+  const others  = new Uint8Array(w * h);
+  const atBest = sampler(best);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) if (atBest(x, y)) subject[y * w + x] = 1;
+  }
+  segs.forEach(seg => {
+    if (seg === best) return;
+    const at = sampler(seg);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        if (!subject[i] && at(x, y)) others[i] = 1;
+      }
+    }
+  });
+  return { subject, others };
+}
+
+// Builds a soft-edged mask canvas from per-pixel flags. The blur matters: a hard
+// binary edge reads as a cut-out sticker.
+function maskToCanvas(flags, w, h, blurPx) {
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const ctx = c.getContext('2d');
+  const img = ctx.createImageData(w, h);
+  for (let i = 0; i < w * h; i++) {
+    img.data[i * 4] = 255; img.data[i * 4 + 1] = 255; img.data[i * 4 + 2] = 255;
+    img.data[i * 4 + 3] = flags[i] ? 255 : 0;
+  }
+  ctx.putImageData(img, 0, 0);
+  if (!blurPx) return c;
+  const soft = document.createElement('canvas');
+  soft.width = w; soft.height = h;
+  const sctx = soft.getContext('2d');
+  if (typeof sctx.filter === 'string') sctx.filter = `blur(${blurPx}px)`;
+  sctx.drawImage(c, 0, 0);
+  return soft;
+}
+
+async function isolateSubject(cropCanvas, subjectRect, mode) {
+  const seg = await segmentCrop(cropCanvas, subjectRect);
+  if (!seg) return cropCanvas;
+
+  const w = cropCanvas.width, h = cropCanvas.height;
+  const feather = Math.max(1, Math.round(Math.min(w, h) * 0.006));
+
+  if (mode === 'cutout') {
+    const out = document.createElement('canvas');
+    out.width = w; out.height = h;
+    const ctx = out.getContext('2d');
+    ctx.drawImage(cropCanvas, 0, 0);
+    ctx.globalCompositeOperation = 'destination-in';
+    ctx.drawImage(maskToCanvas(seg.subject, w, h, feather), 0, 0);
+    return out;
+  }
+
+  // dim / blur: keep the background, treat only the neighbours.
+  const others = maskToCanvas(seg.others, w, h, feather * 2);
+  const ctx = cropCanvas.getContext('2d');
+
+  if (mode === 'blur') {
+    const blurred = document.createElement('canvas');
+    blurred.width = w; blurred.height = h;
+    const bctx = blurred.getContext('2d');
+    if (typeof bctx.filter === 'string') bctx.filter = `blur(${Math.max(3, Math.round(Math.min(w, h) * 0.02))}px)`;
+    bctx.drawImage(cropCanvas, 0, 0);
+    bctx.filter = 'none';
+    bctx.globalCompositeOperation = 'destination-in';
+    bctx.drawImage(others, 0, 0);
+    ctx.drawImage(blurred, 0, 0);
+  } else {
+    const shade = document.createElement('canvas');
+    shade.width = w; shade.height = h;
+    const sctx = shade.getContext('2d');
+    sctx.fillStyle = '#05050f';
+    sctx.fillRect(0, 0, w, h);
+    sctx.globalCompositeOperation = 'destination-in';
+    sctx.drawImage(others, 0, 0);
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.drawImage(shade, 0, 0);
+    ctx.restore();
+  }
+  return cropCanvas;
 }
 
 // ─── Auto-upscale small outputs ────────────────────────────────────────────────
@@ -1747,6 +1974,8 @@ async function extractCurrent() {
   const useRemoveBg = document.getElementById('removeBgToggle').checked;
   const removeBgKey = document.getElementById('removeBgKey').value.trim();
   const replicateKey = document.getElementById('replicateKey').value.trim();
+  const isolateMode = document.getElementById('isolateMode').value;
+  let isolateFailed = false;
   const spotlightStrength = (parseInt(document.getElementById('spotlightStrength').value) || 0) / 100;
   const spotlightOn = document.getElementById('spotlightToggle').checked && !useRemoveBg && spotlightStrength > 0;
   const upscaleOn = document.getElementById('autoUpscaleToggle').checked;
@@ -1783,17 +2012,30 @@ async function extractCurrent() {
         blob = await canvasToBlob(cropped);
       }
     } else {
-      const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct, {
+      let cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct, {
         spotlight: spotlightOn, allBoxes: boxes, targetBox: boxes[i],
         spotlightStrength
       });
+
+      if (isolateMode !== 'off' && !isolateFailed) {
+        try {
+          setStatus(`מבודד לפי צללית ${i + 1} מתוך ${boxes.length}...`, pct);
+          cropped = await isolateSubject(cropped, subjectRectIn(imgObj.img, boxes[i].bbox, padPct), isolateMode);
+        } catch (e) {
+          // Report once, then finish the batch as plain rectangular crops rather
+          // than failing on every single girl.
+          isolateFailed = true;
+          showAlert(`בידוד הצללית לא זמין (${e.message}) — ממשיך בחיתוך ריבועי`, 'info');
+        }
+      }
+
       const finalCanvas = upscaleOn ? upscaleCanvasIfNeeded(cropped, minUpscale) : cropped;
-      blob = await canvasToBlob(finalCanvas);
+      blob = await canvasToBlob(finalCanvas, isolateMode === 'cutout' ? 'image/png' : 'image/jpeg');
     }
 
     if (useRemoveBg && upscaleOn) blob = await maybeUpscaleBlob(blob, minUpscale);
 
-    const ext = useRemoveBg ? 'png' : 'jpg';
+    const ext = (useRemoveBg || isolateMode === 'cutout') ? 'png' : 'jpg';
     const fileName = `${sanitizeName(name)}.${ext}`;
     const result = { id: nextResultId++, blob, name, fileName, groupName };
     allResults.push(result);
@@ -1960,7 +2202,8 @@ function addResultCard(result) {
   card.className = 'person-card';
   card.id = 'result-' + result.id;
   card.innerHTML = `
-    <img src="${url}" alt="${escapeHtml(result.name)}">
+    <img src="${url}" alt="${escapeHtml(result.name)}" title="לחץ להגדלה"
+         onclick="openLightbox('${url}', ${result.id})">
     <div class="person-card-footer" style="flex-direction:column;align-items:stretch;gap:6px;">
       ${images.length > 1 ? `<span style="font-size:0.72rem;color:#666;">📁 ${escapeHtml(result.groupName)}</span>` : ''}
       <input value="${escapeHtml(result.name)}" oninput="renameResult(${result.id}, this.value)"
@@ -2128,6 +2371,7 @@ function persistSettings() {
     sortMode: document.getElementById('sortMode').value,
     minUpscaleSize: document.getElementById('minUpscaleSize').value,
     scanDepth: document.getElementById('scanDepth').value,
+    isolateMode: document.getElementById('isolateMode').value,
     spotlightStrength: document.getElementById('spotlightStrength').value,
     tiledDetect: document.getElementById('tiledDetect').checked,
     spotlightToggle: document.getElementById('spotlightToggle').checked,
@@ -2151,6 +2395,7 @@ function loadSettings() {
     if (s.sortMode) document.getElementById('sortMode').value = s.sortMode;
     if (s.minUpscaleSize != null) document.getElementById('minUpscaleSize').value = s.minUpscaleSize;
     if (s.scanDepth) document.getElementById('scanDepth').value = s.scanDepth;
+    if (s.isolateMode) document.getElementById('isolateMode').value = s.isolateMode;
     if (s.spotlightStrength != null) document.getElementById('spotlightStrength').value = s.spotlightStrength;
     if (s.tiledDetect != null) document.getElementById('tiledDetect').checked = s.tiledDetect;
     if (s.spotlightToggle != null) document.getElementById('spotlightToggle').checked = s.spotlightToggle;
@@ -2184,10 +2429,24 @@ function hideAlert() {
   document.getElementById('alertBox').classList.remove('visible');
 }
 
+// ─── Lightbox ─────────────────────────────────────────────────────────────────
+function openLightbox(url, resultId) {
+  const r = allResults.find(x => x.id === resultId);
+  document.getElementById('lightboxImg').src = url;
+  document.getElementById('lightboxCaption').textContent = r ? r.name : '';
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function closeLightbox(e) {
+  if (e && e.target && e.target.tagName === 'IMG') return;
+  document.getElementById('lightbox').classList.remove('open');
+}
+
 // ─── Help modal ───────────────────────────────────────────────────────────────
 function openHelp()  { document.getElementById('helpModal').classList.add('open'); }
 function closeHelp() { document.getElementById('helpModal').classList.remove('open'); }
 function closeHelpIfBackdrop(e) { if (e.target === document.getElementById('helpModal')) closeHelp(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeHelp(); closeLightbox(); } });
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 loadAllKeys();

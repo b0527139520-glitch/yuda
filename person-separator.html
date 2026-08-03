@@ -832,6 +832,7 @@
   <div class="editor-toolbar">
     <button class="btn btn-secondary" id="addBoxBtn" onclick="toggleAddMode()">➕ הוסף אדם ידנית</button>
     <button class="btn btn-secondary" onclick="deleteSelectedBox()">🗑 מחק תיבה נבחרת</button>
+    <button class="btn btn-secondary" onclick="dedupeCurrent()">🔗 מזג כפילויות</button>
     <button class="btn btn-secondary" onclick="resetToAI()">↺ אפס לזיהוי AI</button>
     <button class="btn btn-secondary" onclick="clearAllBoxes()">🧹 נקה הכל</button>
     <span class="spacer"></span>
@@ -992,8 +993,19 @@ async function detectPersons(img, minConf) {
       tileCanvas.height = tile.h;
       tileCanvas.getContext('2d').drawImage(img, tile.x, tile.y, tile.w, tile.h, 0, 0, tile.w, tile.h);
       const preds = await cocoModel.detect(tileCanvas, 200, minConf);
+      const tol = 3;
       preds.filter(p => p.class === 'person').forEach(p => {
-        raw.push({ bbox: [p.bbox[0] + tile.x, p.bbox[1] + tile.y, p.bbox[2], p.bbox[3]], score: p.score });
+        const [px, py, pw, ph] = p.bbox;
+        // A person sliced by a vertical tile border is detected as half a body.
+        // That half overlaps the whole-body detection from the neighbouring tile
+        // too little for NMS to fuse them, so it survives as a second box on the
+        // same girl. Tiles overlap by 30%, so anyone cut here is intact in the
+        // neighbour — drop the slice. Only interior borders count; a real person
+        // standing at the edge of the photo must still be kept.
+        const cutLeft  = px <= tol && tile.x > 0;
+        const cutRight = px + pw >= tile.w - tol && tile.x + tile.w < iw;
+        if (cutLeft || cutRight) return;
+        raw.push({ bbox: [px + tile.x, py + tile.y, pw, ph], score: p.score });
       });
       // Yield to the UI thread so the progress bar actually animates.
       await new Promise(r => setTimeout(r, 0));
@@ -1001,8 +1013,8 @@ async function detectPersons(img, minConf) {
   }
 
   setStatus('ממזג ומנקה זיהויים...', 85);
-  const merged = mergeBoxes(raw, 0.45);
-  return suppressCrowdBoxes(merged, iw, ih);
+  const merged = mergeBoxes(raw);
+  return dropSizeOutliers(suppressCrowdBoxes(merged, iw, ih));
 }
 
 // The detector squashes whatever it is given down to a fixed ~300x300 input, so
@@ -1099,17 +1111,108 @@ function iou(a, b) {
   return union <= 0 ? 0 : inter / union;
 }
 
-function mergeBoxes(raw, iouThresh) {
+function intersectArea(a, b) {
+  const x1 = Math.max(a[0], b[0]), y1 = Math.max(a[1], b[1]);
+  const x2 = Math.min(a[0] + a[2], b[0] + b[2]), y2 = Math.min(a[1] + a[3], b[1] + b[3]);
+  return Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+}
+
+// Two detections are the same girl when they overlap a lot (plain IoU), OR when
+// one sits almost entirely inside the other AND both are centred on the same
+// vertical column.
+//
+// The containment half matters because tiled scanning produces partial views —
+// head-and-shoulders from one tile, the whole body from another. Their IoU is
+// only ~0.3-0.5, so IoU alone leaves both, which is why one girl was showing up
+// two or three times. The column test is what keeps this from fusing two
+// different girls: duplicates of one person share a centre line, whereas
+// neighbours standing shoulder to shoulder are a body-width apart.
+function isSamePerson(a, b, iouThresh = 0.6, iosThresh = 0.6) {
+  if (iou(a, b) > iouThresh) return true;
+
+  const smaller = Math.min(a[2] * a[3], b[2] * b[3]);
+  if (smaller <= 0) return false;
+  if (intersectArea(a, b) / smaller < iosThresh) return false;
+
+  // Same vertical column.
+  const acx = a[0] + a[2] / 2, bcx = b[0] + b[2] / 2;
+  if (Math.abs(acx - bcx) >= Math.min(a[2], b[2]) * 0.5) return false;
+
+  // Decisive test. Rows in a packed class photo overlap vertically by most of
+  // their height, so a girl in the back row and the girl below her in the next
+  // row reach ~0.5 IoU and ~0.7 containment while sharing a column — every
+  // looser rule fused them into one. Two views of ONE girl always agree on an
+  // edge: a head crop shares her top with the full body, a waist-down crop
+  // shares her feet. Two different girls agree on neither.
+  const tol = Math.min(a[3], b[3]) * 0.2;
+  const topAligned    = Math.abs(a[1] - b[1]) < tol;
+  const bottomAligned = Math.abs((a[1] + a[3]) - (b[1] + b[3])) < tol;
+  return topAligned || bottomAligned;
+}
+
+function boxArea(b) { return b[2] * b[3]; }
+
+// Fuse two views of one girl into the most complete one. Prefer the union, so a
+// head-and-shoulders box and a waist-down box rebuild into the whole girl rather
+// than keeping whichever happened to be bigger. The cap stops a slightly-off
+// match from inflating the box far beyond a real person.
+function fuseBoxes(a, b) {
+  const x1 = Math.min(a[0], b[0]), y1 = Math.min(a[1], b[1]);
+  const x2 = Math.max(a[0] + a[2], b[0] + b[2]), y2 = Math.max(a[1] + a[3], b[1] + b[3]);
+  const union = [x1, y1, x2 - x1, y2 - y1];
+  const larger = boxArea(a) >= boxArea(b) ? a : b;
+  return boxArea(union) <= boxArea(larger) * 1.6 ? union : larger;
+}
+
+function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.6) {
   const sorted = [...raw].sort((a, b) => b.score - a.score);
   const kept = [];
   for (const box of sorted) {
     let dup = false;
     for (const k of kept) {
-      if (iou(box.bbox, k.bbox) > iouThresh) { dup = true; break; }
+      if (isSamePerson(box.bbox, k.bbox, iouThresh, iosThresh)) {
+        k.bbox = fuseBoxes(k.bbox, box.bbox);
+        k.score = Math.max(k.score, box.score);
+        dup = true;
+        break;
+      }
     }
-    if (!dup) kept.push(box);
+    if (!dup) kept.push({ bbox: box.bbox, score: box.score });
   }
+
+  // A single greedy pass stops at the first match, so partial views can be left
+  // stranded: a head box and a waist-down box of one girl do not resemble each
+  // other, and each attaches to a different neighbour. Once a box grows by
+  // fusing, it can match boxes it previously did not — so keep consolidating
+  // until nothing changes.
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (let i = 0; i < kept.length && !changed; i++) {
+      for (let j = i + 1; j < kept.length; j++) {
+        if (isSamePerson(kept[i].bbox, kept[j].bbox, iouThresh, iosThresh)) {
+          kept[i].bbox = fuseBoxes(kept[i].bbox, kept[j].bbox);
+          kept[i].score = Math.max(kept[i].score, kept[j].score);
+          kept.splice(j, 1);
+          changed = true;
+          break;
+        }
+      }
+    }
+  }
+
   return kept.map(b => ({ id: nextBoxId++, bbox: b.bbox, score: b.score, manual: false }));
+}
+
+// Scattered fragments (a stray hand, a chair leg read as a person) come back far
+// smaller than a real girl. Everyone in a group photo is roughly one of a few
+// sizes, so anything well under the median height is not a person.
+function dropSizeOutliers(boxes) {
+  if (boxes.length < 6) return boxes;
+  const heights = boxes.map(b => b.bbox[3]).sort((a, b) => a - b);
+  const median = heights[Math.floor(heights.length / 2)];
+  const kept = boxes.filter(b => b.bbox[3] > median * 0.35);
+  return kept.length ? kept : boxes;
 }
 
 // ─── Sorting ──────────────────────────────────────────────────────────────────
@@ -1473,6 +1576,23 @@ function selectBoxFromList(id) {
   selectedBoxId = id;
   redrawEditor();
   updatePersonListPanel();
+}
+
+// Manual second pass, deliberately more aggressive than the automatic one, for
+// when a few duplicates still slip through. Manual boxes are never touched.
+function dedupeCurrent() {
+  const imgObj = currentImage();
+  if (!imgObj || imgObj.boxes.length < 2) return;
+  const manual = imgObj.boxes.filter(b => b.manual);
+  const auto   = imgObj.boxes.filter(b => !b.manual);
+  const before = auto.length;
+  const deduped = mergeBoxes(auto.map(b => ({ bbox: b.bbox, score: b.score })), 0.45, 0.5);
+  imgObj.boxes = [...deduped, ...manual];
+  selectedBoxId = null;
+  redrawEditor();
+  updatePersonListPanel();
+  const removed = before - deduped.length;
+  showAlert(removed ? `מוזגו ${removed} תיבות כפולות` : 'לא נמצאו כפילויות נוספות', 'info');
 }
 
 function resetToAI() {

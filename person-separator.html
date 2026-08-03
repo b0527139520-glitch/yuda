@@ -519,8 +519,21 @@
       <ul>
         <li>כל אדם מקבל תיבה ורווח (padding) משלו, בלי קשר לתיבה של השכן — גם אם זה אומר שהתיבות של שני אנשים סמוכים <strong>חופפות</strong> וחלק מהתמונה "משרת" יותר מאדם אחד. זה בכוונה.</li>
         <li>כשמפעילים <strong>הסרת רקע עם SAM 2</strong>, המודל משתמש בתיבה כ"פרומפט" ומבודד בדיוק את האדם המבוקש מתוך האזור החופף — כך שגם אם הרקע מלא באנשים אחרים, מקבלים תמונה נקייה של האדם הנכון בלבד.</li>
-        <li>כשלא מסירים רקע, אפשר להפעיל <strong>"מצב הדגשה" (Spotlight)</strong> — האפליקציה מעמעמת קלות את האזורים של אנשים אחרים שנכנסו לתוך התיבה, כדי שהאדם המרכזי יבלוט, בלי לגזור ולאבד חלק מהתמונה.</li>
+        <li>כשלא מסירים רקע, אפשר להפעיל <strong>"מצב הדגשה" (Spotlight)</strong> — האפליקציה מעמעמת קלות את האזורים של אנשים אחרים שנכנסו לתוך התיבה, כדי שהאדם המרכזי יבלוט, בלי לגזור ולאבד חלק מהתמונה. <strong>כבוי כברירת מחדל</strong> — התמונות יוצאות בבהירות מלאה של המקור. אם מפעילים, אפשר לכוון את העוצמה (35% זה עדין; 0 = בלי עמעום).</li>
       </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>לא מזוהות כל השורות בתמונת כיתה?</h3>
+      <p>אם הזיהוי תופס רק את השורה הקדמית, או מקיף כמה שורות אחוריות בתיבה ענקית אחת — זה קורה כי מודל הזיהוי מכווץ כל אזור שהוא בודק לגודל קבוע קטן, ולכן אנשים קטנים ורחוקים "נעלמים". הפתרון:</p>
+      <ul>
+        <li>הגדר <strong>עומק סריקה = עמוק</strong>. האפליקציה תחלק את התמונה להרבה אזורים קטנים ומרובעים (גם לרוחב וגם לגובה) ותסרוק כל אחד בנפרד, כך שהשורות האחוריות מקבלות "זכוכית מגדלת" אמיתית.</li>
+        <li>הורד את <strong>מינימום ביטחון</strong> ל-30–35%.</li>
+        <li>מי שעדיין חסר — הוסף ידנית ב"➕ הוסף אדם ידנית". זו הדרך הבטוחה להגיע ל-100%.</li>
+      </ul>
+      <p style="margin-top:8px;">בנוסף, האפליקציה מזהה ומסירה אוטומטית "תיבות קבוצה" — תיבה שבולעת בתוכה שני אנשים או יותר שכבר זוהו בנפרד, או תיבה רחבה מדי מכדי להיות אדם אחד.</p>
     </div>
 
     <hr class="divider">
@@ -690,6 +703,18 @@
       <label>גודל מינימלי לתמונה שחולצה (px)</label>
       <input type="number" id="minUpscaleSize" value="500" min="0" max="2000" step="50" oninput="persistSettings()">
     </div>
+    <div class="form-group">
+      <label>עומק סריקה</label>
+      <select id="scanDepth" onchange="persistSettings()">
+        <option value="fast">מהיר — סריקה גסה</option>
+        <option value="normal" selected>רגיל — מומלץ לרוב התמונות</option>
+        <option value="deep">עמוק — לתמונות כיתה עם הרבה שורות (איטי)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>עוצמת ההדגשה (0 = בלי עמעום כלל)</label>
+      <input type="number" id="spotlightStrength" value="35" min="0" max="80" step="5" oninput="persistSettings()">
+    </div>
   </div>
 
   <div style="margin-top:20px;">
@@ -706,10 +731,10 @@
     <div class="toggle-row">
       <div>
         <label>מצב הדגשה (Spotlight) בחפיפות</label>
-        <small>כשלא מסירים רקע: מעמעם קלות אנשים אחרים שנכנסו לתיבה, בלי לגזור אותם מהתמונה</small>
+        <small>כשלא מסירים רקע: מעמעם קלות אנשים אחרים שנכנסו לתיבה, בלי לגזור אותם מהתמונה. כבוי כברירת מחדל — התמונות יוצאות בבהירות מלאה</small>
       </div>
       <label class="toggle">
-        <input type="checkbox" id="spotlightToggle" checked onchange="persistSettings()">
+        <input type="checkbox" id="spotlightToggle" onchange="persistSettings()">
         <span class="slider"></span>
       </label>
     </div>
@@ -949,17 +974,18 @@ function refreshUploadZoneLabel() {
 async function detectPersons(img, minConf) {
   const iw = img.naturalWidth || img.width;
   const ih = img.naturalHeight || img.height;
-  const useTiling = document.getElementById('tiledDetect').checked && Math.max(iw, ih) > 1200;
+  const depth = document.getElementById('scanDepth').value;
+  const useTiling = document.getElementById('tiledDetect').checked && depth !== 'off';
 
   const raw = [];
-  setStatus('סורק את כל התמונה...', 25);
+  setStatus('סורק את כל התמונה...', 15);
   const full = await cocoModel.detect(img, 200, minConf);
   full.filter(p => p.class === 'person').forEach(p => raw.push({ bbox: p.bbox, score: p.score }));
 
   if (useTiling) {
-    const tiles = computeTiles(iw, ih);
+    const tiles = computeTiles(iw, ih, depth);
     for (let t = 0; t < tiles.length; t++) {
-      setStatus(`סורק אזור ${t + 1} מתוך ${tiles.length} (זיהוי רב-שכבתי)...`, 25 + Math.round((t / tiles.length) * 35));
+      setStatus(`סורק אזור ${t + 1} מתוך ${tiles.length} (זיהוי רב-שכבתי)...`, 15 + Math.round((t / tiles.length) * 65));
       const tile = tiles[t];
       const tileCanvas = document.createElement('canvas');
       tileCanvas.width = tile.w;
@@ -969,18 +995,44 @@ async function detectPersons(img, minConf) {
       preds.filter(p => p.class === 'person').forEach(p => {
         raw.push({ bbox: [p.bbox[0] + tile.x, p.bbox[1] + tile.y, p.bbox[2], p.bbox[3]], score: p.score });
       });
+      // Yield to the UI thread so the progress bar actually animates.
+      await new Promise(r => setTimeout(r, 0));
     }
   }
 
-  return mergeBoxes(raw, 0.45);
+  setStatus('ממזג ומנקה זיהויים...', 85);
+  const merged = mergeBoxes(raw, 0.45);
+  return suppressCrowdBoxes(merged, iw, ih);
 }
 
-function computeTiles(iw, ih) {
-  const targetTile = 900;
-  const cols = Math.min(3, Math.max(1, Math.round(iw / targetTile)));
-  const rows = Math.min(3, Math.max(1, Math.round(ih / targetTile)));
-  if (cols === 1 && rows === 1) return [];
-  const overlap = 0.25;
+// The detector squashes whatever it is given down to a fixed ~300x300 input, so
+// what decides whether a person is found is their size *relative to the tile* —
+// not the tile's pixel dimensions. A wide class photo split only into columns
+// keeps the full image height in every tile, so the back rows stay squashed and
+// undetectable. Tiles must therefore be roughly SQUARE and small in source
+// pixels, which subdivides vertically as well and gives the back rows real
+// magnification.
+function computeTiles(iw, ih, depth) {
+  const cfg = ({
+    fast:   { target: 700, max: 9  },
+    normal: { target: 460, max: 24 },
+    deep:   { target: 330, max: 54 }
+  })[depth] || { target: 460, max: 24 };
+
+  // Below this the full-frame pass already keeps people large relative to the
+  // model input, so tiling only costs time.
+  if (Math.max(iw, ih) < 900) return [];
+
+  let t = cfg.target;
+  let cols = Math.ceil(iw / t), rows = Math.ceil(ih / t);
+  while (cols * rows > cfg.max && t < Math.max(iw, ih)) {
+    t = Math.round(t * 1.15);
+    cols = Math.ceil(iw / t);
+    rows = Math.ceil(ih / t);
+  }
+  if (cols <= 1 && rows <= 1) return [];
+
+  const overlap = 0.3;
   const tw = iw / cols, th = ih / rows;
   const tiles = [];
   for (let r = 0; r < rows; r++) {
@@ -993,6 +1045,48 @@ function computeTiles(iw, ih) {
     }
   }
   return tiles;
+}
+
+// A detector run on a crowd very often emits one huge box around a whole row or
+// cluster of people. Plain NMS never removes it: its IoU against each individual
+// inside it is low, because the union is dominated by the huge box. Suppress a
+// box when it swallows two or more clearly smaller boxes, and drop boxes whose
+// shape cannot be a single standing/seated person.
+function suppressCrowdBoxes(boxes, imgW, imgH) {
+  const area = b => b.bbox[2] * b.bbox[3];
+
+  const containsMostOf = (big, small) => {
+    const [bx, by, bw, bh] = big.bbox, [sx, sy, sw, sh] = small.bbox;
+    const x1 = Math.max(bx, sx), y1 = Math.max(by, sy);
+    const x2 = Math.min(bx + bw, sx + sw), y2 = Math.min(by + bh, sy + sh);
+    const inter = Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+    return sw * sh > 0 && inter / (sw * sh) > 0.7;
+  };
+
+  let kept = boxes.filter(b => {
+    let swallowed = 0;
+    for (const o of boxes) {
+      if (o === b) continue;
+      if (area(o) < area(b) * 0.6 && containsMostOf(b, o)) {
+        if (++swallowed >= 2) return false;
+      }
+    }
+    return true;
+  });
+
+  // People are taller than they are wide. A box much wider than tall, or one
+  // covering a huge slice of the frame while other people were also found, is a
+  // group box rather than a person.
+  if (kept.length >= 3) {
+    kept = kept.filter(b => {
+      const [, , w, h] = b.bbox;
+      if (w > h * 1.6) return false;
+      if (w * h > imgW * imgH * 0.5) return false;
+      return true;
+    });
+  }
+
+  return kept.length ? kept : boxes;
 }
 
 function iou(a, b) {
@@ -1093,33 +1187,57 @@ function cropPerson(img, bbox, padPct, opts = {}) {
   ctx.drawImage(img, x1, y1, cw, ch, 0, 0, cw, ch);
 
   if (opts.spotlight && opts.allBoxes && opts.allBoxes.length > 1) {
-    applySpotlight(canvas, opts.targetBox, opts.allBoxes, x1, y1);
+    applySpotlight(canvas, opts.targetBox, opts.allBoxes, x1, y1, opts.spotlightStrength);
   }
   return canvas;
 }
 
-// Darkens (feathered) the regions of OTHER detected people that fall inside this
-// person's crop, instead of cutting them out — keeps the whole photo/context but
-// makes the target person visually stand out. This is what lets a single region
-// of the source photo legitimately "serve" more than one extracted image.
-function applySpotlight(cropCanvas, targetBox, allBoxes, cropOriginX, cropOriginY) {
-  const ctx = cropCanvas.getContext('2d');
+// Dims the regions of OTHER detected people that fall inside this person's crop,
+// instead of cutting them out — keeps the whole photo/context but makes the
+// target person stand out. This is what lets a single region of the source photo
+// legitimately "serve" more than one extracted image.
+//
+// The dimming is built up on a SEPARATE layer as a flat union and composited
+// exactly once. Painting each neighbour directly onto the crop would stack alpha
+// on every overlap, so in a dense class photo (20-30 boxes) the accumulated
+// layers turned the whole crop — including the subject — nearly black.
+function applySpotlight(cropCanvas, targetBox, allBoxes, cropOriginX, cropOriginY, strength) {
+  const w = cropCanvas.width, h = cropCanvas.height;
+  const layer = document.createElement('canvas');
+  layer.width = w;
+  layer.height = h;
+  const lctx = layer.getContext('2d');
+
+  // 1. Flat union of the other people's regions — overlaps do not compound.
+  lctx.fillStyle = '#05050f';
+  let painted = false;
   allBoxes.forEach(ob => {
     if (ob === targetBox) return;
     const [ox, oy, ow, oh] = ob.bbox;
     const lx = ox - cropOriginX, ly = oy - cropOriginY;
-    if (lx + ow < 0 || ly + oh < 0 || lx > cropCanvas.width || ly > cropCanvas.height) return;
-    ctx.save();
-    const pad = ow * 0.15;
-    const rx = lx - pad, ry = ly - pad, rw = ow + pad * 2, rh = oh + pad * 2;
-    const cx = rx + rw / 2, cy = ry + rh / 2;
-    const grad = ctx.createRadialGradient(cx, cy, Math.max(1, Math.min(rw, rh) * 0.2), cx, cy, Math.max(rw, rh) * 0.7);
-    grad.addColorStop(0, 'rgba(5,5,15,0.55)');
-    grad.addColorStop(1, 'rgba(5,5,15,0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(Math.max(0, rx), Math.max(0, ry), rw, rh);
-    ctx.restore();
+    if (lx + ow < 0 || ly + oh < 0 || lx > w || ly > h) return;
+    lctx.fillRect(lx, ly, ow, oh);
+    painted = true;
   });
+  if (!painted) return;
+
+  // 2. Punch the subject back out, so the subject is never dimmed by a
+  //    neighbour's box overlapping them.
+  const [tx, ty, tw, th] = targetBox.bbox;
+  const padX = tw * 0.12, padY = th * 0.12;
+  lctx.globalCompositeOperation = 'destination-out';
+  lctx.fillStyle = '#000';
+  lctx.fillRect(tx - cropOriginX - padX, ty - cropOriginY - padY, tw + padX * 2, th + padY * 2);
+  lctx.globalCompositeOperation = 'source-over';
+
+  // 3. Feather the edges and composite once, gently.
+  const ctx = cropCanvas.getContext('2d');
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(0.8, strength == null ? 0.35 : strength));
+  const blurPx = Math.max(4, Math.round(Math.min(w, h) * 0.035));
+  if (typeof ctx.filter === 'string') ctx.filter = `blur(${blurPx}px)`;
+  ctx.drawImage(layer, 0, 0);
+  ctx.restore();
 }
 
 // ─── Auto-upscale small outputs ────────────────────────────────────────────────
@@ -1173,19 +1291,30 @@ function redrawEditor() {
     const [x, y, w, h] = b.bbox;
     const isSelected = b.id === selectedBoxId;
     ctx.strokeStyle = isSelected ? '#f87171' : (b.manual ? '#60a5fa' : '#a78bfa');
-    ctx.lineWidth   = Math.max(2, (isSelected ? 4 : 3) * scale);
+    ctx.lineWidth   = Math.max(2, (isSelected ? 4 : 2.5) * scale);
     ctx.strokeRect(x, y, w, h);
 
-    const label = `${buildName(idx)} ${b.manual ? '(ידני)' : '(' + Math.round(b.score * 100) + '%)'}`;
-    const fontSize = Math.max(14, 18 * scale);
+    // Only the selected box gets the full name. Every other box gets a compact
+    // number chip placed INSIDE its own top corner — in a dense class photo, full
+    // labels hanging above every box overlap into an unreadable smear.
+    const label = isSelected
+      ? `${buildName(idx)} ${b.manual ? '(ידני)' : '(' + Math.round(b.score * 100) + '%)'}`
+      : String(idx + 1);
+    const fontSize = isSelected
+      ? Math.max(13, Math.min(w * 0.28, 22 * scale))
+      : Math.max(11, Math.min(w * 0.34, 18 * scale));
     ctx.font = `bold ${fontSize}px Arial`;
-    const tw = ctx.measureText(label).width + 10;
-    const th = fontSize + 10;
+    const tw = ctx.measureText(label).width + fontSize * 0.5;
+    const th = fontSize * 1.5;
 
-    ctx.fillStyle = isSelected ? 'rgba(220,38,38,0.85)' : 'rgba(124,58,237,0.85)';
-    ctx.fillRect(x, Math.max(0, y - th), tw, th);
+    // Keep the chip inside the canvas even for boxes touching the top edge.
+    const chipY = y < th ? y : y - th;
+    ctx.fillStyle = isSelected ? 'rgba(220,38,38,0.9)' : 'rgba(124,58,237,0.9)';
+    ctx.fillRect(x, chipY, tw, th);
     ctx.fillStyle = '#fff';
-    ctx.fillText(label, x + 5, Math.max(fontSize, y - 6));
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x + fontSize * 0.25, chipY + th / 2);
+    ctx.textBaseline = 'alphabetic';
   });
 }
 
@@ -1498,7 +1627,8 @@ async function extractCurrent() {
   const useRemoveBg = document.getElementById('removeBgToggle').checked;
   const removeBgKey = document.getElementById('removeBgKey').value.trim();
   const replicateKey = document.getElementById('replicateKey').value.trim();
-  const spotlightOn = document.getElementById('spotlightToggle').checked && !useRemoveBg;
+  const spotlightStrength = (parseInt(document.getElementById('spotlightStrength').value) || 0) / 100;
+  const spotlightOn = document.getElementById('spotlightToggle').checked && !useRemoveBg && spotlightStrength > 0;
   const upscaleOn = document.getElementById('autoUpscaleToggle').checked;
   const minUpscale = parseInt(document.getElementById('minUpscaleSize').value) || 0;
 
@@ -1534,7 +1664,8 @@ async function extractCurrent() {
       }
     } else {
       const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct, {
-        spotlight: spotlightOn, allBoxes: boxes, targetBox: boxes[i]
+        spotlight: spotlightOn, allBoxes: boxes, targetBox: boxes[i],
+        spotlightStrength
       });
       const finalCanvas = upscaleOn ? upscaleCanvasIfNeeded(cropped, minUpscale) : cropped;
       blob = await canvasToBlob(finalCanvas);
@@ -1864,7 +1995,9 @@ function toggleShow(inputId) {
 }
 
 // ─── General settings persistence ──────────────────────────────────────────────
-const SETTINGS_KEY = 'personSeparator_settings_v2';
+// Bumped to v3: v2 users have spotlight saved as ON, which would otherwise keep
+// overriding the new default-off and reintroduce the darkened output.
+const SETTINGS_KEY = 'personSeparator_settings_v3';
 
 function persistSettings() {
   const s = {
@@ -1874,6 +2007,8 @@ function persistSettings() {
     minConf: document.getElementById('minConf').value,
     sortMode: document.getElementById('sortMode').value,
     minUpscaleSize: document.getElementById('minUpscaleSize').value,
+    scanDepth: document.getElementById('scanDepth').value,
+    spotlightStrength: document.getElementById('spotlightStrength').value,
     tiledDetect: document.getElementById('tiledDetect').checked,
     spotlightToggle: document.getElementById('spotlightToggle').checked,
     autoUpscaleToggle: document.getElementById('autoUpscaleToggle').checked,
@@ -1895,6 +2030,8 @@ function loadSettings() {
     if (s.minConf != null) document.getElementById('minConf').value = s.minConf;
     if (s.sortMode) document.getElementById('sortMode').value = s.sortMode;
     if (s.minUpscaleSize != null) document.getElementById('minUpscaleSize').value = s.minUpscaleSize;
+    if (s.scanDepth) document.getElementById('scanDepth').value = s.scanDepth;
+    if (s.spotlightStrength != null) document.getElementById('spotlightStrength').value = s.spotlightStrength;
     if (s.tiledDetect != null) document.getElementById('tiledDetect').checked = s.tiledDetect;
     if (s.spotlightToggle != null) document.getElementById('spotlightToggle').checked = s.spotlightToggle;
     if (s.autoUpscaleToggle != null) document.getElementById('autoUpscaleToggle').checked = s.autoUpscaleToggle;

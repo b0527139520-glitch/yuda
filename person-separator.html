@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מפריד אנשים בתמונה</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0f0f1a;
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2rem;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+  }
+  .subtitle2 {
+    text-align: center;
+    color: #6d6d8a;
+    margin-bottom: 28px;
+    font-size: 0.82rem;
+  }
+  .card {
+    background: #1a1a2e;
+    border: 1px solid #2a2a4a;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    max-width: 980px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card h2 {
+    font-size: 1rem;
+    color: #a78bfa;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  /* Upload zone */
+  .upload-zone {
+    border: 2px dashed #3a3a6a;
+    border-radius: 12px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #12122a;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: #a78bfa;
+    background: #1e1e3a;
+  }
+  .upload-zone .icon { font-size: 3rem; margin-bottom: 12px; }
+  .upload-zone p { color: #888; font-size: 0.95rem; }
+  .upload-zone strong { color: #a78bfa; }
+  #fileInput { display: none; }
+  /* Queue strip */
+  #queueCard { display: none; }
+  .queue-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .queue-thumb {
+    position: relative;
+    flex-shrink: 0;
+    width: 110px;
+    cursor: pointer;
+    border: 2px solid #2a2a4a;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #12122a;
+    transition: border-color 0.2s;
+  }
+  .queue-thumb.active { border-color: #a78bfa; }
+  .queue-thumb img { width: 100%; height: 78px; object-fit: cover; display: block; }
+  .qthumb-loading { width: 100%; height: 78px; display: flex; align-items: center; justify-content: center; color: #555; font-size: 0.75rem; }
+  .qthumb-label {
+    font-size: 0.68rem; color: #aaa; padding: 4px 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .qthumb-remove {
+    position: absolute; top: 3px; left: 3px;
+    background: rgba(10,10,26,0.85); border: none; color: #fca5a5;
+    width: 20px; height: 20px; border-radius: 50%; cursor: pointer; font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* Settings */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 600px) { .settings-grid { grid-template-columns: 1fr; } }
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    background: #12122a;
+    border: 1px solid #3a3a6a;
+    color: #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #a78bfa;
+  }
+  .form-group input::placeholder { color: #555; }
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a4a;
+    gap: 12px;
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-row label { font-size: 0.9rem; color: #ccc; }
+  .toggle-row small { display: block; color: #666; font-size: 0.78rem; }
+  .toggle-row-inline { display: flex; align-items: center; gap: 10px; }
+  .toggle-row-inline input[type=number] { width: 80px; }
+  /* Toggle switch */
+  .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .slider {
+    position: absolute; inset: 0;
+    background: #2a2a4a;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle .slider::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; bottom: 3px;
+    background: #666;
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+  .toggle input:checked + .slider { background: #7c3aed; }
+  .toggle input:checked + .slider::before { transform: translateX(20px); background: #fff; }
+  /* Removebg settings */
+  .removebg-settings {
+    display: none;
+    margin-top: 12px;
+    padding: 12px;
+    background: #12122a;
+    border-radius: 8px;
+    border: 1px solid #3a3a6a;
+  }
+  .removebg-settings.visible { display: block; }
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
+    border: none;
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    color: white;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: #2a2a4a;
+    color: #ccc;
+    border: 1px solid #3a3a6a;
+  }
+  .btn-secondary:hover { background: #3a3a6a; }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary.active-mode { background: #4c1d95; border-color: #7c3aed; color: #fff; }
+  .btn-block { width: 100%; justify-content: center; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .btn-row .btn { flex: 1; min-width: 190px; justify-content: center; }
+  /* Status / progress */
+  .status-bar {
+    background: #12122a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+  }
+  .status-bar.visible { display: flex; }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 2px solid #3a3a6a;
+    border-top-color: #a78bfa;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .progress-bar-wrap {
+    background: #2a2a4a;
+    border-radius: 4px;
+    height: 6px;
+    flex: 1;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    border-radius: 4px;
+    transition: width 0.3s;
+    width: 0%;
+  }
+  /* Editor */
+  .editor-banner {
+    background: #0a1a2a; border: 1px solid #1e3a5a; color: #93c5fd;
+    border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; margin-bottom: 14px; line-height: 1.6;
+  }
+  .editor-toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
+  .editor-toolbar .spacer { flex: 1; }
+  #personCountInfo { font-size: 0.8rem; color: #888; }
+  .editor-layout { display: flex; gap: 18px; align-items: flex-start; }
+  @media (max-width: 760px) { .editor-layout { flex-direction: column; } }
+  .editor-canvas-col { flex: 1; min-width: 0; }
+  .preview-wrap {
+    position: relative;
+    display: none;
+  }
+  .preview-wrap.visible { display: block; }
+  #previewCanvas {
+    width: 100%;
+    border-radius: 8px;
+    display: block;
+    touch-action: none;
+    background: #0a0a1a;
+  }
+  .person-list-col { width: 240px; flex-shrink: 0; }
+  @media (max-width: 760px) { .person-list-col { width: 100%; } }
+  #personListPanel { max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+  .person-list-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #12122a; border: 1px solid #2a2a4a; border-radius: 8px;
+    padding: 7px 10px; cursor: pointer; font-size: 0.8rem; color: #ccc;
+    transition: border-color 0.15s;
+  }
+  .person-list-item:hover { border-color: #6d28d9; }
+  .person-list-item.selected { border-color: #f87171; background: #1e1030; }
+  .person-list-item button {
+    background: none; border: none; color: #fca5a5; cursor: pointer; font-size: 0.85rem; padding: 2px 6px;
+  }
+  /* Results grid */
+  .results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .results-header h2 { margin: 0; }
+  .results-header .btn-row-inline { display: flex; gap: 8px; }
+  .badge {
+    background: #7c3aed;
+    color: white;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+  .person-card {
+    background: #12122a;
+    border: 1px solid #2a2a4a;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .person-card:hover { border-color: #a78bfa; }
+  .person-card img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    max-height: 220px;
+    background: #0a0a1a;
+  }
+  .person-card-footer {
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .person-card-footer span { font-size: 0.82rem; color: #888; }
+  .person-card-footer button {
+    background: none;
+    border: 1px solid #3a3a6a;
+    color: #a78bfa;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .person-card-footer button:hover { background: #3a3a6a; }
+  /* Alert */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    display: none;
+  }
+  .alert.visible { display: block; }
+  .alert-error { background: #2a0a0a; border: 1px solid #7f1d1d; color: #fca5a5; }
+  .alert-info  { background: #0a1a2a; border: 1px solid #1e3a5a; color: #93c5fd; }
+  /* Model status */
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #1e1e3a; border: 1px solid #3a3a6a;
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 0.8rem; color: #aaa;
+  }
+  .chip.ready { border-color: #166534; background: #052e16; color: #86efac; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  /* Provider tabs */
+  .provider-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .provider-tab {
+    flex: 1; background: #12122a; border: 1px solid #3a3a6a;
+    border-radius: 10px; padding: 10px 12px; cursor: pointer;
+    text-align: center; transition: all 0.2s; color: #888; font-family: inherit;
+  }
+  .provider-tab:hover { border-color: #6d28d9; }
+  .provider-tab.active { border-color: #7c3aed; background: #1e1040; color: #e0e0e0; }
+  .ptab-title { display: block; font-size: 0.88rem; font-weight: 700; }
+  .ptab-badge {
+    display: inline-block; font-size: 0.7rem; padding: 1px 7px;
+    border-radius: 10px; margin-top: 3px; background: #2a2a4a; color: #888;
+  }
+  .provider-tab.active .ptab-badge { background: #4c1d95; color: #c4b5fd; }
+  .ptab-badge.best { background: #14532d; color: #86efac; }
+  .provider-tab.active .ptab-badge.best { background: #166534; color: #bbf7d0; }
+  .provider-panel { display: none; }
+  .provider-panel.active { display: block; }
+  .api-key-row { display: flex; gap: 8px; align-items: center; }
+  .api-key-row input { flex: 1; }
+  .saved-msg {
+    display: none; margin-top: 8px; font-size: 0.82rem; color: #86efac;
+    padding: 6px 10px; background: #052e16; border-radius: 6px; border: 1px solid #166534;
+  }
+  .key-btns { display: flex; gap: 8px; margin-top: 10px; }
+  .key-btns button { flex: 1; }
+  /* Help button */
+  .help-btn {
+    position: fixed; bottom: 28px; left: 28px;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    border: none; color: white; font-size: 1.3rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 4px 20px rgba(124,58,237,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    z-index: 100; display: flex; align-items: center; justify-content: center;
+  }
+  .help-btn:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(124,58,237,0.7); }
+  /* Modal */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75); z-index: 200;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: #1a1a2e; border: 1px solid #3a3a6a; border-radius: 20px;
+    max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto;
+    padding: 28px; position: relative;
+  }
+  .modal h2 {
+    font-size: 1.3rem; margin-bottom: 20px;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .modal-close {
+    position: absolute; top: 16px; left: 16px;
+    background: #2a2a4a; border: 1px solid #3a3a6a; color: #aaa;
+    border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.85rem;
+    font-family: inherit; transition: background 0.2s;
+  }
+  .modal-close:hover { background: #3a3a6a; }
+  /* Help sections */
+  .help-section { margin-bottom: 22px; }
+  .help-section h3 {
+    font-size: 0.95rem; color: #a78bfa; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .help-section p, .help-section li {
+    font-size: 0.88rem; color: #ccc; line-height: 1.7;
+  }
+  .help-section ul { padding-right: 18px; }
+  .help-section li { margin-bottom: 4px; }
+  .step-list { counter-reset: steps; list-style: none; padding: 0; }
+  .step-list li {
+    counter-increment: steps; position: relative;
+    padding-right: 36px; margin-bottom: 10px;
+  }
+  .step-list li::before {
+    content: counter(steps);
+    position: absolute; right: 0; top: 0;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #4c1d95; color: #c4b5fd;
+    font-size: 0.78rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tip-box {
+    background: #0a1a0a; border: 1px solid #166534;
+    border-radius: 8px; padding: 10px 14px; margin-top: 8px;
+  }
+  .tip-box p { color: #86efac; font-size: 0.85rem; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin-top: 8px; }
+  .compare-table th {
+    background: #12122a; color: #a78bfa;
+    padding: 8px 12px; text-align: right; font-weight: 600;
+    border: 1px solid #2a2a4a;
+  }
+  .compare-table td {
+    padding: 8px 12px; border: 1px solid #2a2a4a; color: #ccc;
+    vertical-align: top;
+  }
+  .compare-table tr:nth-child(even) td { background: #12122a; }
+  .green { color: #86efac; }
+  .yellow { color: #fde68a; }
+  .divider { border: none; border-top: 1px solid #2a2a4a; margin: 18px 0; }
+</style>
+</head>
+<body>
+
+<h1>מפריד אנשים בתמונה</h1>
+<p class="subtitle">העלה תמונה קבוצתית — הכלי יזהה כל אדם ויחלץ אותו לתמונה נפרדת</p>
+<p class="subtitle2">גרסה משופרת: זיהוי רב-שכבתי לתמונות כיתה צפופות, עריכה ידנית של תיבות, מצב הדגשה חכם לחפיפות, ותמיכה בכמה תמונות בבת אחת</p>
+<p style="text-align:center;font-size:0.82rem;color:#555;margin-bottom:4px;">נוצר על ידי <strong style="color:#a78bfa;">יהודה טאוב</strong></p>
+<p style="text-align:center;font-size:0.8rem;color:#555;margin-bottom:24px;">
+  נשמח לשמוע איך נהניתם &nbsp;|&nbsp;
+  <a href="https://wa.me/972527139524" target="_blank" style="color:#25d366;text-decoration:none;">WhatsApp 052-713-9524</a>
+  &nbsp;|&nbsp;
+  <a href="mailto:yudataub@gmail.com" style="color:#60a5fa;text-decoration:none;">yudataub@gmail.com</a>
+</p>
+
+<!-- Help Modal -->
+<div class="modal-backdrop" id="helpModal" onclick="closeHelpIfBackdrop(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeHelp()">סגור ✕</button>
+    <h2>מדריך שימוש — מפריד אנשים בתמונה</h2>
+
+    <div class="help-section">
+      <h3>שלבי השימוש הבסיסיים</h3>
+      <ol class="step-list">
+        <li>המתן שמודל ה-AI ייטען (החיווי הירוק "מודל AI מוכן" יופיע בראש הדף).</li>
+        <li>העלה תמונה אחת או כמה תמונות יחד — לחץ על אזור ההעלאה או גרור לתוכו.</li>
+        <li>לחץ <strong>"שלב 1: זהה אנשים"</strong> — המודל יסרוק את התמונה (כולל סריקה רב-שכבתית לתמונות גדולות/צפופות) ויסמן תיבה סביב כל אדם שזוהה.</li>
+        <li><strong>בדוק ותקן:</strong> אם מישהו לא זוהה — לחץ "הוסף אדם ידנית" וגרור תיבה סביבו. אפשר גם להזיז/לשנות גודל לתיבות קיימות, או למחוק זיהוי שגוי.</li>
+        <li>לחץ <strong>"שלב 2: חלץ ושמור תמונות"</strong> — כל תיבה תיחתך לתמונה נפרדת, לפי סדר המיון שבחרת.</li>
+        <li>הורד תמונות בודדות, שנה שם לכל תמונה, או הורד הכל כקובץ ZIP אחד.</li>
+      </ol>
+      <div class="tip-box">
+        <p>ממהרים? כפתור "⚡ זהה וחלץ אוטומטית" עושה את שני השלבים בלחיצה אחת בלי עצירה לעריכה — כמו בגרסה הקודמת. אם העלית כמה תמונות, "⚡⚡ עבד את כל התור" עושה זאת לכולן ברצף.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>עריכה ידנית של תיבות — למה זה חשוב</h3>
+      <p>שום זיהוי אוטומטי לא מושלם, במיוחד בתמונות כיתה צפופות שבהן אנשים חופפים, מסתירים אחד את השני, או עומדים בקצה הפריים. לכן אחרי הזיהוי אפשר לערוך את התיבות ידנית:</p>
+      <ul>
+        <li><strong>הוספה:</strong> לחץ "➕ הוסף אדם ידנית" ואז גרור על התמונה תיבה סביב האדם החסר.</li>
+        <li><strong>הזזה:</strong> גרור תיבה קיימת ממקום למקום.</li>
+        <li><strong>שינוי גודל:</strong> גרור מהפינה התחתונה של תיבה כדי להגדיל/להקטין אותה.</li>
+        <li><strong>מחיקה:</strong> לחץ על תיבה כדי לבחור אותה ואז מקש Delete, או לחץ ✕ ברשימת האנשים בצד.</li>
+        <li><strong>איפוס:</strong> "↺ אפס לזיהוי AI" מבטל את כל העריכות הידניות וחוזר לתוצאה האוטומטית.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>תמונות כיתה צפופות — למה לא לחלק לחלקים שווים</h3>
+      <p>בתמונה קבוצתית צפופה (למשל תמונת כיתה שבה כולם צמודים) <strong>אסור</strong> לנסות לחלק את התמונה לפי גבול חצי-חצי בין כל שני אנשים סמוכים — כי אז לפעמים לאדם השני כמעט לא נשאר רקע/גוף בתמונה שלו. לכן הכלי לא עושה חלוקה כזו:</p>
+      <ul>
+        <li>כל אדם מקבל תיבה ורווח (padding) משלו, בלי קשר לתיבה של השכן — גם אם זה אומר שהתיבות של שני אנשים סמוכים <strong>חופפות</strong> וחלק מהתמונה "משרת" יותר מאדם אחד. זה בכוונה.</li>
+        <li>כשמפעילים <strong>הסרת רקע עם SAM 2</strong>, המודל משתמש בתיבה כ"פרומפט" ומבודד בדיוק את האדם המבוקש מתוך האזור החופף — כך שגם אם הרקע מלא באנשים אחרים, מקבלים תמונה נקייה של האדם הנכון בלבד.</li>
+        <li>כשלא מסירים רקע, אפשר להפעיל <strong>"מצב הדגשה" (Spotlight)</strong> — האפליקציה מעמעמת קלות את האזורים של אנשים אחרים שנכנסו לתוך התיבה, כדי שהאדם המרכזי יבלוט, בלי לגזור ולאבד חלק מהתמונה.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>זיהוי רב-שכבתי (Tiled Detection)</h3>
+      <p>בתמונות גדולות עם הרבה אנשים קטנים (תמונת כיתה שלמה, אסיפה וכו') זיהוי AI רגיל לפעמים מפספס אנשים קטנים או חופפים כי הוא "רואה" את כל התמונה בבת אחת ברזולוציה נמוכה. כשהאפשרות <strong>"זיהוי רב-שכבתי"</strong> פעילה, האפליקציה גם סורקת אזורים חופפים בתמונה בנפרד (כמו זכוכית מגדלת), מה שמעלה משמעותית את כמות האנשים שמזוהים בתמונות גדולות/צפופות — במחיר זמן עיבוד קצת ארוך יותר.</p>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>הסרת רקע — השוואת ספקים</h3>
+      <p style="margin-bottom:8px;">הפעל את מתג <strong>"הסרת רקע"</strong> כדי לקבל תמונות נקיות של כל אדם ללא הרקע.</p>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>תכונה</th>
+            <th>SAM 2 — Replicate</th>
+            <th>Remove.bg</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>דיוק</td>
+            <td class="green">מושלם — משתמש בתיבות הזיהוי כ-Prompt</td>
+            <td class="yellow">טוב — אלגוריתם כללי</td>
+          </tr>
+          <tr>
+            <td>חינם</td>
+            <td>חשבון Replicate + עלות ~$0.003 לתמונה</td>
+            <td class="green">50 תמונות/חודש חינם</td>
+          </tr>
+          <tr>
+            <td>מתאים ל...</td>
+            <td>תמונות כיתה, קבוצות צפופות, תמונות מורכבות</td>
+            <td>דיוקנאות, תמונות פשוטות</td>
+          </tr>
+          <tr>
+            <td>פורמט פלט</td>
+            <td>PNG שקוף</td>
+            <td>PNG שקוף</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>איך מקבלים מפתח Replicate (SAM 2)</h3>
+      <ol class="step-list">
+        <li>כנס לאתר <strong>replicate.com</strong> וצור חשבון חינמי.</li>
+        <li>עבור להגדרות החשבון ← <strong>API tokens</strong>.</li>
+        <li>לחץ "Create token" ותן לו שם.</li>
+        <li>העתק את המפתח (מתחיל ב-<code style="color:#a78bfa;background:#12122a;padding:1px 5px;border-radius:4px;">r8_</code>).</li>
+        <li>הדבק אותו בשדה "מפתח Replicate API" בתוכנה ולחץ <strong>"שמור במחשב"</strong>.</li>
+      </ol>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>עוד תכונות שכדאי להכיר</h3>
+      <ul>
+        <li><strong>כמה תמונות יחד:</strong> אפשר להעלות תמונות של כמה כיתות/קבוצות בבת אחת. כל תמונה מקבלת "תור" משלה, ותוצאות מכל תמונה נשמרות בתיקייה נפרדת בתוך ה-ZIP.</li>
+        <li><strong>סדר מיון:</strong> "שמאל לימין" ממספר לפי מיקום אופקי בלבד. "שורות ואז שמאל לימין" מזהה שורות (מתאים לתמונות עם כמה שורות עומדים/יושבים) וממספר שורה אחרי שורה — מומלץ לתמונות כיתה קלאסיות.</li>
+        <li><strong>הגדלה אוטומטית:</strong> תמונות שיצאו קטנות מדי (למשל אדם שצולם רחוק) יוגדלו אוטומטית לגודל מינימלי סביר, כדי שלא יתקבלו קבצים זעירים ומפוקסלים.</li>
+        <li><strong>שינוי שם לכל תמונה:</strong> בכל כרטיס תוצאה אפשר לערוך את השם ישירות לפני ההורדה.</li>
+        <li><strong>גיליון תמונות מסכם:</strong> מייצא תמונה אחת עם כל האנשים שחולצו בגריד מסודר עם שמות — נוח להדפסה או לשיתוף מהיר.</li>
+        <li><strong>ההגדרות נשמרות:</strong> כל ההגדרות (לא כולל מפתחות ה-API) נשמרות אוטומטית בדפדפן שלך לפעם הבאה.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>טיפים לתוצאות הטובות ביותר</h3>
+      <ul>
+        <li><strong>רזולוציה:</strong> תמונה ברורה וחדה = זיהוי טוב יותר. מינימום 1000px רוחב מומלץ.</li>
+        <li><strong>תאורה:</strong> תאורה אחידה ללא צללים קשים משפרת זיהוי.</li>
+        <li><strong>מינימום ביטחון:</strong> אם אנשים לא מזוהים אוטומטית — הורד ל-30–40% ו/או הוסף אותם ידנית. אם יש זיהויים שגויים — העלה ל-60–70%.</li>
+        <li><strong>רווח סביב האדם:</strong> 15–20% מתאים לרוב התמונות. תמונות ראש בלבד — הורד ל-8%. גוף שלם — העלה ל-25%.</li>
+        <li><strong>תמונות צפופות:</strong> השאר את "זיהוי רב-שכבתי" ו"מצב הדגשה" דלוקים, ואל תפחד מחפיפה בין תיבות — זה בכוונה, ראה הסבר למעלה.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>שאלות נפוצות</h3>
+      <ul>
+        <li><strong>התוכנה לא מזהה אנשים?</strong> — ודא שהמודל נטען (חיווי ירוק), ובדוק שהתמונה ברורה מספיק. תמיד אפשר להוסיף ידנית.</li>
+        <li><strong>הזיהוי מפספס חלק מהאנשים?</strong> — הורד את "מינימום ביטחון" ל-30%, הפעל "זיהוי רב-שכבתי", ואז הוסף את מי שעדיין חסר ידנית.</li>
+        <li><strong>SAM 2 מחזיר שגיאה?</strong> — בדוק שהמפתח נכון ושיש לך קרדיט ב-Replicate.</li>
+        <li><strong>התמונות גדולות מדי?</strong> — המודל מעבד גם תמונות גדולות (SAM 2 מקטין אוטומטית ל-1920px).</li>
+        <li><strong>הכל רץ בדפדפן?</strong> — כן! זיהוי האנשים (COCO-SSD) והעריכה רצים לחלוטין על המחשב שלך ללא שרת חיצוני.</li>
+      </ul>
+      <div class="tip-box">
+        <p>הסרת הרקע (SAM 2 / Remove.bg) שולחת את התמונה לשרת חיצוני. לפרטיות מלאה — השתמש ללא הסרת רקע (עם מצב הדגשה כדי עדיין להבליט כל אדם).</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Help button -->
+<button class="help-btn" onclick="openHelp()" title="עזרה">?</button>
+
+<!-- Model status -->
+<div style="text-align:center;margin-bottom:20px;">
+  <span class="chip" id="modelChip">
+    <span class="dot" style="background:#888;"></span>
+    <span id="modelStatusText">טוען מודל AI...</span>
+  </span>
+</div>
+
+<!-- Upload -->
+<div class="card">
+  <h2>העלאת תמונה</h2>
+  <div class="upload-zone" id="uploadZone">
+    <div class="icon">🖼️</div>
+    <p><strong>לחץ לבחירת תמונה</strong> או גרור לכאן</p>
+    <p style="margin-top:6px;">JPG, PNG, WEBP — אפשר לבחור כמה תמונות יחד</p>
+  </div>
+  <input type="file" id="fileInput" accept="image/*" multiple>
+</div>
+
+<!-- Queue -->
+<div class="card" id="queueCard">
+  <h2>תור תמונות <button class="btn btn-secondary" style="margin-right:auto;padding:4px 12px;font-size:0.78rem;" onclick="clearQueue()">נקה הכל</button></h2>
+  <div class="queue-strip" id="queueStrip"></div>
+</div>
+
+<!-- Settings -->
+<div class="card">
+  <h2>הגדרות</h2>
+  <div class="settings-grid">
+    <div class="form-group">
+      <label>שם בסיס לקבצים</label>
+      <input type="text" id="baseName" placeholder="לדוגמה: כיתה ג תשפו" value="תמונה" oninput="persistSettings()">
+    </div>
+    <div class="form-group">
+      <label>פורמט שם</label>
+      <select id="nameFormat" onchange="redrawEditor(); updatePersonListPanel(); persistSettings();">
+        <option value="num">שם + מספר (תמונה 1, תמונה 2...)</option>
+        <option value="padded">שם + מספר עם אפס (תמונה 01...)</option>
+        <option value="alpha">שם + אות (תמונה א, תמונה ב...)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>רווח סביב האדם (%)</label>
+      <input type="number" id="padding" value="18" min="0" max="60" oninput="persistSettings()">
+    </div>
+    <div class="form-group">
+      <label>מינימום ביטחון בזיהוי (%)</label>
+      <input type="number" id="minConf" value="50" min="10" max="99" oninput="persistSettings()">
+    </div>
+    <div class="form-group">
+      <label>סדר מיון</label>
+      <select id="sortMode" onchange="redrawEditor(); updatePersonListPanel(); persistSettings();">
+        <option value="rows">שורות, ואז שמאל לימין (מומלץ לתמונות כיתה)</option>
+        <option value="ltr">שמאל לימין בלבד</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>גודל מינימלי לתמונה שחולצה (px)</label>
+      <input type="number" id="minUpscaleSize" value="500" min="0" max="2000" step="50" oninput="persistSettings()">
+    </div>
+  </div>
+
+  <div style="margin-top:20px;">
+    <div class="toggle-row">
+      <div>
+        <label>זיהוי רב-שכבתי (Tiled Detection)</label>
+        <small>סורק גם אזורים חופפים בתמונה בנפרד — מוצא הרבה יותר אנשים בתמונות גדולות/צפופות (איטי יותר)</small>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="tiledDetect" checked onchange="persistSettings()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <label>מצב הדגשה (Spotlight) בחפיפות</label>
+        <small>כשלא מסירים רקע: מעמעם קלות אנשים אחרים שנכנסו לתיבה, בלי לגזור אותם מהתמונה</small>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="spotlightToggle" checked onchange="persistSettings()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <label>הגדלה אוטומטית לתמונות קטנות</label>
+        <small>מגדיל תמונות שיצאו קטנות מדי לגודל המינימלי שהוגדר למעלה</small>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="autoUpscaleToggle" checked onchange="persistSettings()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <label>שם קובץ המקור כשם תיקייה (בהעלאה מרובה)</label>
+        <small>כשמעלים כמה תמונות יחד — כל תמונה תקבל תיקייה בשם קובץ המקור בתוך ה-ZIP</small>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="fileNameAsFolder" checked onchange="persistSettings()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <label>הסרת רקע</label>
+        <small>מסיר את הרקע ומשאיר רק את האדם — דורש מפתח API</small>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="removeBgToggle" onchange="toggleRemoveBg(); persistSettings();">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="removebg-settings" id="removeBgSettings">
+
+      <!-- Provider selector -->
+      <div class="provider-tabs">
+        <button class="provider-tab" id="tab-removebg" onclick="selectProvider('removebg')">
+          <span class="ptab-title">Remove.bg</span>
+          <span class="ptab-badge">50 חינם / חודש</span>
+        </button>
+        <button class="provider-tab active" id="tab-sam2" onclick="selectProvider('sam2')">
+          <span class="ptab-title">SAM 2 — Replicate</span>
+          <span class="ptab-badge best">הכי מדויק</span>
+        </button>
+      </div>
+
+      <!-- Remove.bg panel -->
+      <div class="provider-panel" id="panel-removebg">
+        <div class="form-group">
+          <label>מפתח Remove.bg API <a href="https://www.remove.bg/api" target="_blank" style="color:#a78bfa;font-size:0.8rem;">(קבל מפתח חינם)</a></label>
+          <div class="api-key-row">
+            <input type="password" id="removeBgKey" placeholder="הכנס את ה-API key" oninput="onKeyInput('removebg')">
+            <button class="btn btn-secondary" onclick="toggleShow('removeBgKey')" style="padding:10px 12px;flex-shrink:0;">👁</button>
+          </div>
+          <div class="key-btns">
+            <button class="btn btn-secondary" onclick="saveKey('removebg')" id="saveBtn-removebg" disabled>שמור במחשב</button>
+            <button class="btn btn-secondary" onclick="clearKey('removebg')" id="clearBtn-removebg" style="display:none;color:#fca5a5;border-color:#7f1d1d;">מחק שמור</button>
+          </div>
+          <div class="saved-msg" id="savedMsg-removebg">המפתח שמור — ייטען אוטומטית בכל פתיחה</div>
+        </div>
+      </div>
+
+      <!-- SAM 2 panel -->
+      <div class="provider-panel active" id="panel-sam2">
+        <div style="background:#0a0a1f;border:1px solid #312e81;border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:0.82rem;color:#a5b4fc;line-height:1.6;">
+          <strong>SAM 2</strong> (Segment Anything Model 2) של Meta — המודל המדויק ביותר בעולם לחילוץ אובייקטים.<br>
+          משתמש בתיבות הזיהוי של COCO-SSD כ<strong>בוקס-פרומפט</strong> לקבלת חיתוך מושלם, גם באזורים חופפים.<br>
+          <a href="https://replicate.com/signin" target="_blank" style="color:#818cf8;">קבל מפתח Replicate חינם (חשבון נדרש)</a>
+        </div>
+        <div class="form-group">
+          <label>מפתח Replicate API</label>
+          <div class="api-key-row">
+            <input type="password" id="replicateKey" placeholder="r8_..." oninput="onKeyInput('replicate')">
+            <button class="btn btn-secondary" onclick="toggleShow('replicateKey')" style="padding:10px 12px;flex-shrink:0;">👁</button>
+          </div>
+          <div class="key-btns">
+            <button class="btn btn-secondary" onclick="saveKey('replicate')" id="saveBtn-replicate" disabled>שמור במחשב</button>
+            <button class="btn btn-secondary" onclick="clearKey('replicate')" id="clearBtn-replicate" style="display:none;color:#fca5a5;border-color:#7f1d1d;">מחק שמור</button>
+          </div>
+          <div class="saved-msg" id="savedMsg-replicate">המפתח שמור — ייטען אוטומטית בכל פתיחה</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Editor / Preview -->
+<div class="card">
+  <h2>זיהוי ועריכה</h2>
+  <div class="editor-banner">
+    💡 גרור תיבה כדי להזיז אותה, גרור מהפינה שלה כדי לשנות גודל, לחץ עליה לבחירה (Delete למחיקה). לחץ "הוסף אדם ידנית" ואז גרור על התמונה כדי לצייר תיבה חדשה סביב מישהו שהוחמץ.
+  </div>
+  <div class="editor-toolbar">
+    <button class="btn btn-secondary" id="addBoxBtn" onclick="toggleAddMode()">➕ הוסף אדם ידנית</button>
+    <button class="btn btn-secondary" onclick="deleteSelectedBox()">🗑 מחק תיבה נבחרת</button>
+    <button class="btn btn-secondary" onclick="resetToAI()">↺ אפס לזיהוי AI</button>
+    <button class="btn btn-secondary" onclick="clearAllBoxes()">🧹 נקה הכל</button>
+    <span class="spacer"></span>
+    <span id="personCountInfo"></span>
+  </div>
+  <div class="editor-layout">
+    <div class="editor-canvas-col">
+      <div class="preview-wrap" id="previewWrap">
+        <canvas id="previewCanvas"></canvas>
+      </div>
+      <div id="previewPlaceholder" style="text-align:center;padding:32px;color:#555;">
+        העלה תמונה כדי להתחיל
+      </div>
+    </div>
+    <div class="person-list-col">
+      <div id="personListPanel"><p style="color:#555;font-size:0.85rem;">אין עדיין תיבות.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- Process -->
+<div class="card">
+  <div id="alertBox" class="alert"></div>
+  <div class="status-bar" id="statusBar">
+    <div class="spinner"></div>
+    <div style="flex:1">
+      <div id="statusText" style="font-size:0.9rem;margin-bottom:6px;">מעבד...</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" id="processBtn-detect" disabled onclick="detectCurrent()">🔍 שלב 1: זהה אנשים</button>
+    <button class="btn btn-primary" id="processBtn-extract" disabled onclick="extractCurrent()">✂️ שלב 2: חלץ ושמור תמונות</button>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" id="processBtn-quick" disabled onclick="quickAutoCurrent()">⚡ זהה וחלץ אוטומטית (תמונה נוכחית)</button>
+    <button class="btn btn-secondary" id="processBtn-queue" style="display:none;" onclick="processAllQueueAuto()">⚡⚡ עבד את כל התור אוטומטית</button>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="card" id="resultsCard" style="display:none;">
+  <div class="results-header">
+    <h2 style="color:#a78bfa;">תמונות שחולצו <span class="badge" id="countBadge">0</span></h2>
+    <div class="btn-row-inline">
+      <button class="btn btn-secondary" onclick="exportContactSheet()">🖼 גיליון תמונות מסכם</button>
+      <button class="btn btn-secondary" onclick="downloadAll()">הורד הכל כ-ZIP</button>
+    </div>
+  </div>
+  <div class="results-grid" id="resultsGrid"></div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+let cocoModel = null;
+let images = [];          // { file, name, img, boxes:[], aiBoxes:[], results:[], processed:false, index }
+let currentIndex = -1;
+let currentProvider = 'sam2'; // 'sam2' | 'removebg'
+let allResults = [];      // { id, blob, name, fileName, groupName }
+let nextBoxId = 1;
+let nextResultId = 1;
+let selectedBoxId = null;
+let addMode = false;
+let dragInfo = null;      // {mode:'move'|'resize'|'draw', box, startX, startY, orig}
+
+function currentImage() { return currentIndex >= 0 ? images[currentIndex] : null; }
+
+// ─── Model loading ────────────────────────────────────────────────────────────
+async function loadModel() {
+  try {
+    setStatus('טוען מודל זיהוי אנשים...', 20);
+    cocoModel = await cocoSsd.load({ base: 'mobilenet_v2' });
+    document.getElementById('modelChip').classList.add('ready');
+    document.getElementById('modelStatusText').textContent = 'מודל AI מוכן';
+    updateActionButtons();
+    hideStatus();
+  } catch (e) {
+    showAlert('שגיאה בטעינת המודל: ' + e.message, 'error');
+  }
+}
+
+// ─── Upload handling ─────────────────────────────────────────────────────────
+const uploadZone = document.getElementById('uploadZone');
+const fileInput  = document.getElementById('fileInput');
+
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag-over');
+  if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length) handleFiles(fileInput.files);
+  fileInput.value = '';
+});
+
+function handleFiles(fileList) {
+  const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+  if (files.length === 0) { showAlert('אנא בחר קובצי תמונה', 'error'); return; }
+  hideAlert();
+
+  let firstNewIndex = -1;
+  files.forEach(file => {
+    const obj = { file, name: file.name, img: null, boxes: [], aiBoxes: [], results: [], processed: false, index: images.length };
+    images.push(obj);
+    if (firstNewIndex === -1) firstNewIndex = obj.index;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        obj.img = img;
+        if (currentIndex === obj.index) redrawEditor();
+        updateQueueUI();
+        updateActionButtons();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  if (currentIndex === -1 && firstNewIndex !== -1) currentIndex = firstNewIndex;
+
+  document.getElementById('previewPlaceholder').style.display = 'none';
+  document.getElementById('previewWrap').classList.add('visible');
+  refreshUploadZoneLabel();
+  updateQueueUI();
+  updateActionButtons();
+}
+
+function refreshUploadZoneLabel() {
+  uploadZone.innerHTML = images.length
+    ? `<div class="icon">✅</div><p><strong>${images.length} תמונות נטענו</strong></p><p style="margin-top:6px;">לחץ להוספת עוד תמונות</p>`
+    : `<div class="icon">🖼️</div><p><strong>לחץ לבחירת תמונה</strong> או גרור לכאן</p><p style="margin-top:6px;">JPG, PNG, WEBP — אפשר לבחור כמה תמונות יחד</p>`;
+}
+
+// ─── Detection: full-frame + tiled multi-scale, merged via NMS ───────────────
+async function detectPersons(img, minConf) {
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+  const useTiling = document.getElementById('tiledDetect').checked && Math.max(iw, ih) > 1200;
+
+  const raw = [];
+  setStatus('סורק את כל התמונה...', 25);
+  const full = await cocoModel.detect(img, 200, minConf);
+  full.filter(p => p.class === 'person').forEach(p => raw.push({ bbox: p.bbox, score: p.score }));
+
+  if (useTiling) {
+    const tiles = computeTiles(iw, ih);
+    for (let t = 0; t < tiles.length; t++) {
+      setStatus(`סורק אזור ${t + 1} מתוך ${tiles.length} (זיהוי רב-שכבתי)...`, 25 + Math.round((t / tiles.length) * 35));
+      const tile = tiles[t];
+      const tileCanvas = document.createElement('canvas');
+      tileCanvas.width = tile.w;
+      tileCanvas.height = tile.h;
+      tileCanvas.getContext('2d').drawImage(img, tile.x, tile.y, tile.w, tile.h, 0, 0, tile.w, tile.h);
+      const preds = await cocoModel.detect(tileCanvas, 200, minConf);
+      preds.filter(p => p.class === 'person').forEach(p => {
+        raw.push({ bbox: [p.bbox[0] + tile.x, p.bbox[1] + tile.y, p.bbox[2], p.bbox[3]], score: p.score });
+      });
+    }
+  }
+
+  return mergeBoxes(raw, 0.45);
+}
+
+function computeTiles(iw, ih) {
+  const targetTile = 900;
+  const cols = Math.min(3, Math.max(1, Math.round(iw / targetTile)));
+  const rows = Math.min(3, Math.max(1, Math.round(ih / targetTile)));
+  if (cols === 1 && rows === 1) return [];
+  const overlap = 0.25;
+  const tw = iw / cols, th = ih / rows;
+  const tiles = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const x0 = Math.max(0, Math.floor(c * tw - tw * overlap));
+      const y0 = Math.max(0, Math.floor(r * th - th * overlap));
+      const x1 = Math.min(iw, Math.ceil((c + 1) * tw + tw * overlap));
+      const y1 = Math.min(ih, Math.ceil((r + 1) * th + th * overlap));
+      tiles.push({ x: x0, y: y0, w: x1 - x0, h: y1 - y0 });
+    }
+  }
+  return tiles;
+}
+
+function iou(a, b) {
+  const [ax, ay, aw, ah] = a, [bx, by, bw, bh] = b;
+  const x1 = Math.max(ax, bx), y1 = Math.max(ay, by);
+  const x2 = Math.min(ax + aw, bx + bw), y2 = Math.min(ay + ah, by + bh);
+  const iw = Math.max(0, x2 - x1), ih = Math.max(0, y2 - y1);
+  const inter = iw * ih;
+  const union = aw * ah + bw * bh - inter;
+  return union <= 0 ? 0 : inter / union;
+}
+
+function mergeBoxes(raw, iouThresh) {
+  const sorted = [...raw].sort((a, b) => b.score - a.score);
+  const kept = [];
+  for (const box of sorted) {
+    let dup = false;
+    for (const k of kept) {
+      if (iou(box.bbox, k.bbox) > iouThresh) { dup = true; break; }
+    }
+    if (!dup) kept.push(box);
+  }
+  return kept.map(b => ({ id: nextBoxId++, bbox: b.bbox, score: b.score, manual: false }));
+}
+
+// ─── Sorting ──────────────────────────────────────────────────────────────────
+function sortBoxes(boxes, mode) {
+  const arr = [...boxes];
+  if (mode === 'rows') {
+    const withCenter = arr.map(b => ({ box: b, cy: b.bbox[1] + b.bbox[3] / 2, h: b.bbox[3] }));
+    withCenter.sort((a, b) => a.cy - b.cy);
+    const avgH = withCenter.reduce((s, b) => s + b.h, 0) / (withCenter.length || 1);
+    const rowThresh = Math.max(1, avgH * 0.6);
+    const rows = [];
+    withCenter.forEach(item => {
+      let row = rows.find(r => Math.abs(r.cy - item.cy) < rowThresh);
+      if (!row) { row = { cy: item.cy, items: [] }; rows.push(row); }
+      row.items.push(item);
+      row.cy = row.items.reduce((s, i) => s + i.cy, 0) / row.items.length;
+    });
+    rows.sort((a, b) => a.cy - b.cy);
+    const result = [];
+    rows.forEach(r => {
+      r.items.sort((a, b) => a.box.bbox[0] - b.box.bbox[0]);
+      r.items.forEach(i => result.push(i.box));
+    });
+    return result;
+  }
+  return arr.sort((a, b) => a.bbox[0] - b.bbox[0]);
+}
+
+// ─── Name building ────────────────────────────────────────────────────────────
+const hebrewLetters = 'אבגדהוזחטיכלמנסעפצקרשת'.split('');
+
+function buildName(index) {
+  const base   = document.getElementById('baseName').value.trim() || 'תמונה';
+  const format = document.getElementById('nameFormat').value;
+  const n = index + 1;
+  if (format === 'num')    return `${base} ${n}`;
+  if (format === 'padded') return `${base} ${String(n).padStart(2, '0')}`;
+  if (format === 'alpha')  return `${base} ${hebrewLetters[index] || n}`;
+  return `${base} ${n}`;
+}
+
+function sanitizeName(s) {
+  return (s || '').replace(/[\\/:*?"<>|]/g, '_').trim() || 'תמונה';
+}
+
+function getGroupName(imgObj) {
+  if (images.length > 1 && document.getElementById('fileNameAsFolder').checked) {
+    return sanitizeName((imgObj.name || 'תמונה').replace(/\.[^/.]+$/, ''));
+  }
+  return sanitizeName(document.getElementById('baseName').value.trim() || 'תמונות');
+}
+
+// ─── Crop with padding + optional spotlight ───────────────────────────────────
+function cropPerson(img, bbox, padPct, opts = {}) {
+  const [x, y, w, h] = bbox;
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+
+  const padX = w * padPct;
+  const padY = h * padPct;
+  const topExtra = h * 0.08;
+
+  const x1 = Math.max(0, Math.floor(x - padX));
+  const y1 = Math.max(0, Math.floor(y - padY - topExtra));
+  const x2 = Math.min(iw, Math.ceil(x + w + padX));
+  const y2 = Math.min(ih, Math.ceil(y + h + padY));
+
+  const cw = x2 - x1;
+  const ch = y2 - y1;
+
+  const canvas = document.createElement('canvas');
+  canvas.width  = cw;
+  canvas.height = ch;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, x1, y1, cw, ch, 0, 0, cw, ch);
+
+  if (opts.spotlight && opts.allBoxes && opts.allBoxes.length > 1) {
+    applySpotlight(canvas, opts.targetBox, opts.allBoxes, x1, y1);
+  }
+  return canvas;
+}
+
+// Darkens (feathered) the regions of OTHER detected people that fall inside this
+// person's crop, instead of cutting them out — keeps the whole photo/context but
+// makes the target person visually stand out. This is what lets a single region
+// of the source photo legitimately "serve" more than one extracted image.
+function applySpotlight(cropCanvas, targetBox, allBoxes, cropOriginX, cropOriginY) {
+  const ctx = cropCanvas.getContext('2d');
+  allBoxes.forEach(ob => {
+    if (ob === targetBox) return;
+    const [ox, oy, ow, oh] = ob.bbox;
+    const lx = ox - cropOriginX, ly = oy - cropOriginY;
+    if (lx + ow < 0 || ly + oh < 0 || lx > cropCanvas.width || ly > cropCanvas.height) return;
+    ctx.save();
+    const pad = ow * 0.15;
+    const rx = lx - pad, ry = ly - pad, rw = ow + pad * 2, rh = oh + pad * 2;
+    const cx = rx + rw / 2, cy = ry + rh / 2;
+    const grad = ctx.createRadialGradient(cx, cy, Math.max(1, Math.min(rw, rh) * 0.2), cx, cy, Math.max(rw, rh) * 0.7);
+    grad.addColorStop(0, 'rgba(5,5,15,0.55)');
+    grad.addColorStop(1, 'rgba(5,5,15,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(Math.max(0, rx), Math.max(0, ry), rw, rh);
+    ctx.restore();
+  });
+}
+
+// ─── Auto-upscale small outputs ────────────────────────────────────────────────
+function upscaleCanvasIfNeeded(canvas, minSize, maxScale = 3) {
+  if (!minSize) return canvas;
+  const minDim = Math.min(canvas.width, canvas.height);
+  if (minDim >= minSize) return canvas;
+  const scale = Math.min(maxScale, minSize / minDim);
+  if (scale <= 1) return canvas;
+  const out = document.createElement('canvas');
+  out.width = Math.round(canvas.width * scale);
+  out.height = Math.round(canvas.height * scale);
+  const ctx = out.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(canvas, 0, 0, out.width, out.height);
+  return out;
+}
+
+async function maybeUpscaleBlob(blob, minSize) {
+  if (!minSize) return blob;
+  const img = await blobToImage(blob);
+  const minDim = Math.min(img.width, img.height);
+  if (minDim >= minSize) return blob;
+  const scale = Math.min(3, minSize / minDim);
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.width * scale);
+  canvas.height = Math.round(img.height * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvasToBlob(canvas, 'image/png');
+}
+
+// ─── Editor: draw current image + boxes ────────────────────────────────────────
+function redrawEditor() {
+  const imgObj = currentImage();
+  const canvas = document.getElementById('previewCanvas');
+  if (!imgObj || !imgObj.img) return;
+  canvas.width  = imgObj.img.naturalWidth;
+  canvas.height = imgObj.img.naturalHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(imgObj.img, 0, 0);
+
+  const sortMode = document.getElementById('sortMode').value;
+  const displayBoxes = sortBoxes(imgObj.boxes, sortMode);
+  const scale = canvas.width / 900;
+
+  displayBoxes.forEach((b, idx) => {
+    const [x, y, w, h] = b.bbox;
+    const isSelected = b.id === selectedBoxId;
+    ctx.strokeStyle = isSelected ? '#f87171' : (b.manual ? '#60a5fa' : '#a78bfa');
+    ctx.lineWidth   = Math.max(2, (isSelected ? 4 : 3) * scale);
+    ctx.strokeRect(x, y, w, h);
+
+    const label = `${buildName(idx)} ${b.manual ? '(ידני)' : '(' + Math.round(b.score * 100) + '%)'}`;
+    const fontSize = Math.max(14, 18 * scale);
+    ctx.font = `bold ${fontSize}px Arial`;
+    const tw = ctx.measureText(label).width + 10;
+    const th = fontSize + 10;
+
+    ctx.fillStyle = isSelected ? 'rgba(220,38,38,0.85)' : 'rgba(124,58,237,0.85)';
+    ctx.fillRect(x, Math.max(0, y - th), tw, th);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(label, x + 5, Math.max(fontSize, y - 6));
+  });
+}
+
+function clearEditorView() {
+  const canvas = document.getElementById('previewCanvas');
+  canvas.width = 0; canvas.height = 0;
+  document.getElementById('previewWrap').classList.remove('visible');
+  document.getElementById('previewPlaceholder').style.display = 'block';
+  document.getElementById('personListPanel').innerHTML = '<p style="color:#555;font-size:0.85rem;">אין עדיין תיבות.</p>';
+  document.getElementById('personCountInfo').textContent = '';
+}
+
+// ─── Editor: pointer interactions (move / resize / draw) ─────────────────────
+const canvasEl = document.getElementById('previewCanvas');
+
+function getCanvasCoords(evt) {
+  const rect = canvasEl.getBoundingClientRect();
+  const cx = evt.touches && evt.touches.length ? evt.touches[0].clientX : evt.clientX;
+  const cy = evt.touches && evt.touches.length ? evt.touches[0].clientY : evt.clientY;
+  return {
+    x: (cx - rect.left) * (canvasEl.width / rect.width),
+    y: (cy - rect.top) * (canvasEl.height / rect.height)
+  };
+}
+
+function hitTestBox(x, y) {
+  const imgObj = currentImage();
+  if (!imgObj) return null;
+  const boxes = imgObj.boxes;
+  for (let i = boxes.length - 1; i >= 0; i--) {
+    const b = boxes[i];
+    const [bx, by, bw, bh] = b.bbox;
+    const handleSize = Math.max(16, bw * 0.12);
+    if (Math.hypot(x - (bx + bw), y - (by + bh)) < handleSize) return { box: b, mode: 'resize' };
+    if (x >= bx && x <= bx + bw && y >= by && y <= by + bh) return { box: b, mode: 'move' };
+  }
+  return null;
+}
+
+function onPointerDown(evt) {
+  const imgObj = currentImage();
+  if (!imgObj || !imgObj.img) return;
+  evt.preventDefault();
+  const { x, y } = getCanvasCoords(evt);
+
+  if (addMode) {
+    const newBox = { id: nextBoxId++, bbox: [x, y, 0, 0], score: 1, manual: true };
+    imgObj.boxes.push(newBox);
+    selectedBoxId = newBox.id;
+    dragInfo = { mode: 'draw', startX: x, startY: y, box: newBox };
+    return;
+  }
+
+  const hit = hitTestBox(x, y);
+  if (hit) {
+    selectedBoxId = hit.box.id;
+    dragInfo = { mode: hit.mode, box: hit.box, startX: x, startY: y, orig: [...hit.box.bbox] };
+  } else {
+    selectedBoxId = null;
+  }
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+function onPointerMove(evt) {
+  if (!dragInfo) {
+    if (!addMode) {
+      const { x, y } = getCanvasCoords(evt);
+      const hit = hitTestBox(x, y);
+      canvasEl.style.cursor = hit ? (hit.mode === 'resize' ? 'nwse-resize' : 'move') : 'default';
+    }
+    return;
+  }
+  evt.preventDefault();
+  const { x, y } = getCanvasCoords(evt);
+  const imgObj = currentImage();
+  const iw = imgObj.img.naturalWidth, ih = imgObj.img.naturalHeight;
+
+  if (dragInfo.mode === 'draw') {
+    const x0 = Math.min(dragInfo.startX, x), y0 = Math.min(dragInfo.startY, y);
+    const w = Math.abs(x - dragInfo.startX), h = Math.abs(y - dragInfo.startY);
+    dragInfo.box.bbox = [Math.max(0, x0), Math.max(0, y0), w, h];
+  } else if (dragInfo.mode === 'move') {
+    const dx = x - dragInfo.startX, dy = y - dragInfo.startY;
+    const [ox, oy, ow, oh] = dragInfo.orig;
+    let nx = ox + dx, ny = oy + dy;
+    nx = Math.max(0, Math.min(nx, iw - ow));
+    ny = Math.max(0, Math.min(ny, ih - oh));
+    dragInfo.box.bbox = [nx, ny, ow, oh];
+  } else if (dragInfo.mode === 'resize') {
+    const [ox, oy] = dragInfo.orig;
+    let nw = Math.max(20, x - ox), nh = Math.max(20, y - oy);
+    nw = Math.min(nw, iw - ox); nh = Math.min(nh, ih - oy);
+    dragInfo.box.bbox = [ox, oy, nw, nh];
+  }
+  redrawEditor();
+}
+
+function onPointerUp() {
+  if (dragInfo && dragInfo.mode === 'draw') {
+    const [, , w, h] = dragInfo.box.bbox;
+    const imgObj = currentImage();
+    if (w < 15 || h < 15) {
+      imgObj.boxes = imgObj.boxes.filter(b => b.id !== dragInfo.box.id);
+      selectedBoxId = null;
+    }
+  }
+  dragInfo = null;
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+canvasEl.addEventListener('mousedown', onPointerDown);
+canvasEl.addEventListener('mousemove', onPointerMove);
+window.addEventListener('mouseup', onPointerUp);
+canvasEl.addEventListener('touchstart', onPointerDown, { passive: false });
+canvasEl.addEventListener('touchmove', onPointerMove, { passive: false });
+canvasEl.addEventListener('touchend', onPointerUp);
+
+document.addEventListener('keydown', evt => {
+  if ((evt.key === 'Delete' || evt.key === 'Backspace') && selectedBoxId != null &&
+      document.activeElement.tagName !== 'INPUT') {
+    evt.preventDefault();
+    deleteSelectedBox();
+  }
+  if (evt.key === 'Escape' && addMode) toggleAddMode();
+});
+
+function toggleAddMode() {
+  addMode = !addMode;
+  const btn = document.getElementById('addBoxBtn');
+  btn.classList.toggle('active-mode', addMode);
+  btn.textContent = addMode ? '✖ בטל הוספה (Esc)' : '➕ הוסף אדם ידנית';
+  canvasEl.style.cursor = addMode ? 'crosshair' : 'default';
+}
+
+function deleteSelectedBox() {
+  const imgObj = currentImage();
+  if (!imgObj || selectedBoxId == null) return;
+  imgObj.boxes = imgObj.boxes.filter(b => b.id !== selectedBoxId);
+  selectedBoxId = null;
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+function deleteBoxById(id) {
+  const imgObj = currentImage();
+  if (!imgObj) return;
+  imgObj.boxes = imgObj.boxes.filter(b => b.id !== id);
+  if (selectedBoxId === id) selectedBoxId = null;
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+function selectBoxFromList(id) {
+  selectedBoxId = id;
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+function resetToAI() {
+  const imgObj = currentImage();
+  if (!imgObj) return;
+  imgObj.boxes = (imgObj.aiBoxes || []).map(b => ({ ...b }));
+  selectedBoxId = null;
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+function clearAllBoxes() {
+  const imgObj = currentImage();
+  if (!imgObj) return;
+  if (imgObj.boxes.length && !confirm('למחוק את כל התיבות בתמונה זו?')) return;
+  imgObj.boxes = [];
+  selectedBoxId = null;
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+function updatePersonListPanel() {
+  const imgObj = currentImage();
+  const panel = document.getElementById('personListPanel');
+  if (!imgObj || imgObj.boxes.length === 0) {
+    panel.innerHTML = '<p style="color:#555;font-size:0.85rem;">אין עדיין תיבות. הרץ זיהוי או הוסף ידנית.</p>';
+    document.getElementById('personCountInfo').textContent = '';
+    updateActionButtons();
+    return;
+  }
+  const sorted = sortBoxes(imgObj.boxes, document.getElementById('sortMode').value);
+  const manualCount = imgObj.boxes.filter(b => b.manual).length;
+  document.getElementById('personCountInfo').textContent =
+    `${imgObj.boxes.length} סה״כ (${imgObj.boxes.length - manualCount} אוטומטי, ${manualCount} ידני)`;
+  panel.innerHTML = sorted.map((b, idx) => `
+    <div class="person-list-item ${b.id === selectedBoxId ? 'selected' : ''}" onclick="selectBoxFromList(${b.id})">
+      <span>${escapeHtml(buildName(idx))} ${b.manual ? '✏️' : '🤖 ' + Math.round(b.score * 100) + '%'}</span>
+      <button onclick="event.stopPropagation(); deleteBoxById(${b.id})" title="מחק">✕</button>
+    </div>`).join('');
+  updateActionButtons();
+}
+
+function updateActionButtons() {
+  const imgObj = currentImage();
+  const hasImage = !!(imgObj && imgObj.img);
+  const hasBoxes = !!(imgObj && imgObj.boxes.length > 0);
+  document.getElementById('processBtn-detect').disabled  = !cocoModel || !hasImage;
+  document.getElementById('processBtn-extract').disabled = !hasBoxes;
+  document.getElementById('processBtn-quick').disabled   = !cocoModel || !hasImage;
+  document.getElementById('processBtn-queue').disabled   = !cocoModel || images.length === 0;
+}
+
+// ─── Queue UI ─────────────────────────────────────────────────────────────────
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+function updateQueueUI() {
+  document.getElementById('queueCard').style.display = images.length > 1 ? 'block' : 'none';
+  document.getElementById('processBtn-queue').style.display = images.length > 1 ? '' : 'none';
+  const strip = document.getElementById('queueStrip');
+  strip.innerHTML = images.map((im, idx) => `
+    <div class="queue-thumb ${idx === currentIndex ? 'active' : ''}" onclick="selectQueueImage(${idx})">
+      ${im.img ? `<img src="${im.img.src}" alt="${escapeHtml(im.name)}">` : '<div class="qthumb-loading">טוען...</div>'}
+      <div class="qthumb-label">${im.processed ? '✅' : '○'} ${escapeHtml(im.name)}</div>
+      <button class="qthumb-remove" onclick="event.stopPropagation(); removeQueueImage(${idx})" title="הסר">✕</button>
+    </div>`).join('');
+}
+
+function selectQueueImage(idx) {
+  currentIndex = idx;
+  selectedBoxId = null;
+  addMode = false;
+  const btn = document.getElementById('addBoxBtn');
+  btn.classList.remove('active-mode');
+  btn.textContent = '➕ הוסף אדם ידנית';
+  redrawEditor();
+  updatePersonListPanel();
+  updateQueueUI();
+  updateActionButtons();
+}
+
+function removeQueueImage(idx) {
+  images.splice(idx, 1);
+  images.forEach((im, i) => im.index = i);
+  if (currentIndex >= images.length) currentIndex = images.length - 1;
+  if (images.length === 0) {
+    currentIndex = -1;
+    clearEditorView();
+  } else {
+    redrawEditor();
+    updatePersonListPanel();
+  }
+  refreshUploadZoneLabel();
+  updateQueueUI();
+  updateActionButtons();
+}
+
+function clearQueue() {
+  if (images.length && !confirm('לנקות את כל התור? כל התמונות והתוצאות יימחקו.')) return;
+  images = [];
+  currentIndex = -1;
+  allResults = [];
+  selectedBoxId = null;
+  document.getElementById('resultsGrid').innerHTML = '';
+  document.getElementById('resultsCard').style.display = 'none';
+  document.getElementById('countBadge').textContent = '0';
+  clearEditorView();
+  refreshUploadZoneLabel();
+  updateQueueUI();
+  updateActionButtons();
+}
+
+// ─── Detect / Extract pipeline ─────────────────────────────────────────────────
+async function detectCurrent() {
+  const imgObj = currentImage();
+  if (!imgObj || !imgObj.img) { showAlert('העלה תמונה קודם', 'error'); return; }
+  if (!cocoModel) { showAlert('המודל עדיין נטען, המתן רגע', 'error'); return; }
+  hideAlert();
+  const minConf = parseInt(document.getElementById('minConf').value) / 100;
+  document.getElementById('processBtn-detect').disabled = true;
+  try {
+    const boxes = await detectPersons(imgObj.img, minConf);
+    imgObj.aiBoxes = boxes.map(b => ({ ...b }));
+    imgObj.boxes = boxes;
+    selectedBoxId = null;
+    redrawEditor();
+    updatePersonListPanel();
+    setStatus(`נמצאו ${boxes.length} אנשים`, 100);
+    setTimeout(hideStatus, 1200);
+    if (boxes.length === 0) showAlert('לא זוהו אנשים אוטומטית. אפשר להוסיף ידנית עם "הוסף אדם ידנית".', 'info');
+  } catch (e) {
+    showAlert('שגיאה בזיהוי: ' + e.message, 'error');
+    hideStatus();
+  } finally {
+    updateActionButtons();
+  }
+}
+
+async function extractCurrent() {
+  const imgObj = currentImage();
+  if (!imgObj) return;
+  if (!imgObj.boxes || imgObj.boxes.length === 0) {
+    showAlert('אין תיבות לחילוץ. הרץ זיהוי או הוסף תיבות ידנית.', 'error');
+    return;
+  }
+  hideAlert();
+
+  const padPct = parseInt(document.getElementById('padding').value) / 100;
+  const useRemoveBg = document.getElementById('removeBgToggle').checked;
+  const removeBgKey = document.getElementById('removeBgKey').value.trim();
+  const replicateKey = document.getElementById('replicateKey').value.trim();
+  const spotlightOn = document.getElementById('spotlightToggle').checked && !useRemoveBg;
+  const upscaleOn = document.getElementById('autoUpscaleToggle').checked;
+  const minUpscale = parseInt(document.getElementById('minUpscaleSize').value) || 0;
+
+  if (useRemoveBg) {
+    if (currentProvider === 'sam2' && !replicateKey) { showAlert('הכנס מפתח Replicate API כדי להשתמש ב-SAM 2', 'error'); return; }
+    if (currentProvider === 'removebg' && !removeBgKey) { showAlert('הכנס מפתח Remove.bg API כדי להשתמש בהסרת רקע', 'error'); return; }
+  }
+
+  const boxes = sortBoxes(imgObj.boxes, document.getElementById('sortMode').value);
+  const groupName = getGroupName(imgObj);
+  document.getElementById('resultsCard').style.display = 'block';
+
+  for (let i = 0; i < boxes.length; i++) {
+    const pct = Math.round((i / boxes.length) * 100);
+    setStatus(`חולץ תמונה ${i + 1} מתוך ${boxes.length}...`, pct);
+
+    const name = buildName(i);
+    let blob;
+
+    if (useRemoveBg) {
+      try {
+        if (currentProvider === 'sam2') {
+          setStatus(`SAM 2 מחלץ אדם ${i + 1} מתוך ${boxes.length}...`, pct);
+          blob = await removeBackgroundSAM2(imgObj.img, boxes[i].bbox, replicateKey, padPct);
+        } else {
+          const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct);
+          blob = await removeBackgroundRemoveBg(cropped, removeBgKey);
+        }
+      } catch (e) {
+        showAlert(`הסרת רקע נכשלה עבור ${name} (${e.message}) — נשמר בלי הסרה`, 'info');
+        const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct);
+        blob = await canvasToBlob(cropped);
+      }
+    } else {
+      const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct, {
+        spotlight: spotlightOn, allBoxes: boxes, targetBox: boxes[i]
+      });
+      const finalCanvas = upscaleOn ? upscaleCanvasIfNeeded(cropped, minUpscale) : cropped;
+      blob = await canvasToBlob(finalCanvas);
+    }
+
+    if (useRemoveBg && upscaleOn) blob = await maybeUpscaleBlob(blob, minUpscale);
+
+    const ext = useRemoveBg ? 'png' : 'jpg';
+    const fileName = `${sanitizeName(name)}.${ext}`;
+    const result = { id: nextResultId++, blob, name, fileName, groupName };
+    allResults.push(result);
+    imgObj.results.push(result);
+    addResultCard(result);
+  }
+
+  imgObj.processed = true;
+  updateQueueUI();
+  document.getElementById('countBadge').textContent = allResults.length;
+  setStatus('הושלם!', 100);
+  setTimeout(hideStatus, 1200);
+}
+
+async function quickAutoCurrent() {
+  await detectCurrent();
+  const imgObj = currentImage();
+  if (imgObj && imgObj.boxes.length > 0) await extractCurrent();
+}
+
+async function processAllQueueAuto() {
+  for (let i = 0; i < images.length; i++) {
+    if (images[i].processed) continue;
+    if (!images[i].img) { await new Promise(r => { const iv = setInterval(() => { if (images[i].img) { clearInterval(iv); r(); } }, 100); }); }
+    currentIndex = i;
+    selectedBoxId = null;
+    updateQueueUI();
+    redrawEditor();
+    await detectCurrent();
+    if (currentImage().boxes.length > 0) await extractCurrent();
+  }
+  showAlert(`עיבוד אוטומטי הושלם עבור ${images.length} תמונות`, 'info');
+}
+
+// ─── Draw detection boxes on preview (legacy helper kept for compatibility) ───
+function drawBoxes() { redrawEditor(); }
+
+// ─── Remove.bg API ────────────────────────────────────────────────────────────
+async function removeBackgroundRemoveBg(canvas, apiKey) {
+  const blob = await canvasToBlob(canvas, 'image/png');
+  const formData = new FormData();
+  formData.append('image_file', blob, 'person.png');
+  formData.append('size', 'auto');
+
+  const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+    method: 'POST',
+    headers: { 'X-Api-Key': apiKey },
+    body: formData
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.errors?.[0]?.title || `HTTP ${response.status}`);
+  }
+
+  return await response.blob();
+}
+
+// ─── SAM 2 via Replicate ───────────────────────────────────────────────────────
+async function removeBackgroundSAM2(originalImg, bbox, apiKey, padPct) {
+  const iw = originalImg.naturalWidth  || originalImg.width;
+  const ih = originalImg.naturalHeight || originalImg.height;
+
+  const maxDim = 1920;
+  const scale  = Math.min(1, maxDim / Math.max(iw, ih));
+  const sw = Math.round(iw * scale);
+  const sh = Math.round(ih * scale);
+
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width  = sw;
+  tmpCanvas.height = sh;
+  tmpCanvas.getContext('2d').drawImage(originalImg, 0, 0, sw, sh);
+  const base64 = tmpCanvas.toDataURL('image/jpeg', 0.88);
+
+  const [bx, by, bw, bh] = bbox;
+  const boxScaled = [
+    Math.round(bx * scale), Math.round(by * scale),
+    Math.round((bx + bw) * scale), Math.round((by + bh) * scale)
+  ];
+
+  const createRes = await fetch('https://api.replicate.com/v1/models/meta/sam-2/predictions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'wait=60'
+    },
+    body: JSON.stringify({
+      input: {
+        image: base64,
+        box_coords: JSON.stringify([boxScaled]),
+        mask_type: 'rgba',
+        multimask_output: false
+      }
+    })
+  });
+
+  if (!createRes.ok) {
+    const err = await createRes.json().catch(() => ({}));
+    throw new Error(err.detail || `Replicate error: ${createRes.status}`);
+  }
+
+  let prediction = await createRes.json();
+
+  let attempts = 0;
+  while (prediction.status !== 'succeeded' && prediction.status !== 'failed' && attempts < 60) {
+    await new Promise(r => setTimeout(r, 1500));
+    const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${prediction.id}`, {
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    });
+    prediction = await pollRes.json();
+    attempts++;
+    setStatus(`SAM 2 מעבד... (${attempts}s)`, 65);
+  }
+
+  if (prediction.status === 'failed') throw new Error(prediction.error || 'SAM 2 failed');
+  if (!prediction.output)            throw new Error('SAM 2: אין פלט');
+
+  const outputUrl = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+
+  const outputRes = await fetch(outputUrl);
+  if (!outputRes.ok) throw new Error(`לא ניתן להוריד תוצאה: ${outputRes.status}`);
+  const outputBlob = await outputRes.blob();
+  const outputImg  = await blobToImage(outputBlob);
+
+  const padX     = bw * padPct;
+  const padY     = bh * padPct;
+  const topExtra = bh * 0.08;
+  const x1 = Math.max(0, Math.floor(bx - padX));
+  const y1 = Math.max(0, Math.floor(by - padY - topExtra));
+  const x2 = Math.min(iw, Math.ceil(bx + bw + padX));
+  const y2 = Math.min(ih, Math.ceil(by + bh + padY));
+  const cw = x2 - x1;
+  const ch = y2 - y1;
+
+  const outCanvas = document.createElement('canvas');
+  outCanvas.width  = cw;
+  outCanvas.height = ch;
+  outCanvas.getContext('2d').drawImage(
+    outputImg,
+    Math.round(x1 * scale), Math.round(y1 * scale),
+    Math.round(cw * scale), Math.round(ch * scale),
+    0, 0, cw, ch
+  );
+
+  return canvasToBlob(outCanvas, 'image/png');
+}
+
+function blobToImage(blob) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload  = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => reject(new Error('לא ניתן לטעון תמונת פלט'));
+    img.src = url;
+  });
+}
+
+// ─── Result cards / rename / delete / download ────────────────────────────────
+function addResultCard(result) {
+  const grid = document.getElementById('resultsGrid');
+  const url  = URL.createObjectURL(result.blob);
+  const card = document.createElement('div');
+  card.className = 'person-card';
+  card.id = 'result-' + result.id;
+  card.innerHTML = `
+    <img src="${url}" alt="${escapeHtml(result.name)}">
+    <div class="person-card-footer" style="flex-direction:column;align-items:stretch;gap:6px;">
+      ${images.length > 1 ? `<span style="font-size:0.72rem;color:#666;">📁 ${escapeHtml(result.groupName)}</span>` : ''}
+      <input value="${escapeHtml(result.name)}" oninput="renameResult(${result.id}, this.value)"
+        style="width:100%;background:#0a0a1a;border:1px solid #3a3a6a;color:#e0e0e0;border-radius:6px;padding:5px 8px;font-size:0.8rem;font-family:inherit;">
+      <div style="display:flex;gap:6px;">
+        <button onclick="downloadSingle(${result.id})" style="flex:1;">הורד</button>
+        <button onclick="removeResult(${result.id})" style="color:#fca5a5;border-color:#7f1d1d;">מחק</button>
+      </div>
+    </div>`;
+  grid.appendChild(card);
+}
+
+function renameResult(id, value) {
+  const r = allResults.find(r => r.id === id);
+  if (!r) return;
+  const clean = value.trim() || r.name;
+  r.name = clean;
+  const ext = r.fileName.split('.').pop();
+  r.fileName = `${sanitizeName(clean)}.${ext}`;
+}
+
+function removeResult(id) {
+  allResults = allResults.filter(r => r.id !== id);
+  images.forEach(im => im.results = im.results.filter(r => r.id !== id));
+  const el = document.getElementById('result-' + id);
+  if (el) el.remove();
+  document.getElementById('countBadge').textContent = allResults.length;
+}
+
+function downloadSingle(id) {
+  const r = allResults.find(r => r.id === id);
+  if (r) saveAs(r.blob, r.fileName);
+}
+
+async function downloadAll() {
+  if (allResults.length === 0) return;
+  const zip = new JSZip();
+  const groups = {};
+  allResults.forEach(r => { (groups[r.groupName] ||= []).push(r); });
+  const groupNames = Object.keys(groups);
+
+  groupNames.forEach(g => {
+    const folder = zip.folder(g);
+    groups[g].forEach(r => folder.file(r.fileName, r.blob));
+  });
+
+  const content = await zip.generateAsync({ type: 'blob' });
+  saveAs(content, 'אנשים_שחולצו.zip');
+}
+
+// ─── Contact sheet export ───────────────────────────────────────────────────────
+async function exportContactSheet() {
+  if (allResults.length === 0) { showAlert('אין תמונות לייצוא', 'error'); return; }
+  const cell = 200, gap = 16, labelH = 26;
+  const cols = Math.min(6, Math.max(1, Math.ceil(Math.sqrt(allResults.length))));
+  const rows = Math.ceil(allResults.length / cols);
+  const canvas = document.createElement('canvas');
+  canvas.width  = cols * (cell + gap) + gap;
+  canvas.height = rows * (cell + labelH + gap) + gap;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#0f0f1a';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < allResults.length; i++) {
+    const r = allResults[i];
+    const img = await blobToImage(r.blob);
+    const col = i % cols, row = Math.floor(i / cols);
+    const x = gap + col * (cell + gap), y = gap + row * (cell + labelH + gap);
+    const scale = Math.min(cell / img.width, cell / img.height);
+    const dw = img.width * scale, dh = img.height * scale;
+    ctx.fillStyle = '#12122a';
+    ctx.fillRect(x, y, cell, cell);
+    ctx.drawImage(img, x + (cell - dw) / 2, y + (cell - dh) / 2, dw, dh);
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = '13px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(r.name, x + cell / 2, y + cell + 19, cell);
+  }
+  ctx.textAlign = 'start';
+
+  const blob = await canvasToBlob(canvas, 'image/png');
+  saveAs(blob, 'גיליון_תמונות.png');
+}
+
+// ─── Utilities ────────────────────────────────────────────────────────────────
+function canvasToBlob(canvas, type = 'image/jpeg', quality = 0.92) {
+  return new Promise((resolve, reject) =>
+    canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob failed')), type, quality)
+  );
+}
+
+function toggleRemoveBg() {
+  const on = document.getElementById('removeBgToggle').checked;
+  document.getElementById('removeBgSettings').classList.toggle('visible', on);
+}
+
+function selectProvider(name) {
+  currentProvider = name;
+  ['removebg', 'sam2'].forEach(p => {
+    document.getElementById('tab-' + p).classList.toggle('active', p === name);
+    document.getElementById('panel-' + p).classList.toggle('active', p === name);
+  });
+  persistSettings();
+}
+
+// ─── API Key persistence ───────────────────────────────────────────────────────
+const LS_KEYS = { removebg: 'removebg_api_key', replicate: 'replicate_api_key' };
+const INPUT_IDS = { removebg: 'removeBgKey', replicate: 'replicateKey' };
+
+function saveKey(provider) {
+  const key = document.getElementById(INPUT_IDS[provider]).value.trim();
+  if (!key) return;
+  localStorage.setItem(LS_KEYS[provider], key);
+  refreshKeyUI(provider);
+}
+
+function clearKey(provider) {
+  localStorage.removeItem(LS_KEYS[provider]);
+  document.getElementById(INPUT_IDS[provider]).value = '';
+  refreshKeyUI(provider);
+}
+
+function loadAllKeys() {
+  ['removebg', 'replicate'].forEach(p => {
+    const saved = localStorage.getItem(LS_KEYS[p]);
+    if (saved) {
+      document.getElementById(INPUT_IDS[p]).value = saved;
+      refreshKeyUI(p);
+    }
+  });
+}
+
+function onKeyInput(provider) {
+  const val     = document.getElementById(INPUT_IDS[provider]).value.trim();
+  const saved   = localStorage.getItem(LS_KEYS[provider]);
+  const isSaved = saved && saved === val;
+  document.getElementById('saveBtn-' + provider).disabled = !val || isSaved;
+}
+
+function refreshKeyUI(provider) {
+  const saved   = localStorage.getItem(LS_KEYS[provider]);
+  const current = document.getElementById(INPUT_IDS[provider]).value.trim();
+  const isSaved = saved && saved === current;
+  document.getElementById('savedMsg-'  + provider).style.display = isSaved ? 'block' : 'none';
+  document.getElementById('clearBtn-' + provider).style.display  = saved   ? ''      : 'none';
+  document.getElementById('saveBtn-'  + provider).disabled       = isSaved || !current;
+}
+
+function toggleShow(inputId) {
+  const el = document.getElementById(inputId);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+// ─── General settings persistence ──────────────────────────────────────────────
+const SETTINGS_KEY = 'personSeparator_settings_v2';
+
+function persistSettings() {
+  const s = {
+    baseName: document.getElementById('baseName').value,
+    nameFormat: document.getElementById('nameFormat').value,
+    padding: document.getElementById('padding').value,
+    minConf: document.getElementById('minConf').value,
+    sortMode: document.getElementById('sortMode').value,
+    minUpscaleSize: document.getElementById('minUpscaleSize').value,
+    tiledDetect: document.getElementById('tiledDetect').checked,
+    spotlightToggle: document.getElementById('spotlightToggle').checked,
+    autoUpscaleToggle: document.getElementById('autoUpscaleToggle').checked,
+    fileNameAsFolder: document.getElementById('fileNameAsFolder').checked,
+    removeBgToggle: document.getElementById('removeBgToggle').checked,
+    provider: currentProvider
+  };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+}
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.baseName != null) document.getElementById('baseName').value = s.baseName;
+    if (s.nameFormat) document.getElementById('nameFormat').value = s.nameFormat;
+    if (s.padding != null) document.getElementById('padding').value = s.padding;
+    if (s.minConf != null) document.getElementById('minConf').value = s.minConf;
+    if (s.sortMode) document.getElementById('sortMode').value = s.sortMode;
+    if (s.minUpscaleSize != null) document.getElementById('minUpscaleSize').value = s.minUpscaleSize;
+    if (s.tiledDetect != null) document.getElementById('tiledDetect').checked = s.tiledDetect;
+    if (s.spotlightToggle != null) document.getElementById('spotlightToggle').checked = s.spotlightToggle;
+    if (s.autoUpscaleToggle != null) document.getElementById('autoUpscaleToggle').checked = s.autoUpscaleToggle;
+    if (s.fileNameAsFolder != null) document.getElementById('fileNameAsFolder').checked = s.fileNameAsFolder;
+    if (s.removeBgToggle != null) {
+      document.getElementById('removeBgToggle').checked = s.removeBgToggle;
+      toggleRemoveBg();
+    }
+    if (s.provider) selectProvider(s.provider);
+  } catch (e) { /* ignore malformed settings */ }
+}
+
+function setStatus(text, pct) {
+  document.getElementById('statusBar').classList.add('visible');
+  document.getElementById('statusText').textContent = text;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function hideStatus() {
+  document.getElementById('statusBar').classList.remove('visible');
+}
+
+function showAlert(msg, type = 'error') {
+  const el = document.getElementById('alertBox');
+  el.textContent = msg;
+  el.className = `alert alert-${type} visible`;
+}
+
+function hideAlert() {
+  document.getElementById('alertBox').classList.remove('visible');
+}
+
+// ─── Help modal ───────────────────────────────────────────────────────────────
+function openHelp()  { document.getElementById('helpModal').classList.add('open'); }
+function closeHelp() { document.getElementById('helpModal').classList.remove('open'); }
+function closeHelpIfBackdrop(e) { if (e.target === document.getElementById('helpModal')) closeHelp(); }
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+loadAllKeys();
+loadSettings();
+loadModel();
+updateActionButtons();
+</script>
+</body>
+</html>

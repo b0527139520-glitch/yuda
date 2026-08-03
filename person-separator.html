@@ -1420,13 +1420,37 @@ let bodyPixLoading = null;
 
 function loadScriptOnce(src) {
   return new Promise((resolve, reject) => {
-    if (document.querySelector(`script[src="${src}"]`)) return resolve();
+    const existing = document.querySelector(`script[data-src="${src}"]`);
+    if (existing) {
+      if (existing.dataset.loaded === '1') return resolve();
+      existing.addEventListener('load', () => resolve());
+      existing.addEventListener('error', () => reject(new Error('טעינה נכשלה')));
+      return;
+    }
     const s = document.createElement('script');
     s.src = src;
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error('לא ניתן לטעון את מודל הצללית — בדוק חיבור לאינטרנט'));
+    s.dataset.src = src;
+    s.onload = () => { s.dataset.loaded = '1'; resolve(); };
+    s.onerror = () => reject(new Error('טעינה נכשלה'));
     document.head.appendChild(s);
   });
+}
+
+// body-pix 2.2.1 ships its browser build as dist/body-pix.min.umd.js, even
+// though the package still advertises dist/body-pix.min.js in its unpkg and
+// jsdelivr fields — that filename 404s. The UMD bundle also registers itself as
+// window["body-pix"], not window.bodyPix.
+// The last entry is 2.2.0, which does ship dist/body-pix.min.js and registers
+// itself as window.bodyPix. It is a last resort only: it was built against
+// TF.js 3.x, so it may misbehave against the 4.x we load.
+const BODYPIX_URLS = [
+  'https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.1/dist/body-pix.min.umd.js',
+  'https://unpkg.com/@tensorflow-models/body-pix@2.2.1/dist/body-pix.min.umd.js',
+  'https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js'
+];
+
+function getBodyPixGlobal() {
+  return window['body-pix'] || window.bodyPix || null;
 }
 
 async function ensureBodyPix() {
@@ -1434,8 +1458,27 @@ async function ensureBodyPix() {
   if (!bodyPixLoading) {
     bodyPixLoading = (async () => {
       setStatus('טוען מודל בידוד צללית (פעם אחת בלבד)...', 8);
-      await loadScriptOnce('https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.1/dist/body-pix.min.js');
-      bodyPixNet = await bodyPix.load({
+
+      let lib = getBodyPixGlobal();
+      if (!lib) {
+        const failures = [];
+        for (const url of BODYPIX_URLS) {
+          try {
+            await loadScriptOnce(url);
+            lib = getBodyPixGlobal();
+            if (lib) break;
+            failures.push('נטען אך לא נמצאה הספרייה');
+          } catch (e) {
+            failures.push(e.message);
+          }
+        }
+        if (!lib) {
+          throw new Error('לא ניתן לטעון את מודל הצללית מאף מקור — בדוק חיבור לאינטרנט או חסימת פרסומות');
+        }
+      }
+
+      setStatus('מוריד את משקולות המודל...', 10);
+      bodyPixNet = await lib.load({
         architecture: 'MobileNetV1', outputStride: 16, multiplier: 0.75, quantBytes: 2
       });
       return bodyPixNet;

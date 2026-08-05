@@ -594,6 +594,29 @@
     <hr class="divider">
 
     <div class="help-section">
+      <h3>מנוע הזיהוי — למה "משולב" עדיף</h3>
+      <p>המנוע המהיר (COCO-SSD) מצייר מלבן לכל מי שהוא חושב שהוא רואה. בשורה צפופה זה נכשל: הוא מותח מלבן אחד על שניים-שלושה ילדים, ומי שמוסתר חלקית לא מקבל מלבן בכלל. לכן נוסף <strong>זיהוי שלד (MoveNet)</strong> — הוא מוצא <strong>שלד לכל אדם בנפרד</strong>, כך שכל ילד מעוגן בפנים ובכתפיים שלו ונשאר ישות נפרדת גם כשהוא חופף לחלוטין לילד שלידו.</p>
+      <ul>
+        <li><strong>משולב</strong> (ברירת מחדל) — מריץ את שני המנועים וממזג. הכי מדויק, מומלץ לתמונות כיתה.</li>
+        <li><strong>זיהוי שלד בלבד</strong> — מצוין להפרדת אנשים חופפים, אבל עלול לפספס מי שהגוף שלו כמעט לא נראה.</li>
+        <li><strong>מהיר בלבד</strong> — המנוע הישן, לתמונות פשוטות עם מעט אנשים.</li>
+      </ul>
+      <div class="tip-box">
+        <p>אם ילד מסוים לא מקבל תמונה משלו אלא רק מופיע יחד עם אחרים — עברו ל"משולב", העלו את עומק הסריקה ל"עמוק", ובדקו ב"👁 הצג זיהויים שנפסלו" אם הוא נמצא שם וניתן להחזיר אותו בלחיצה.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
+      <h3>מסגור חכם — תמונות פורטרט יפות</h3>
+      <p>כשזוהה שלד, החיתוך כבר לא מלבן גולמי סביב מה שהמודל סימן. האפליקציה ממרכזת את התמונה על <strong>קו הכתפיים</strong> ומשאירה <strong>רווח מעל הראש</strong> בפרופורציה לגודל הראש של אותו ילד — בדיוק כמו שצלם היה ממסגר. זה מה שהופך חיתוך טכני לתמונת פורטרט מסודרת, ובמיוחד מונע תמונות שבהן הילד "נדחף" הצידה כי שכן נכנס למלבן.</p>
+      <p style="margin-top:8px;">משלבים את זה עם <strong>בידוד לפי צללית</strong> ומקבלים תמונה נקייה, ממורכזת, בלי החברים שמסביב.</p>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
       <h3>זיהוי רב-שכבתי (Tiled Detection)</h3>
       <p>בתמונות גדולות עם הרבה אנשים קטנים (תמונת כיתה שלמה, אסיפה וכו') זיהוי AI רגיל לפעמים מפספס אנשים קטנים או חופפים כי הוא "רואה" את כל התמונה בבת אחת ברזולוציה נמוכה. כשהאפשרות <strong>"זיהוי רב-שכבתי"</strong> פעילה, האפליקציה גם סורקת אזורים חופפים בתמונה בנפרד (כמו זכוכית מגדלת), מה שמעלה משמעותית את כמות האנשים שמזוהים בתמונות גדולות/צפופות — במחיר זמן עיבוד קצת ארוך יותר.</p>
     </div>
@@ -766,6 +789,14 @@
       <input type="number" id="minUpscaleSize" value="500" min="0" max="2000" step="50" oninput="persistSettings()">
     </div>
     <div class="form-group">
+      <label>מנוע זיהוי 🧠</label>
+      <select id="detectEngine" onchange="persistSettings()">
+        <option value="both" selected>משולב — הכי מדויק (מומלץ לתמונות צפופות)</option>
+        <option value="pose">זיהוי שלד בלבד — מפריד טוב אנשים חופפים</option>
+        <option value="ssd">מהיר בלבד — הכי מהיר, פחות מדויק</option>
+      </select>
+    </div>
+    <div class="form-group">
       <label>עומק סריקה</label>
       <select id="scanDepth" onchange="persistSettings()">
         <option value="fast">מהיר — סריקה גסה</option>
@@ -800,6 +831,16 @@
       </div>
       <label class="toggle">
         <input type="checkbox" id="tiledDetect" checked onchange="persistSettings()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <label>מסגור חכם לפי הגוף 📸</label>
+        <small>כשזוהה שלד: ממרכז את החיתוך על הפנים ומשאיר רווח נכון מעל הראש — תמונות פורטרט מסודרות במקום מלבן גולמי</small>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="smartFraming" checked onchange="persistSettings()">
         <span class="slider"></span>
       </label>
     </div>
@@ -1048,6 +1089,96 @@ function refreshUploadZoneLabel() {
     : `<div class="icon">🖼️</div><p><strong>לחץ לבחירת תמונה</strong> או גרור לכאן</p><p style="margin-top:6px;">JPG, PNG, WEBP — אפשר לבחור כמה תמונות יחד</p>`;
 }
 
+// ─── Pose detection (MoveNet MultiPose) ───────────────────────────────────────
+// COCO-SSD draws one rectangle per "person" it thinks it sees, which is exactly
+// the wrong tool for a packed row: overlapping bodies get one box stretched over
+// several children, and heavily occluded ones get none. MoveNet finds a skeleton
+// per person, so each child is anchored on their own face and shoulders and
+// stays a separate instance no matter how much they overlap. The keypoints also
+// tell us where the head is, which is what makes a well-framed portrait
+// possible instead of a raw rectangle.
+let poseDetector = null;
+let poseLoading = null;
+
+const POSE_URLS = [
+  'https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js',
+  'https://unpkg.com/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js'
+];
+
+async function ensurePoseDetector() {
+  if (poseDetector) return poseDetector;
+  if (!poseLoading) {
+    poseLoading = (async () => {
+      setStatus('טוען מודל זיהוי שלד (פעם אחת בלבד)...', 6);
+      if (!window.poseDetection) {
+        for (const url of POSE_URLS) {
+          try { await loadScriptOnce(url); } catch (e) { /* try next */ }
+          if (window.poseDetection) break;
+        }
+      }
+      if (!window.poseDetection) {
+        throw new Error('לא ניתן לטעון את מודל זיהוי השלד — בדוק חיבור לאינטרנט');
+      }
+      const pd = window.poseDetection;
+      poseDetector = await pd.createDetector(pd.SupportedModels.MoveNet, {
+        modelType: (pd.movenet && pd.movenet.modelType && pd.movenet.modelType.MULTIPOSE_LIGHTNING)
+                   || 'MultiPose.Lightning',
+        enableTracking: false
+      });
+      return poseDetector;
+    })().catch(e => { poseLoading = null; throw e; });
+  }
+  return poseLoading;
+}
+
+const KP_MIN_SCORE = 0.3;
+
+// Turns a skeleton into a person box. Only confident joints are used, then the
+// box is grown upward to take in the head (which has few keypoints above the
+// eyes) and outward a little for the body's width.
+function poseToBox(pose) {
+  const kp = (pose.keypoints || []).filter(k => (k.score == null ? 1 : k.score) >= KP_MIN_SCORE);
+  if (kp.length < 3) return null;
+
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  kp.forEach(k => {
+    if (k.x < minX) minX = k.x;
+    if (k.x > maxX) maxX = k.x;
+    if (k.y < minY) minY = k.y;
+    if (k.y > maxY) maxY = k.y;
+  });
+
+  const by = name => kp.find(k => k.name === name);
+  const ls = by('left_shoulder'), rs = by('right_shoulder');
+  const shoulderW = (ls && rs) ? Math.abs(ls.x - rs.x) : (maxX - minX);
+
+  // Headroom: the topmost keypoint is an eye or ear, so the skull sits above it.
+  const headRoom = Math.max(shoulderW * 0.75, (maxY - minY) * 0.18);
+  const sideRoom = Math.max(shoulderW * 0.28, (maxX - minX) * 0.12);
+
+  const x = minX - sideRoom;
+  const y = minY - headRoom;
+  const w = (maxX - minX) + sideRoom * 2;
+  const h = (maxY - minY) + headRoom;
+  if (!(w > 0 && h > 0)) return null;
+
+  return { bbox: [x, y, w, h], score: pose.score == null ? 0.6 : pose.score, keypoints: kp };
+}
+
+async function detectPosesIn(canvasOrImg, offsetX, offsetY, out) {
+  const det = await ensurePoseDetector();
+  const poses = await det.estimatePoses(canvasOrImg, { maxPoses: 6, scoreThreshold: 0.2 });
+  (poses || []).forEach(pose => {
+    const b = poseToBox(pose);
+    if (!b) return;
+    out.push({
+      bbox: [b.bbox[0] + offsetX, b.bbox[1] + offsetY, b.bbox[2], b.bbox[3]],
+      score: b.score,
+      keypoints: b.keypoints.map(k => ({ ...k, x: k.x + offsetX, y: k.y + offsetY }))
+    });
+  });
+}
+
 // ─── Detection: full-frame + tiled multi-scale, merged via NMS ───────────────
 async function detectPersons(img, minConf) {
   const iw = img.naturalWidth || img.width;
@@ -1067,9 +1198,27 @@ async function detectPersons(img, minConf) {
     (p.score >= minConf ? raw : lowConf).push(box);
   };
 
+  const engine = document.getElementById('detectEngine').value;
+  const useSsd  = engine === 'ssd'  || engine === 'both';
+  const usePose = engine === 'pose' || engine === 'both';
+  let poseFailed = false;
+
+  const runPose = async (target, ox, oy) => {
+    if (!usePose || poseFailed) return;
+    try {
+      await detectPosesIn(target, ox, oy, raw);
+    } catch (e) {
+      poseFailed = true;
+      showAlert(`זיהוי שלד לא זמין (${e.message}) — ממשיך עם המנוע המהיר`, 'info');
+    }
+  };
+
   setStatus('סורק את כל התמונה...', 15);
-  const full = await cocoModel.detect(img, 200, floor);
-  full.filter(p => p.class === 'person').forEach(p => sortInto(p));
+  if (useSsd) {
+    const full = await cocoModel.detect(img, 200, floor);
+    full.filter(p => p.class === 'person').forEach(p => sortInto(p));
+  }
+  await runPose(img, 0, 0);
 
   if (useTiling) {
     const tiles = computeTiles(iw, ih, depth);
@@ -1080,6 +1229,12 @@ async function detectPersons(img, minConf) {
       tileCanvas.width = tile.w;
       tileCanvas.height = tile.h;
       tileCanvas.getContext('2d').drawImage(img, tile.x, tile.y, tile.w, tile.h, 0, 0, tile.w, tile.h);
+      // MoveNet MultiPose resolves at most six skeletons per call, so running it
+      // per tile is not just a speed trick here — it is what lets a class photo
+      // of thirty children be covered at all.
+      await runPose(tileCanvas, tile.x, tile.y);
+
+      if (!useSsd) { await new Promise(r => setTimeout(r, 0)); continue; }
       const preds = await cocoModel.detect(tileCanvas, 200, floor);
       const tol = 3;
       preds.filter(p => p.class === 'person').forEach(p => {
@@ -1289,7 +1444,13 @@ function fuseBoxes(a, b) {
   const x2 = Math.max(a[0] + a[2], b[0] + b[2]), y2 = Math.max(a[1] + a[3], b[1] + b[3]);
   const union = [x1, y1, x2 - x1, y2 - y1];
   const larger = boxArea(a) >= boxArea(b) ? a : b;
-  return boxArea(union) <= boxArea(larger) * 1.6 ? union : larger;
+  const widest = Math.max(a[2], b[2]);
+  // Partial views of one person differ vertically, never sideways, so a union
+  // that grows wider is a sign the two boxes are not the same person after all.
+  // Falling back to the larger box keeps a stretched box from spanning
+  // neighbours.
+  if (union[2] > widest * 1.15) return larger;
+  return boxArea(union) <= boxArea(larger) * 1.25 ? union : larger;
 }
 
 function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75, rejected) {
@@ -1307,11 +1468,12 @@ function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75, rejected) {
         }
         k.bbox = fuseBoxes(k.bbox, box.bbox);
         k.score = Math.max(k.score, box.score);
+        k.keypoints = k.keypoints || box.keypoints;
         dup = true;
         break;
       }
     }
-    if (!dup) kept.push({ bbox: box.bbox, score: box.score });
+    if (!dup) kept.push({ bbox: box.bbox, score: box.score, keypoints: box.keypoints });
   }
 
   // A single greedy pass stops at the first match, so partial views can be left
@@ -1330,6 +1492,7 @@ function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75, rejected) {
           }
           kept[i].bbox = fuseBoxes(kept[i].bbox, kept[j].bbox);
           kept[i].score = Math.max(kept[i].score, kept[j].score);
+          kept[i].keypoints = kept[i].keypoints || kept[j].keypoints;
           kept.splice(j, 1);
           changed = true;
           break;
@@ -1338,7 +1501,7 @@ function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75, rejected) {
     }
   }
 
-  return kept.map(b => ({ id: nextBoxId++, bbox: b.bbox, score: b.score, manual: false }));
+  return kept.map(b => ({ id: nextBoxId++, bbox: b.bbox, score: b.score, manual: false, keypoints: b.keypoints }));
 }
 
 // Scattered fragments (a stray hand, a chair leg read as a person) come back far
@@ -1410,10 +1573,39 @@ function getGroupName(imgObj) {
 
 // ─── Crop with padding + optional spotlight ───────────────────────────────────
 // Shared so callers can map the person's box into crop-local coordinates.
-function cropRect(img, bbox, padPct) {
+function cropRect(img, bbox, padPct, box) {
   const [x, y, w, h] = bbox;
   const iw = img.naturalWidth || img.width;
   const ih = img.naturalHeight || img.height;
+
+  // With a skeleton available, frame the shot the way a photographer would:
+  // centred on the line between the shoulders rather than on the box, with
+  // headroom scaled to the person's own head. A raw rectangle centres on
+  // whatever the detector outlined, which in a packed row is usually offset
+  // toward whoever is leaning in.
+  if (box && box.keypoints && document.getElementById('smartFraming').checked) {
+    const by = n => box.keypoints.find(k => k.name === n);
+    const ls = by('left_shoulder'), rs = by('right_shoulder');
+    const nose = by('nose') || by('left_eye') || by('right_eye');
+    if (ls && rs && nose) {
+      const shoulderW = Math.abs(ls.x - rs.x) || w * 0.5;
+      const cx = (ls.x + rs.x) / 2;
+      const headTop = nose.y - shoulderW * 0.95;
+
+      const halfW = Math.max(shoulderW * (1.15 + padPct), w * 0.5 * (1 + padPct * 0.5));
+      const bottom = y + h + h * padPct * 0.5;
+      const top = headTop - shoulderW * (0.35 + padPct);
+
+      const sx1 = Math.max(0, Math.floor(cx - halfW));
+      const sy1 = Math.max(0, Math.floor(top));
+      const sx2 = Math.min(iw, Math.ceil(cx + halfW));
+      const sy2 = Math.min(ih, Math.ceil(bottom));
+      if (sx2 - sx1 > 8 && sy2 - sy1 > 8) {
+        return { x1: sx1, y1: sy1, cw: sx2 - sx1, ch: sy2 - sy1 };
+      }
+    }
+  }
+
   const padX = w * padPct;
   const padY = h * padPct;
   const topExtra = h * 0.08;
@@ -1425,13 +1617,13 @@ function cropRect(img, bbox, padPct) {
 }
 
 // The person's own box, expressed relative to the crop.
-function subjectRectIn(img, bbox, padPct) {
-  const { x1, y1 } = cropRect(img, bbox, padPct);
+function subjectRectIn(img, bbox, padPct, box) {
+  const { x1, y1 } = cropRect(img, bbox, padPct, box);
   return { x: bbox[0] - x1, y: bbox[1] - y1, w: bbox[2], h: bbox[3] };
 }
 
 function cropPerson(img, bbox, padPct, opts = {}) {
-  const { x1, y1, cw, ch } = cropRect(img, bbox, padPct);
+  const { x1, y1, cw, ch } = cropRect(img, bbox, padPct, opts.targetBox);
 
   const canvas = document.createElement('canvas');
   canvas.width  = cw;
@@ -2234,12 +2426,12 @@ async function extractCurrent() {
           setStatus(`SAM 2 מחלץ אדם ${i + 1} מתוך ${boxes.length}...`, pct);
           blob = await removeBackgroundSAM2(imgObj.img, boxes[i].bbox, replicateKey, padPct);
         } else {
-          const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct);
+          const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct, { targetBox: boxes[i] });
           blob = await removeBackgroundRemoveBg(cropped, removeBgKey);
         }
       } catch (e) {
         showAlert(`הסרת רקע נכשלה עבור ${name} (${e.message}) — נשמר בלי הסרה`, 'info');
-        const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct);
+        const cropped = cropPerson(imgObj.img, boxes[i].bbox, padPct, { targetBox: boxes[i] });
         blob = await canvasToBlob(cropped);
       }
     } else {
@@ -2251,7 +2443,7 @@ async function extractCurrent() {
       if (isolateMode !== 'off' && !isolateFailed) {
         try {
           setStatus(`מבודד לפי צללית ${i + 1} מתוך ${boxes.length}...`, pct);
-          cropped = await isolateSubject(cropped, subjectRectIn(imgObj.img, boxes[i].bbox, padPct), isolateMode);
+          cropped = await isolateSubject(cropped, subjectRectIn(imgObj.img, boxes[i].bbox, padPct, boxes[i]), isolateMode);
         } catch (e) {
           // Report once, then finish the batch as plain rectangular crops rather
           // than failing on every single girl.
@@ -2602,6 +2794,8 @@ function persistSettings() {
     sortMode: document.getElementById('sortMode').value,
     minUpscaleSize: document.getElementById('minUpscaleSize').value,
     scanDepth: document.getElementById('scanDepth').value,
+    detectEngine: document.getElementById('detectEngine').value,
+    smartFraming: document.getElementById('smartFraming').checked,
     isolateMode: document.getElementById('isolateMode').value,
     spotlightStrength: document.getElementById('spotlightStrength').value,
     tiledDetect: document.getElementById('tiledDetect').checked,
@@ -2626,6 +2820,8 @@ function loadSettings() {
     if (s.sortMode) document.getElementById('sortMode').value = s.sortMode;
     if (s.minUpscaleSize != null) document.getElementById('minUpscaleSize').value = s.minUpscaleSize;
     if (s.scanDepth) document.getElementById('scanDepth').value = s.scanDepth;
+    if (s.detectEngine) document.getElementById('detectEngine').value = s.detectEngine;
+    if (s.smartFraming != null) document.getElementById('smartFraming').checked = s.smartFraming;
     if (s.isolateMode) document.getElementById('isolateMode').value = s.isolateMode;
     if (s.spotlightStrength != null) document.getElementById('spotlightStrength').value = s.spotlightStrength;
     if (s.tiledDetect != null) document.getElementById('tiledDetect').checked = s.tiledDetect;

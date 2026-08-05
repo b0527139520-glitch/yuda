@@ -537,6 +537,22 @@
     <hr class="divider">
 
     <div class="help-section">
+      <h3>זיהויים שנפסלו — איך הופכים אותם לתמונות</h3>
+      <p>אחרי הזיהוי האפליקציה מסננת החוצה תיבות שנראות שגויות: כפילויות, תיבות שעוטפות כמה אנשים, רסיסים זעירים, וזיהויים שהמודל לא היה בטוח לגביהם. <strong>שום דבר מזה לא נמחק באמת</strong> — הכל נשמר בצד עם הסיבה לפסילה.</p>
+      <ol class="step-list">
+        <li>לחץ <strong>"👁 הצג זיהויים שנפסלו"</strong> — הם יופיעו על התמונה כמסגרות כתומות מקווקוות, וברשימה שבצד עם הסיבה לכל אחד.</li>
+        <li>כדי להפוך אחד לתמונה נפרדת — <strong>לחץ עליו</strong> (על המסגרת הכתומה בתמונה, או על השורה שלו ברשימה).</li>
+        <li>כדי להחזיר את כולם בבת אחת — <strong>"➕ הפוך את כולם לתמונות"</strong>.</li>
+        <li>מי שהוחזר מקבל מספר ושם משלו, ונכלל בחילוץ בשלב 2 בדיוק כמו כל אחד אחר.</li>
+      </ol>
+      <div class="tip-box">
+        <p>זיהוי שהוחזר מסומן כ"ידני" ✏️, כך שאף סינון אוטומטי לא יסיר אותו שוב. אם החזרת מישהו בטעות — פשוט מחק את התיבה שלו.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="help-section">
       <h3>תמונות כיתה צפופות — למה לא לחלק לחלקים שווים</h3>
       <p>בתמונה קבוצתית צפופה (למשל תמונת כיתה שבה כולם צמודים) <strong>אסור</strong> לנסות לחלק את התמונה לפי גבול חצי-חצי בין כל שני אנשים סמוכים — כי אז לפעמים לאדם השני כמעט לא נשאר רקע/גוף בתמונה שלו. לכן הכלי לא עושה חלוקה כזו:</p>
       <ul>
@@ -892,6 +908,7 @@
     <button class="btn btn-secondary" id="addBoxBtn" onclick="toggleAddMode()">➕ הוסף אדם ידנית</button>
     <button class="btn btn-secondary" onclick="deleteSelectedBox()">🗑 מחק תיבה נבחרת</button>
     <button class="btn btn-secondary" onclick="dedupeCurrent()">🔗 מזג כפילויות</button>
+    <button class="btn btn-secondary" id="rejectedBtn" onclick="toggleRejected()">👁 הצג זיהויים שנפסלו</button>
     <button class="btn btn-secondary" onclick="resetToAI()">↺ אפס לזיהוי AI</button>
     <button class="btn btn-secondary" onclick="clearAllBoxes()">🧹 נקה הכל</button>
     <span class="spacer"></span>
@@ -955,6 +972,7 @@ let nextBoxId = 1;
 let nextResultId = 1;
 let selectedBoxId = null;
 let addMode = false;
+let showRejected = false;
 let dragInfo = null;      // {mode:'move'|'resize'|'draw', box, startX, startY, orig}
 
 function currentImage() { return currentIndex >= 0 ? images[currentIndex] : null; }
@@ -997,7 +1015,7 @@ function handleFiles(fileList) {
 
   let firstNewIndex = -1;
   files.forEach(file => {
-    const obj = { file, name: file.name, img: null, boxes: [], aiBoxes: [], results: [], processed: false, index: images.length };
+    const obj = { file, name: file.name, img: null, boxes: [], aiBoxes: [], rejected: [], results: [], processed: false, index: images.length };
     images.push(obj);
     if (firstNewIndex === -1) firstNewIndex = obj.index;
 
@@ -1037,10 +1055,21 @@ async function detectPersons(img, minConf) {
   const depth = document.getElementById('scanDepth').value;
   const useTiling = document.getElementById('tiledDetect').checked && depth !== 'off';
 
+  // Detect down to a floor below the user's threshold and split the results.
+  // Anything between the floor and the threshold is not discarded but set aside
+  // as a rejected candidate, so a person the model was merely unsure about can
+  // still be recovered by hand. Costs nothing: it is the same single pass.
+  const floor = Math.max(0.15, Math.min(minConf, minConf * 0.5));
   const raw = [];
+  const lowConf = [];
+  const sortInto = (p, ox = 0, oy = 0) => {
+    const box = { bbox: [p.bbox[0] + ox, p.bbox[1] + oy, p.bbox[2], p.bbox[3]], score: p.score };
+    (p.score >= minConf ? raw : lowConf).push(box);
+  };
+
   setStatus('סורק את כל התמונה...', 15);
-  const full = await cocoModel.detect(img, 200, minConf);
-  full.filter(p => p.class === 'person').forEach(p => raw.push({ bbox: p.bbox, score: p.score }));
+  const full = await cocoModel.detect(img, 200, floor);
+  full.filter(p => p.class === 'person').forEach(p => sortInto(p));
 
   if (useTiling) {
     const tiles = computeTiles(iw, ih, depth);
@@ -1051,7 +1080,7 @@ async function detectPersons(img, minConf) {
       tileCanvas.width = tile.w;
       tileCanvas.height = tile.h;
       tileCanvas.getContext('2d').drawImage(img, tile.x, tile.y, tile.w, tile.h, 0, 0, tile.w, tile.h);
-      const preds = await cocoModel.detect(tileCanvas, 200, minConf);
+      const preds = await cocoModel.detect(tileCanvas, 200, floor);
       const tol = 3;
       preds.filter(p => p.class === 'person').forEach(p => {
         const [px, py, pw, ph] = p.bbox;
@@ -1064,7 +1093,7 @@ async function detectPersons(img, minConf) {
         const cutLeft  = px <= tol && tile.x > 0;
         const cutRight = px + pw >= tile.w - tol && tile.x + tile.w < iw;
         if (cutLeft || cutRight) return;
-        raw.push({ bbox: [px + tile.x, py + tile.y, pw, ph], score: p.score });
+        sortInto(p, tile.x, tile.y);
       });
       // Yield to the UI thread so the progress bar actually animates.
       await new Promise(r => setTimeout(r, 0));
@@ -1072,8 +1101,19 @@ async function detectPersons(img, minConf) {
   }
 
   setStatus('ממזג ומנקה זיהויים...', 85);
-  const merged = mergeBoxes(raw);
-  return dropSizeOutliers(suppressCrowdBoxes(merged, iw, ih));
+  const rejected = [];
+  const merged = mergeBoxes(raw, undefined, undefined, rejected);
+  const boxes = dropSizeOutliers(suppressCrowdBoxes(merged, iw, ih, rejected), rejected);
+
+  // Fold in the unsure detections, minus any already covered by a kept box or by
+  // something already on the rejected list, so the review list stays meaningful.
+  const covered = b => boxes.some(k => iou(b.bbox, k.bbox) > 0.3) ||
+                       rejected.some(r => iou(b.bbox, r.bbox) > 0.5);
+  mergeBoxes(lowConf).forEach(b => {
+    if (!covered(b)) rejected.push({ bbox: b.bbox, score: b.score, reason: 'מתחת לרף הביטחון' });
+  });
+
+  return { boxes, rejected: rejected.map(r => ({ id: nextBoxId++, ...r })) };
 }
 
 // The detector squashes whatever it is given down to a fixed ~300x300 input, so
@@ -1124,7 +1164,7 @@ function computeTiles(iw, ih, depth) {
 // inside it is low, because the union is dominated by the huge box. Suppress a
 // box when it swallows two or more clearly smaller boxes, and drop boxes whose
 // shape cannot be a single standing/seated person.
-function suppressCrowdBoxes(boxes, imgW, imgH) {
+function suppressCrowdBoxes(boxes, imgW, imgH, rejected) {
   const area = b => b.bbox[2] * b.bbox[3];
 
   const containsMostOf = (big, small) => {
@@ -1147,7 +1187,7 @@ function suppressCrowdBoxes(boxes, imgW, imgH) {
     for (const o of boxes) {
       if (o === b) continue;
       if (area(o) < area(b) * 0.6 && containsMostOf(b, o)) {
-        if (++swallowed >= 2) return false;
+        if (++swallowed >= 2) { noteReject(rejected, b, 'תיבת קבוצה — בלעה כמה אנשים'); return false; }
       }
     }
     return true;
@@ -1159,13 +1199,20 @@ function suppressCrowdBoxes(boxes, imgW, imgH) {
   if (kept.length >= 3) {
     kept = kept.filter(b => {
       const [, , w, h] = b.bbox;
-      if (w > h * 1.6) return false;
-      if (w * h > imgW * imgH * 0.5) return false;
+      if (w > h * 1.6) { noteReject(rejected, b, 'רחבה מדי מכדי להיות אדם אחד'); return false; }
+      if (w * h > imgW * imgH * 0.5) { noteReject(rejected, b, 'מכסה חלק עצום מהתמונה'); return false; }
       return true;
     });
   }
 
   return kept.length ? kept : boxes;
+}
+
+// Nothing the detector found is thrown away for good — every filter records what
+// it discarded and why, so a person a rule got wrong can be shown and restored
+// by hand instead of silently disappearing.
+function noteReject(rejected, box, reason) {
+  if (rejected) rejected.push({ bbox: box.bbox, score: box.score, reason });
 }
 
 function iou(a, b) {
@@ -1245,13 +1292,19 @@ function fuseBoxes(a, b) {
   return boxArea(union) <= boxArea(larger) * 1.6 ? union : larger;
 }
 
-function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75) {
+function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75, rejected) {
   const sorted = [...raw].sort((a, b) => b.score - a.score);
   const kept = [];
   for (const box of sorted) {
     let dup = false;
     for (const k of kept) {
       if (isSamePerson(box.bbox, k.bbox, iouThresh, iosThresh)) {
+        // Near-identical boxes are certainly one person and not worth listing.
+        // A merge decided by containment is the judgement call that can be
+        // wrong, so record that one for review.
+        if (iou(box.bbox, k.bbox) <= iouThresh) {
+          noteReject(rejected, box, 'מוזגה כתצוגה חלקית של אדם אחר');
+        }
         k.bbox = fuseBoxes(k.bbox, box.bbox);
         k.score = Math.max(k.score, box.score);
         dup = true;
@@ -1272,6 +1325,9 @@ function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75) {
     for (let i = 0; i < kept.length && !changed; i++) {
       for (let j = i + 1; j < kept.length; j++) {
         if (isSamePerson(kept[i].bbox, kept[j].bbox, iouThresh, iosThresh)) {
+          if (iou(kept[i].bbox, kept[j].bbox) <= iouThresh) {
+            noteReject(rejected, kept[j], 'מוזגה כתצוגה חלקית של אדם אחר');
+          }
           kept[i].bbox = fuseBoxes(kept[i].bbox, kept[j].bbox);
           kept[i].score = Math.max(kept[i].score, kept[j].score);
           kept.splice(j, 1);
@@ -1290,11 +1346,15 @@ function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75) {
 // often visible only from the shoulders up, so their box is legitimately a small
 // fraction of a seated person's full-body box in the front row. Only a box that
 // is both tiny AND unconfident is treated as junk.
-function dropSizeOutliers(boxes) {
+function dropSizeOutliers(boxes, rejected) {
   if (boxes.length < 6) return boxes;
   const heights = boxes.map(b => b.bbox[3]).sort((a, b) => a - b);
   const median = heights[Math.floor(heights.length / 2)];
-  const kept = boxes.filter(b => b.bbox[3] > median * 0.18 || b.score >= 0.5);
+  const kept = boxes.filter(b => {
+    if (b.bbox[3] > median * 0.18 || b.score >= 0.5) return true;
+    noteReject(rejected, b, 'זעירה מדי ובביטחון נמוך');
+    return false;
+  });
   return kept.length ? kept : boxes;
 }
 
@@ -1684,6 +1744,32 @@ function redrawEditor() {
   const displayBoxes = sortBoxes(imgObj.boxes, sortMode);
   const scale = canvas.width / 900;
 
+  // Rejected candidates first, underneath the real boxes: dashed amber, so they
+  // read clearly as "not counted yet".
+  if (showRejected && imgObj.rejected && imgObj.rejected.length) {
+    ctx.save();
+    ctx.setLineDash([Math.max(6, 10 * scale), Math.max(4, 7 * scale)]);
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = Math.max(2, 2.5 * scale);
+    imgObj.rejected.forEach(r => {
+      const [x, y, w, h] = r.bbox;
+      ctx.strokeRect(x, y, w, h);
+      const fs = Math.max(11, Math.min(w * 0.3, 16 * scale));
+      ctx.setLineDash([]);
+      ctx.font = `bold ${fs}px Arial`;
+      const label = '＋';
+      const tw = ctx.measureText(label).width + fs * 0.6;
+      ctx.fillStyle = 'rgba(180,83,9,0.92)';
+      ctx.fillRect(x, y, tw, fs * 1.5);
+      ctx.fillStyle = '#fff';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x + fs * 0.3, y + fs * 0.75);
+      ctx.textBaseline = 'alphabetic';
+      ctx.setLineDash([Math.max(6, 10 * scale), Math.max(4, 7 * scale)]);
+    });
+    ctx.restore();
+  }
+
   displayBoxes.forEach((b, idx) => {
     const [x, y, w, h] = b.bbox;
     const isSelected = b.id === selectedBoxId;
@@ -1763,6 +1849,16 @@ function onPointerDown(evt) {
     selectedBoxId = newBox.id;
     dragInfo = { mode: 'draw', startX: x, startY: y, box: newBox };
     return;
+  }
+
+  // Clicking a rejected candidate promotes it — the quickest way to rescue
+  // someone a filter got wrong. Checked before the normal boxes, since a
+  // rejected box usually sits inside one.
+  if (showRejected && currentImage().rejected) {
+    const hitRejected = [...currentImage().rejected].reverse().find(r =>
+      x >= r.bbox[0] && x <= r.bbox[0] + r.bbox[2] &&
+      y >= r.bbox[1] && y <= r.bbox[1] + r.bbox[3]);
+    if (hitRejected) { promoteRejected(hitRejected.id); return; }
   }
 
   const hit = hitTestBox(x, y);
@@ -1872,6 +1968,45 @@ function selectBoxFromList(id) {
   updatePersonListPanel();
 }
 
+// ─── Rejected detections: review and restore ──────────────────────────────────
+function toggleRejected() {
+  showRejected = !showRejected;
+  const btn = document.getElementById('rejectedBtn');
+  btn.classList.toggle('active-mode', showRejected);
+  btn.textContent = showRejected ? '🙈 הסתר זיהויים שנפסלו' : '👁 הצג זיהויים שנפסלו';
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+// Turns a rejected candidate into a real person, so it gets a name, a number
+// and its own extracted image. Flagged manual so no filter can drop it again.
+function promoteRejected(id) {
+  const imgObj = currentImage();
+  if (!imgObj || !imgObj.rejected) return;
+  const idx = imgObj.rejected.findIndex(r => r.id === id);
+  if (idx < 0) return;
+  const r = imgObj.rejected.splice(idx, 1)[0];
+  imgObj.boxes.push({ id: nextBoxId++, bbox: r.bbox, score: r.score, manual: true });
+  selectedBoxId = null;
+  redrawEditor();
+  updatePersonListPanel();
+}
+
+function promoteAllRejected() {
+  const imgObj = currentImage();
+  if (!imgObj || !imgObj.rejected || !imgObj.rejected.length) return;
+  const n = imgObj.rejected.length;
+  if (!confirm(`להפוך את כל ${n} הזיהויים שנפסלו לתמונות נפרדות?`)) return;
+  imgObj.rejected.forEach(r => {
+    imgObj.boxes.push({ id: nextBoxId++, bbox: r.bbox, score: r.score, manual: true });
+  });
+  imgObj.rejected = [];
+  selectedBoxId = null;
+  redrawEditor();
+  updatePersonListPanel();
+  showAlert(`${n} זיהויים שנפסלו הפכו לתמונות נפרדות`, 'info');
+}
+
 // Manual second pass, deliberately more aggressive than the automatic one, for
 // when a few duplicates still slip through. Manual boxes are never touched.
 function dedupeCurrent() {
@@ -1903,6 +2038,7 @@ function clearAllBoxes() {
   if (!imgObj) return;
   if (imgObj.boxes.length && !confirm('למחוק את כל התיבות בתמונה זו?')) return;
   imgObj.boxes = [];
+  imgObj.rejected = [];
   selectedBoxId = null;
   redrawEditor();
   updatePersonListPanel();
@@ -1912,7 +2048,10 @@ function updatePersonListPanel() {
   const imgObj = currentImage();
   const panel = document.getElementById('personListPanel');
   if (!imgObj || imgObj.boxes.length === 0) {
-    panel.innerHTML = '<p style="color:#555;font-size:0.85rem;">אין עדיין תיבות. הרץ זיהוי או הוסף ידנית.</p>';
+    // Still list the rejects — when nothing was accepted, they are the only
+    // thing standing between the user and an empty result.
+    panel.innerHTML = '<p style="color:#555;font-size:0.85rem;">אין עדיין תיבות. הרץ זיהוי או הוסף ידנית.</p>' +
+                      (imgObj ? rejectedPanelHtml(imgObj) : '');
     document.getElementById('personCountInfo').textContent = '';
     updateActionButtons();
     return;
@@ -1925,8 +2064,32 @@ function updatePersonListPanel() {
     <div class="person-list-item ${b.id === selectedBoxId ? 'selected' : ''}" onclick="selectBoxFromList(${b.id})">
       <span>${escapeHtml(buildName(idx))} ${b.manual ? '✏️' : '🤖 ' + Math.round(b.score * 100) + '%'}</span>
       <button onclick="event.stopPropagation(); deleteBoxById(${b.id})" title="מחק">✕</button>
-    </div>`).join('');
+    </div>`).join('') + rejectedPanelHtml(imgObj);
   updateActionButtons();
+}
+
+function rejectedPanelHtml(imgObj) {
+  const rej = imgObj.rejected || [];
+  if (!rej.length) {
+    return showRejected
+      ? '<p style="color:#555;font-size:0.8rem;margin-top:10px;">אין זיהויים שנפסלו בתמונה זו.</p>'
+      : '';
+  }
+  if (!showRejected) {
+    return `<p style="color:#a16207;font-size:0.78rem;margin-top:10px;">
+      ${rej.length} זיהויים נפסלו — לחץ "👁 הצג זיהויים שנפסלו" כדי לשחזר.</p>`;
+  }
+  return `
+    <div style="margin-top:12px;border-top:1px solid #3a3a6a;padding-top:10px;">
+      <div style="font-size:0.8rem;color:#fbbf24;margin-bottom:6px;">נפסלו (${rej.length}) — לחץ כדי להפוך לתמונה</div>
+      <button class="btn btn-secondary" style="width:100%;justify-content:center;font-size:0.78rem;padding:6px;margin-bottom:8px;"
+        onclick="promoteAllRejected()">➕ הפוך את כולם לתמונות</button>
+      ${rej.map(r => `
+        <div class="person-list-item" style="border-color:#a16207;" onclick="promoteRejected(${r.id})" title="לחץ כדי להפוך לתמונה נפרדת">
+          <span style="font-size:0.75rem;">${Math.round(r.score * 100)}% — ${escapeHtml(r.reason)}</span>
+          <button onclick="event.stopPropagation(); promoteRejected(${r.id})" style="color:#fbbf24;" title="הפוך לתמונה">＋</button>
+        </div>`).join('')}
+    </div>`;
 }
 
 function updateActionButtons() {
@@ -2011,9 +2174,10 @@ async function detectCurrent() {
   const minConf = parseInt(document.getElementById('minConf').value) / 100;
   document.getElementById('processBtn-detect').disabled = true;
   try {
-    const boxes = await detectPersons(imgObj.img, minConf);
+    const { boxes, rejected } = await detectPersons(imgObj.img, minConf);
     imgObj.aiBoxes = boxes.map(b => ({ ...b }));
     imgObj.boxes = boxes;
+    imgObj.rejected = rejected;
     selectedBoxId = null;
     redrawEditor();
     updatePersonListPanel();

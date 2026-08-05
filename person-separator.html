@@ -1091,8 +1091,9 @@ function computeTiles(iw, ih, depth) {
   })[depth] || { target: 460, max: 24 };
 
   // Below this the full-frame pass already keeps people large relative to the
-  // model input, so tiling only costs time.
-  if (Math.max(iw, ih) < 900) return [];
+  // model input, so tiling only costs time. Kept low, because a small classroom
+  // photo with a partly hidden back row still benefits from a closer look.
+  if (Math.max(iw, ih) < 600) return [];
 
   let t = cfg.target;
   let cols = Math.ceil(iw / t), rows = Math.ceil(ih / t);
@@ -1134,7 +1135,14 @@ function suppressCrowdBoxes(boxes, imgW, imgH) {
     return sw * sh > 0 && inter / (sw * sh) > 0.7;
   };
 
+  // Only a box well above the typical person size can be a crowd box. A normal
+  // seated person in the front row often has two back-row heads showing inside
+  // their box; without this guard that person was deleted as a "crowd".
+  const areas = boxes.map(area).sort((x, y) => x - y);
+  const medianArea = areas[Math.floor(areas.length / 2)] || 0;
+
   let kept = boxes.filter(b => {
+    if (area(b) < medianArea * 1.8) return true;
     let swallowed = 0;
     for (const o of boxes) {
       if (o === b) continue;
@@ -1186,7 +1194,12 @@ function intersectArea(a, b) {
 // two or three times. The column test is what keeps this from fusing two
 // different girls: duplicates of one person share a centre line, whereas
 // neighbours standing shoulder to shoulder are a body-width apart.
-function isSamePerson(a, b, iouThresh = 0.6, iosThresh = 0.6) {
+// iosThresh is deliberately high. A genuine partial view sits ~95-100% inside
+// the fuller view of the same person, whereas two different people standing one
+// close behind the other reach only ~60-65%. Erring toward keeping both is the
+// right trade: a duplicate is obvious and removable in one click, while someone
+// silently merged away has to be noticed and redrawn by hand.
+function isSamePerson(a, b, iouThresh = 0.6, iosThresh = 0.75) {
   if (iou(a, b) > iouThresh) return true;
 
   const smaller = Math.min(a[2] * a[3], b[2] * b[3]);
@@ -1196,6 +1209,15 @@ function isSamePerson(a, b, iouThresh = 0.6, iosThresh = 0.6) {
   // Same vertical column.
   const acx = a[0] + a[2] / 2, bcx = b[0] + b[2] / 2;
   if (Math.abs(acx - bcx) >= Math.min(a[2], b[2]) * 0.5) return false;
+
+  // Similar width. A partial view of one person is cut vertically, never
+  // narrowed: a head-and-shoulders box is about as wide as the full body,
+  // because the shoulders are the widest part. A child standing BEHIND someone
+  // is a different matter — only their head shows between the row in front, so
+  // their box is far narrower while still sitting inside the front person's box,
+  // in the same column, with a near-aligned top. Without this test that back-row
+  // child was absorbed into the person in front and vanished.
+  if (Math.min(a[2], b[2]) / Math.max(a[2], b[2]) < 0.65) return false;
 
   // Decisive test. Rows in a packed class photo overlap vertically by most of
   // their height, so a girl in the back row and the girl below her in the next
@@ -1223,7 +1245,7 @@ function fuseBoxes(a, b) {
   return boxArea(union) <= boxArea(larger) * 1.6 ? union : larger;
 }
 
-function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.6) {
+function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.75) {
   const sorted = [...raw].sort((a, b) => b.score - a.score);
   const kept = [];
   for (const box of sorted) {
@@ -1264,13 +1286,15 @@ function mergeBoxes(raw, iouThresh = 0.6, iosThresh = 0.6) {
 }
 
 // Scattered fragments (a stray hand, a chair leg read as a person) come back far
-// smaller than a real girl. Everyone in a group photo is roughly one of a few
-// sizes, so anything well under the median height is not a person.
+// smaller than a real person. This has to stay timid: someone in a back row is
+// often visible only from the shoulders up, so their box is legitimately a small
+// fraction of a seated person's full-body box in the front row. Only a box that
+// is both tiny AND unconfident is treated as junk.
 function dropSizeOutliers(boxes) {
   if (boxes.length < 6) return boxes;
   const heights = boxes.map(b => b.bbox[3]).sort((a, b) => a - b);
   const median = heights[Math.floor(heights.length / 2)];
-  const kept = boxes.filter(b => b.bbox[3] > median * 0.35);
+  const kept = boxes.filter(b => b.bbox[3] > median * 0.18 || b.score >= 0.5);
   return kept.length ? kept : boxes;
 }
 
@@ -1856,7 +1880,7 @@ function dedupeCurrent() {
   const manual = imgObj.boxes.filter(b => b.manual);
   const auto   = imgObj.boxes.filter(b => !b.manual);
   const before = auto.length;
-  const deduped = mergeBoxes(auto.map(b => ({ bbox: b.bbox, score: b.score })), 0.45, 0.5);
+  const deduped = mergeBoxes(auto.map(b => ({ bbox: b.bbox, score: b.score })), 0.45, 0.6);
   imgObj.boxes = [...deduped, ...manual];
   selectedBoxId = null;
   redrawEditor();

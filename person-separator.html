@@ -581,13 +581,14 @@
       <h3>החברות נכנסות לתמונה — איך מסלקים אותן</h3>
       <p>חיתוך הוא תמיד <strong>מלבן</strong>, ובתמונה צפופה מלבן סביב בת אחת תמיד יכיל חלקים מהבנות שלידה. הקטנת הרווח לא פותרת — היא רק חותכת לבת עצמה את הידיים. הפתרון האמיתי הוא לחתוך <strong>לפי קו הגוף</strong> ולא לפי מלבן. בהגדרות יש <strong>"בידוד לפי צללית"</strong> עם שלוש אפשרויות:</p>
       <ul>
-        <li><strong>עמעום השכנות</strong> — הרקע נשאר, אבל הבנות האחרות מועמעמות בדיוק לפי הצללית שלהן. התמונה נראית טבעית והבת שלך בולטת.</li>
-        <li><strong>טשטוש השכנות</strong> — כמו אפקט "פורטרט" במצלמה: הבת חדה, השכנות מטושטשות.</li>
+        <li><strong>עמעום כל מה שמסביב</strong> — האדם נשאר בבהירות מלאה, וכל השאר (החברים והרקע) מועמעם. התמונה נראית טבעית והוא בולט.</li>
+        <li><strong>טשטוש כל מה שמסביב</strong> — בדיוק כמו מצב "פורטרט" במצלמה: האדם חד, כל השאר מטושטש.</li>
         <li><strong>הסרת רקע מלאה</strong> — PNG שקוף עם הבת בלבד. הכי נקי, מצוין להדבקה במסמך או במצגת.</li>
       </ul>
       <div class="tip-box">
         <p>הכל רץ במחשב שלך, בחינם, בלי מפתח API ובלי לשלוח את התמונה לשום מקום. בפעם הראשונה יורד מודל קטן (~5MB) ולכן החילוץ הראשון לוקח קצת יותר זמן.</p>
       </div>
+      <p style="margin-top:8px;">אם התקבלה הודעה ש"לא נמצאה צללית" בחלק מהתמונות — סימן שהמודל לא הצליח לזהות את קווי הגוף באותו חיתוך (קורה כשהאדם קטן מאוד או מוסתר ברובו). נסה להגדיל את <strong>הרווח סביב האדם</strong> ל-25-30% כדי לתת למודל יותר גוף לעבוד איתו.</p>
       <p style="margin-top:8px;">רוצה את האיכות הגבוהה ביותר? <strong>SAM 2</strong> (בהסרת רקע) עדיין מדויק יותר, אבל דורש מפתח Replicate בתשלום ושולח את התמונה לשרת חיצוני.</p>
     </div>
 
@@ -812,8 +813,8 @@
       <label>בידוד לפי צללית — מקומי וחינם 🪄</label>
       <select id="isolateMode" onchange="persistSettings()">
         <option value="off">כבוי — חיתוך ריבועי בלבד</option>
-        <option value="dim">עמעום השכנות לפי הצללית שלהן</option>
-        <option value="blur">טשטוש השכנות (רקע מטושטש, כמו במצלמה)</option>
+        <option value="dim">עמעום כל מה שמסביב (החברים והרקע)</option>
+        <option value="blur">טשטוש כל מה שמסביב — מצב פורטרט</option>
         <option value="cutout">הסרת רקע מלאה — PNG שקוף</option>
       </select>
     </div>
@@ -1693,6 +1694,7 @@ function applySpotlight(cropCanvas, targetBox, allBoxes, cropOriginX, cropOrigin
 // never enable this do not pay for the download.
 let bodyPixNet = null;
 let bodyPixLoading = null;
+let isolateMisses = 0;
 
 function loadScriptOnce(src) {
   return new Promise((resolve, reject) => {
@@ -1774,9 +1776,8 @@ async function segmentCrop(cropCanvas, subjectRect) {
     scoreThreshold: 0.2,
     nmsRadius: 20
   });
-  if (!segs || !segs.length) return null;
-
   const w = cropCanvas.width, h = cropCanvas.height;
+  if (!segs || !segs.length) return segmentFallback(net, cropCanvas, subjectRect, w, h);
   const sampler = seg => {
     const sw = seg.width, sh = seg.height;
     return (x, y) => seg.data[Math.min(sh - 1, (y * sh / h) | 0) * sw + Math.min(sw - 1, (x * sw / w) | 0)];
@@ -1800,24 +1801,52 @@ async function segmentCrop(cropCanvas, subjectRect) {
     const score = inside - outside * 0.5;
     if (score > bestScore) { bestScore = score; best = seg; }
   });
-  if (!best || bestScore <= 0) return null;
+  if (!best || bestScore <= 0) return segmentFallback(net, cropCanvas, subjectRect, w, h);
 
   const subject = new Uint8Array(w * h);
-  const others  = new Uint8Array(w * h);
   const atBest = sampler(best);
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) if (atBest(x, y)) subject[y * w + x] = 1;
   }
-  segs.forEach(seg => {
-    if (seg === best) return;
-    const at = sampler(seg);
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const i = y * w + x;
-        if (!subject[i] && at(x, y)) others[i] = 1;
+  return withBackground(subject, w, h);
+}
+
+// When the instance pass finds nobody, fall back to the plain person/background
+// mask and call the people inside the subject's own box the subject. Cruder, but
+// it still separates a person from everything around them.
+async function segmentFallback(net, cropCanvas, subjectRect, w, h) {
+  let seg;
+  try {
+    seg = await net.segmentPerson(cropCanvas, {
+      internalResolution: 'high', segmentationThreshold: 0.7
+    });
+  } catch (e) { return null; }
+  if (!seg || !seg.data) return null;
+
+  const sw = seg.width, sh = seg.height;
+  const subject = new Uint8Array(w * h);
+  let any = false;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const on = seg.data[Math.min(sh - 1, (y * sh / h) | 0) * sw + Math.min(sw - 1, (x * sw / w) | 0)];
+      if (!on) continue;
+      if (x >= subjectRect.x && x <= subjectRect.x + subjectRect.w &&
+          y >= subjectRect.y && y <= subjectRect.y + subjectRect.h) {
+        subject[y * w + x] = 1;
+        any = true;
       }
     }
-  });
+  }
+  return any ? withBackground(subject, w, h) : null;
+}
+
+// Everything that is not the subject. Blur and dim work from this rather than
+// from other detected people: a neighbour cropped in half at the edge of the
+// frame often is not recognised as a person at all, so keying off "other
+// people" left the layer empty and the effect did nothing at all.
+function withBackground(subject, w, h) {
+  const others = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) if (!subject[i]) others[i] = 1;
   return { subject, others };
 }
 
@@ -1844,7 +1873,9 @@ function maskToCanvas(flags, w, h, blurPx) {
 
 async function isolateSubject(cropCanvas, subjectRect, mode) {
   const seg = await segmentCrop(cropCanvas, subjectRect);
-  if (!seg) return cropCanvas;
+  // Returning the crop untouched used to look like the setting did nothing at
+  // all, with no explanation. Say so instead.
+  if (!seg) { isolateMisses++; return cropCanvas; }
 
   const w = cropCanvas.width, h = cropCanvas.height;
   const feather = Math.max(1, Math.round(Math.min(w, h) * 0.006));
@@ -2399,6 +2430,7 @@ async function extractCurrent() {
   const replicateKey = document.getElementById('replicateKey').value.trim();
   const isolateMode = document.getElementById('isolateMode').value;
   let isolateFailed = false;
+  isolateMisses = 0;
   const spotlightStrength = (parseInt(document.getElementById('spotlightStrength').value) || 0) / 100;
   const spotlightOn = document.getElementById('spotlightToggle').checked && !useRemoveBg && spotlightStrength > 0;
   const upscaleOn = document.getElementById('autoUpscaleToggle').checked;
@@ -2464,6 +2496,10 @@ async function extractCurrent() {
     allResults.push(result);
     imgObj.results.push(result);
     addResultCard(result);
+  }
+
+  if (isolateMode !== 'off' && isolateMisses > 0) {
+    showAlert(`לא נמצאה צללית ב-${isolateMisses} מתוך ${boxes.length} תמונות — הן נשמרו כחיתוך רגיל. נסה להגדיל את הרווח סביב האדם.`, 'info');
   }
 
   imgObj.processed = true;

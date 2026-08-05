@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>{{שם הספר}}</title>
+<style>
+/* ===== 1. כל התוכן של assets/base.css ===== */
+/* ===== 2. אחריו, כל התוכן של assets/paginated.css ===== */
+/* ===== 3. ורק אז כללים ייחודיים לספר הזה, אם יש ===== */
+</style>
+</head>
+<body>
+
+<!-- ה-id="book" הוא מה שמפעיל את מצב העמודים. class="container" נשאר — ממנו
+     מגיעים הרקע והפינות המעוגלות, ועליו מבוססת לחיצה-להקראה. -->
+<div class="container" id="book">
+
+    <!-- עמוד 1: כריכה פנימית -->
+    <div class="page page-cover active" data-title="כריכה">
+        <h1 class="main-title" id="top">{{שם הספר}}</h1>
+        <div class="subtitle">{{תת-כותרת}}</div>
+        <div class="author">מאת: הרב יהודה טאוב</div>
+    </div>
+
+    <!-- עמוד 2: מבט-על — רשת כל הפרקים. data-page ולא עוגן. -->
+    <div class="page" data-title="מבט על הספר">
+        <nav class="chapter-grid" aria-label="מבט על פרקי הספר">
+            <h2 class="grid-title">תּוֹכֶן הָעִנְיָנִים</h2>
+            <a class="chapter-chip" href="#" data-page="3"><span class="n">1</span>{{כותרת פרק א}}</a>
+            <a class="chapter-chip" href="#" data-page="4"><span class="n">2</span>{{כותרת פרק ב}}</a>
+        </nav>
+    </div>
+
+    <!-- עמוד 3: מפתח עניינים מפורט -->
+    <div class="page" data-title="תוכן העניינים">
+        <h2>📑 תוכן העניינים</h2>
+        <div class="toc">
+            <ul>
+                <li>
+                    <a class="toc-chapter" href="#" data-page="4">{{כותרת פרק א}}</a>
+                    <span class="toc-subs"><a href="#" data-page="4">{{תת-נושא}}</a><span>·</span><a href="#" data-page="4">{{תת-נושא}}</a></span>
+                </li>
+                <li>
+                    <a class="toc-chapter" href="#" data-page="5">{{כותרת פרק ב}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- עמוד 3 ואילך: פרק לעמוד -->
+    <div class="page" data-title="{{כותרת פרק א}}">
+        <span class="chapter-label">פרק א</span>
+        <h2 id="section1">{{כותרת פרק א}}</h2>
+        <div class="in-this-chapter">
+            <h4>📖 בפרק זה:</h4>
+            <ul><li>{{תת-נושא}}</li><li>סיפור: {{שם הסיפור}}</li></ul>
+        </div>
+        <p>{{...}}</p>
+    </div>
+
+    <div class="page" data-title="{{כותרת פרק ב}}">
+        <span class="chapter-label">פרק ב</span>
+        <h2 id="section2">{{כותרת פרק ב}}</h2>
+        <p>{{...}}</p>
+    </div>
+
+    <!-- עמוד מקורות -->
+    <div class="page" data-title="מקורות">
+        <div class="sources">
+            <h2>📚 מקורות ומראי מקומות</h2>
+            <ol><li>{{מקור}}</li></ol>
+        </div>
+    </div>
+
+    <!-- עמוד אחרון: חתימה -->
+    <div class="page page-end" data-title="חתימה">
+        <div class="footer" style="border: none; margin: 0;">
+            <strong>נכתב ונערך על ידי:</strong><br>
+            <strong>הרב יהודה טאוב</strong><br>
+            קרית אתא<br>
+            📞 <strong>ליצירת קשר:</strong> 0527139520<br><br>
+
+            <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); border-radius: 10px; color: #1f2937;">
+                <h4>🎧 שיעורים נוספים של הרב</h4>
+                <p><strong>ניתן לשמוע עוד שיעורים נפלאים:</strong></p>
+                <p>📻 <strong>קול הלשון - קול תודה:</strong> 03-6171190</p>
+                <p>🌐 <strong>באתר:</strong> <a href="https://www.kol-toda.co.il/">www.kol-toda.co.il</a></p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- סרגל ההאזנה: אחד לכל הספר, צף מעל הניווט. מקריא את העמוד המוצג
+     וממשיך לעמוד הבא מעצמו. מבנה זהה לתבנית הרגילה + class נוסף. -->
+<div class="listen-bar book-listen-bar">
+    <div class="listen-btn-group">
+        <button class="listen-btn" id="listenBtn" onclick="toggleListen()"
+                aria-pressed="false" aria-label="הפעל או השהה הקראה">🔊 האזן</button>
+        <button class="listen-skip-btn" onclick="skipListen(-1)" aria-label="פסקה קודמת" title="פסקה קודמת">⏮</button>
+        <button class="listen-skip-btn" onclick="skipListen(1)"  aria-label="פסקה הבאה"  title="פסקה הבאה">⏭</button>
+        <button class="listen-stop-btn" onclick="stopListen()"   aria-label="עצור הקראה">⏹</button>
+        <button class="listen-toggle-btn" id="clickReadBtn" onclick="toggleClickRead()"
+                aria-pressed="true" aria-label="לחיצה על פסקה מתחילה הקראה">👆 לחיצה: פעילה</button>
+    </div>
+    <span class="listen-status" id="listenStatus" role="status" aria-live="polite">לחץ כדי להתחיל האזנה, או לחץ על כל פסקה כדי להתחיל להקריא ממנה</span>
+    <span class="listen-progress" id="listenProgress"></span>
+    <div class="listen-rate">
+        <label for="rateRange">מהירות:</label>
+        <input type="range" id="rateRange" min="0.5" max="1.6" step="0.1" value="1"
+               oninput="setListenRate(this.value)" onchange="applyListenRate(this.value)" aria-label="מהירות הקראה">
+        <output id="rateValue" for="rateRange">1.0×</output>
+    </div>
+    <div class="listen-voice">
+        <label for="voiceSelect">קול:</label>
+        <select id="voiceSelect" onchange="setListenVoice(this.value)" aria-label="בחירת קול"></select>
+    </div>
+    <button class="listen-collapse" id="listenCollapse" onclick="toggleListenBar()"
+            aria-expanded="true" aria-label="קפל את סרגל ההאזנה" title="קפל את סרגל ההאזנה">⌄</button>
+</div>
+
+<!-- ניווט. ב-RTL הילד הראשון מופיע מימין, ולכן "הקודם" ראשון. -->
+<nav class="book-nav" aria-label="ניווט בין עמודי הספר">
+    <button class="nav-arrow" id="bookPrev" onclick="bookJump(-1)" aria-label="עמוד קודם">▶</button>
+    <div class="book-dots" id="bookDots"></div>
+    <span class="book-counter" id="bookCounter"></span>
+    <button class="nav-arrow" id="bookNext" onclick="bookJump(1)" aria-label="עמוד הבא">◀</button>
+</nav>
+
+<script>
+/* ===== הדבק כאן את כל התוכן של assets/paginated.js — לפני tts.js ===== */
+</script>
+
+<script>
+/* ===== ואחריו את כל התוכן של assets/tts.js, מילה במילה ===== */
+</script>
+
+</body>
+</html>

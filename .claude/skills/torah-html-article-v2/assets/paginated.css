@@ -1,0 +1,134 @@
+/* =============================================================================
+   קול תודה — ספר דיגיטלי מתחלף   |   paginated.css   v2.0
+   נוסף *אחרי* base.css, לא במקומו. רק כשהמשתמש ביקש עמוד-לעמוד.
+   ============================================================================= */
+
+body { padding: 20px 15px 0; overflow: hidden; }
+
+/* --chrome-h נמדד בפועל ב-paginated.js ולא מקובע כאן: גובה הסרגל משתנה
+   כששם הקול ארוך, כשהוא נשבר לשתי שורות בנייד, וכשמקפלים אותו. מספר קשיח
+   כאן פירושו סרגל שמכסה תוכן. 150px הוא רק ערך התחלתי עד המדידה הראשונה. */
+:root { --chrome-h: 150px; }
+
+#book {
+    max-width: 1000px; margin: 0 auto;
+    padding: 0; overflow: hidden;
+    height: calc(100dvh - var(--chrome-h));
+}
+
+.page {
+    display: none;
+    height: 100%;
+    padding: 45px 60px 55px;   /* שוליים תחתונים — שלא תיחתך שורה בדיוק בקצה */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+.page.active { display: block; animation: pageIn .35s ease-out; }
+@keyframes pageIn { from { opacity: 0; transform: scale(.985); } to { opacity: 1; transform: none; } }
+
+/* עמוד הכריכה הפנימית ועמוד החתימה — ממורכזים אנכית */
+.page.page-cover, .page.page-end { display: none; }
+.page.page-cover.active, .page.page-end.active {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+}
+.page.page-cover .main-title { margin-bottom: 20px; }
+.page h2:first-child { margin-top: 0; }
+
+/* בפורמט הזה כל עמוד הוא כבר "דף חדש" — הכרטיס והמפריד מיותרים */
+#book .chapter-card, #book .chapter-divider { display: none; }
+
+/* ---------- ניווט ---------- */
+.book-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    padding: 12px 20px;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+}
+.nav-arrow {
+    width: 46px; height: 46px; border-radius: 50%; flex: 0 0 auto;
+    background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+    color: #fff; border: none; font-size: 1.2em; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .15s, opacity .15s;
+}
+.nav-arrow:hover:not(:disabled) { transform: scale(1.08); }
+.nav-arrow:disabled { opacity: .3; cursor: default; }
+.nav-arrow:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+
+.book-dots { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; max-width: 55vw; }
+.book-dot {
+    width: 10px; height: 10px; border-radius: 50%; padding: 0;
+    background: #d1d5db; border: none; cursor: pointer; transition: all .2s;
+}
+.book-dot:hover { background: var(--pink); }
+.book-dot.active { background: var(--purple); width: 26px; border-radius: 5px; }
+.book-dot:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+.book-counter { font-size: .9em; color: var(--muted); white-space: nowrap; }
+
+/* סרגל ההאזנה צף מעל הניווט, אחד לכל הספר.
+   ה-bottom נקבע ב-JS לפי הגובה האמיתי של הניווט. */
+.book-listen-bar {
+    position: fixed; bottom: 70px; left: 0; right: 0; z-index: 39;
+    margin: 0; border-radius: 0; border-right: none;
+    border-top: 3px solid var(--gold);
+    transition: padding .2s;
+}
+
+/* מקופל: הסרגל מפסיק להיות רצועה ברוחב מלא והופך לגלולה צפה בפינה.
+   כך הוא לא שומר לעצמו שורה — שטח המסך של הטקסט כמעט מוכפל. */
+.book-listen-bar.collapsed {
+    right: auto; width: auto; padding: 6px 10px;
+    /* z-index גבוה מהניווט (40), אחרת הגלולה נבלעת מאחוריו ונעלמת.
+       הניווט ממורכז, ולכן הפינה השמאלית שלו פנויה בדיוק בשבילה. */
+    z-index: 45;
+    bottom: 12px !important; left: 14px;
+    border-radius: 30px; border: 2px solid var(--gold); border-top: 2px solid var(--gold);
+    box-shadow: 0 6px 18px rgba(0,0,0,.22);
+    gap: 8px;
+}
+.book-listen-bar.collapsed .listen-status,
+.book-listen-bar.collapsed .listen-progress,
+.book-listen-bar.collapsed .listen-rate,
+.book-listen-bar.collapsed .listen-voice,
+.book-listen-bar.collapsed .listen-toggle-btn,
+.book-listen-bar.collapsed .listen-skip-btn { display: none; }
+.book-listen-bar.collapsed .listen-btn { padding: 7px 18px; font-size: .95em; }
+
+.listen-collapse {
+    margin-right: auto;                 /* RTL: נצמד לקצה השמאלי */
+    width: 34px; height: 34px; border-radius: 50%;
+    background: #fff; color: var(--purple); border: 2px solid var(--purple);
+    font-size: 1em; line-height: 1; cursor: pointer; flex: 0 0 auto;
+    transition: transform .2s, background .15s;
+}
+.listen-collapse:hover { background: #f3e8ff; }
+.listen-collapse:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+.book-listen-bar.collapsed .listen-collapse { transform: rotate(180deg); }
+
+@media (max-width: 768px) {
+    body { padding: 10px 8px 0; }
+    #book { height: calc(100vh - 190px); }
+    .page { padding: 25px 20px; }
+    .book-listen-bar { bottom: 62px; }
+    .book-dots { max-width: 45vw; gap: 5px; }
+    .book-dot { width: 8px; height: 8px; }
+    .book-dot.active { width: 20px; }
+    .nav-arrow { width: 40px; height: 40px; }
+    .book-counter { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page.active { animation: none; }
+}
+
+/* הפורמט המתחלף הוא למסך בלבד. גרסת הדפסה = קובץ נפרד בגלילה רציפה. */
+@media print {
+    body { overflow: visible; padding: 0; }
+    #book { height: auto; overflow: visible; }
+    .page, .page.page-cover, .page.page-end { display: block !important; height: auto; overflow: visible;
+                                              padding: 0; page-break-after: always; break-after: page; }
+    .book-nav, .book-listen-bar { display: none !important; }
+}

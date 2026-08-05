@@ -2,19 +2,15 @@
 name: torah-html-article-v2
 version: 2.6.0
 description: >
-  The full-featured (v2) generator for Hebrew Torah content as a single self-contained HTML file —
-  articles AND books (shiurim, parasha, halacha, moadim, mussar), in the house style of
-  Rabbi Yehuda Taub (קול תודה). Beyond a styled article it adds: a built-in "listen to the article"
-  text-to-speech button (Web Speech API, no external service), a page-turning book format
-  (עמוד-לעמוד / paginated), a separate A4 cover page with a renderer to PNG/PDF, a hierarchical
-  table of contents, and tested asset files that are copied verbatim rather than rewritten.
-  Use this skill when the user asks for a "ספר תורני", a paginated/page-turning HTML book,
-  a כריכה / cover, an article with הקראה קולית / TTS / "להאזין למאמר", or explicitly asks for
-  v2 / הגרסה החדשה / הגרסה המלאה. Also use it for a plain "מאמר HTML" / "דף תורני מעוצב" /
-  raw shiur transcript turned into a formatted document, when those extra capabilities are wanted
-  or when no specific version was requested — it is a superset of the older `torah-html-article`
-  skill, which remains installed separately for the simpler single-file article flow.
-  Never default to plain markdown for Torah content.
+  Full-featured (v2) generator of Hebrew Torah content as a single self-contained HTML file —
+  articles and books (shiurim, parasha, halacha, moadim, mussar) — in the house style of
+  Rabbi Yehuda Taub (קול תודה). Adds built-in text-to-speech ("listen to the article",
+  Web Speech API), a page-turning book format (עמוד-לעמוד), a separate A4 cover rendered to
+  PNG/PDF, and a hierarchical table of contents. Use for "ספר תורני", a paginated HTML book,
+  a כריכה / cover, הקראה קולית / TTS, or an explicit v2 / הגרסה החדשה. Also use for a plain
+  "מאמר HTML", "דף תורני מעוצב", or a raw shiur transcript to format, whenever no version was
+  named — it supersedes the older `torah-html-article` skill, which now runs only when called
+  by name. Never default to plain markdown for Torah content.
 ---
 
 # מאמר תורני ב-HTML — סגנון הבית

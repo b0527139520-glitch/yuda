@@ -96,7 +96,7 @@ for (const n of nodes) {
         raw.push(current);
     }
     /* השורה הראשונה בקטע היא הכותרת, כל השאר גוף */
-    (current.head.length ? current.body : current.head).push(spoken);
+    (current.head.length ? current.body : current.head).push({ el: n, text: spoken });
 }
 
 /* קטע שאין בו גוף מעבר לכותרת אינו פרק אמיתי.
@@ -143,13 +143,14 @@ function resolveEdge() {
     return null;
 }
 
-function synth(txtFile, mp3File) {
+function synth(txtFile, mp3File, srtFile) {
     const cmd = resolveEdge();
     if (!cmd) {
         console.error('edge-tts לא נמצא. הרץ:  pip install edge-tts');
         process.exit(1);
     }
-    const args = [...cmd[1], '--voice', voice, '--file', txtFile, '--write-media', mp3File];
+    const args = [...cmd[1], '--voice', voice, '--file', txtFile,
+                  '--write-media', mp3File, '--write-subtitles', srtFile];
     if (rate) args.push('--rate', rate);
     const r = spawnSync(cmd[0], args, { stdio: ['ignore', 'ignore', 'inherit'] });
     if (r.status !== 0) return false;
@@ -157,30 +158,94 @@ function synth(txtFile, mp3File) {
     return fs.existsSync(mp3File) && fs.statSync(mp3File).size > 0;
 }
 
+/* ---------- יישור תזמונים ----------
+   edge-tts מפיק cue לכל מילה (WordBoundary). כאן ממפים אותם חזרה לפסקאות:
+   לכל פסקה נשמר הזמן שבו נאמרה המילה הראשונה שלה, וזה מה שמניע את ההדגשה. */
+const norm = (w) => w.replace(/["'״׳,.;:!?()\[\]־–—]/g, '').trim();
+
+function parseSrt(srt) {
+    const cues = [];
+    for (const block of srt.split(/\r?\n\r?\n/)) {
+        const m = block.match(/(\d{2}):(\d{2}):(\d{2})[,.](\d{3})\s*-->/);
+        if (!m) continue;
+        const text = block.split(/\r?\n/).slice(2).join(' ').trim();
+        if (!text) continue;
+        cues.push({ start: +m[1] * 3600 + +m[2] * 60 + +m[3] + +m[4] / 1000, text });
+    }
+    return cues;
+}
+
+function alignCues(srt, lines) {
+    const cues = parseSrt(srt);
+    if (!cues.length) return null;
+
+    /* מערך מילים שטוח, כל מילה יודעת לאיזו פסקה היא שייכת */
+    const flat = [];
+    lines.forEach((text, i) => {
+        for (const w of text.split(/\s+/)) if (norm(w)) flat.push({ w: norm(w), line: i });
+    });
+
+    const starts = new Array(lines.length).fill(undefined);
+    let p = 0;
+    for (const cue of cues) {
+        const words = cue.text.split(/\s+/).map(norm).filter(Boolean);
+        if (!words.length) continue;
+        /* סנכרון מחדש: מחפשים את מילת ה-cue קדימה בחלון קצר, כדי שסטייה
+           קטנה (פיסוק, מילה שאוחדה) לא תגרור את כל השאר */
+        for (let q = p; q < Math.min(p + 12, flat.length); q++) {
+            if (flat[q].w === words[0]) { p = q; break; }
+        }
+        if (p < flat.length && starts[flat[p].line] === undefined) {
+            starts[flat[p].line] = cue.start;
+        }
+        p += words.length;
+        if (p >= flat.length) break;
+    }
+
+    /* פסקה שלא נתפסה יורשת את הזמן שלפניה — ההדגשה נשארת מונוטונית */
+    let last = 0;
+    for (let i = 0; i < starts.length; i++) {
+        if (starts[i] === undefined) starts[i] = last;
+        else last = starts[i];
+    }
+    return starts.map((s) => Math.round(s * 100) / 100);
+}
+
 /* ---------- הפקה ---------- */
 const made = [];
 let totalWords = 0;
 
+const cueMap = {};
+
 for (let i = 0; i < parts.length; i++) {
-    const text = parts[i].lines.join('\n');
+    const text = parts[i].lines.map((l) => l.text).join('\n');
     const words = text.split(/\s+/).filter(Boolean).length;
     totalWords += words;
 
     const txtFile = path.join(audioDir, nameOf(i) + '.txt');
     const mp3File = path.join(audioDir, nameOf(i) + '.mp3');
+    const srtFile = path.join(audioDir, nameOf(i) + '.srt');
     fs.writeFileSync(txtFile, text, 'utf8');
+
+    /* תיוג הפסקאות — גם ב-dry-run, כדי שהרצה אמיתית אחר כך רק תוסיף תזמונים */
+    parts[i].lines.forEach((l, j) => l.el.setAttribute('data-a', pad(i) + '-' + j));
 
     const mins = (words / 140).toFixed(1);
     process.stdout.write(`[${pad(i)}] ${parts[i].title.slice(0, 40)} — ${words} מילים, ~${mins} דק'`);
 
     if (dryRun) {
         console.log('  (dry-run)');
-    } else if (!synth(txtFile, mp3File)) {
+    } else if (!synth(txtFile, mp3File, srtFile)) {
         console.log('  ✗ נכשל');
         console.error('\nההפקה נעצרה. אם זו שגיאת רשת — הרץ שוב, הקבצים שכבר נוצרו יישמרו.');
         process.exit(1);
     } else {
         console.log(`  ✓ ${Math.round(fs.statSync(mp3File).size / 1024)} KB`);
+    }
+
+    if (fs.existsSync(srtFile)) {
+        const starts = alignCues(fs.readFileSync(srtFile, 'utf8'), parts[i].lines.map((l) => l.text));
+        if (starts) cueMap[pad(i)] = starts;
     }
     made.push({ title: parts[i].title, file: nameOf(i) + '.mp3' });
 }
@@ -190,7 +255,7 @@ console.log(`\nסה"כ ${made.length} קטעים, ~${totalWords} מילים, ~${
 /* ---------- הטמעת הנגן ---------- */
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const options = made
-    .map((m) => `        <option value="audio/${encodeURIComponent(m.file)}">${esc(m.title)}</option>`)
+    .map((m, i) => `        <option value="audio/${encodeURIComponent(m.file)}" data-seg="${pad(i)}">${esc(m.title)}</option>`)
     .join('\n');
 
 const block =
@@ -209,6 +274,24 @@ if (existing) {
     const anchor = document.querySelector('.listen-bar');
     if (anchor) anchor.insertAdjacentHTML('afterend', block);
     else (document.querySelector('.container') || document.body).insertAdjacentHTML('afterbegin', block);
+}
+
+/* מפת התזמונים להדגשה. נשמרת בין ריצות: dry-run לא מוחק תזמונים קיימים. */
+const cuesTag = document.querySelector('script[data-audio-cues]');
+let merged = cueMap;
+if (cuesTag) {
+    try { merged = Object.assign({}, JSON.parse(cuesTag.textContent || '{}'), cueMap); } catch {}
+    cuesTag.remove();
+}
+if (Object.keys(merged).length) {
+    const tag = document.createElement('script');
+    tag.setAttribute('type', 'application/json');
+    tag.setAttribute('data-audio-cues', '');
+    tag.textContent = JSON.stringify(merged);
+    document.body.appendChild(tag);
+    console.log(`תזמוני הדגשה: ${Object.keys(merged).length} קטעים`);
+} else if (!dryRun) {
+    console.log('לא נוצרו תזמונים — ההדגשה לא תפעל (האם edge-tts כתב קובץ .srt?)');
 }
 
 /* סקריפט הנגן — מוטמע פעם אחת, מ-assets/audio-player.js */

@@ -71,6 +71,60 @@
         if (el) highlight(el);
     });
 
+    /* ---------- קבצים שנבחרו מהמחשב ----------
+       דפדפן לא יכול לקרוא נתיב מקומי מעצמו (תיקיית ההורדות חסומה לו), אבל
+       קובץ שהמשתמש בוחר בעצמו מותר. ממפים לפי שם הקובץ, כך שאפשר לבחור את
+       כל פרקי הספר בבת אחת. ההדגשה עובדת גם ככה — התזמונים כבר בדף. */
+    var picked = {};
+    var note   = box.querySelector('.audio-note');
+    var input  = box.querySelector('.audio-pick-input');
+    var pickBtn = box.querySelector('.audio-pick-btn');
+
+    function say(msg) { if (note) note.textContent = msg || ''; }
+
+    /* קישור הורדה שלא מולא עדיין מוסתר מהקורא — אין טעם ב"לחץ כאן" מת.
+       הבדיקה היא על ה-href עצמו, כך שברגע שמדביקים כתובת הוא מופיע לבד. */
+    var dl = box.querySelector('.audio-download');
+    if (dl && (dl.getAttribute('href') || '#') === '#') dl.style.display = 'none';
+
+    function baseName(u) {
+        try { u = decodeURIComponent(u); } catch (e) {}
+        return u.split('/').pop();
+    }
+
+    function srcFor(opt) {
+        return picked[baseName(opt.value)] || opt.value;
+    }
+
+    if (pickBtn && input) {
+        pickBtn.addEventListener('click', function () { input.click(); });
+        input.addEventListener('change', function () {
+            var files = [].slice.call(input.files || []);
+            if (!files.length) return;
+            var names = {};
+            for (var i = 0; i < select.options.length; i++) names[baseName(select.options[i].value)] = true;
+
+            var matched = 0, spare = [];
+            files.forEach(function (f) {
+                if (names[f.name]) { picked[f.name] = URL.createObjectURL(f); matched++; }
+                else spare.push(f);
+            });
+            /* קובץ יחיד בשם אחר — מניחים שהוא של הפרק המוצג */
+            if (!matched && spare.length === 1) {
+                picked[baseName(select.options[select.selectedIndex].value)] = URL.createObjectURL(spare[0]);
+                matched = 1;
+            }
+            say(matched ? 'נטענו ' + matched + ' קבצים מהמחשב.' : 'שמות הקבצים לא תואמים לפרקים.');
+            if (matched) load(select.selectedIndex, true);
+        });
+    }
+
+    /* הקובץ לא נמצא בנתיב היחסי — מכוונים להורדה ולבחירה ידנית */
+    audio.addEventListener('error', function () {
+        if (!audio.getAttribute('src')) return;
+        say('קובץ השמע לא נמצא לצד הדף. הורד אותו ואז בחר אותו כאן.');
+    });
+
     /* ---------- ניווט בין פרקים ---------- */
     function load(i, autoplay) {
         var opt = select.options[i];
@@ -78,7 +132,7 @@
         select.selectedIndex = i;
         seg = opt.getAttribute('data-seg');
         clearHighlight();
-        audio.src = opt.value;
+        audio.src = srcFor(opt);
         try { localStorage.setItem(KEY, String(i)); } catch (e) {}
         if (autoplay) {
             var p = audio.play();

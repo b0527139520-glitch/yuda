@@ -39,6 +39,8 @@ const dryRun = argv.includes('--dry-run');
 const single = argv.includes('--single');
 const voice = flag('voice', 'he-IL-HilaNeural');
 const rate = flag('rate', null);
+/* קישור הורדה חיצוני (דרייב וכדומה). אם לא ניתן — נשתל מציין מקום לעריכה ידנית. */
+const downloadUrl = flag('download-url', null);
 
 if (!htmlPath) {
     console.error('שימוש: node scripts/make-audio.mjs "<קובץ.html>" [--voice ...] [--rate +10%] [--single] [--dry-run]');
@@ -258,6 +260,10 @@ const options = made
     .map((m, i) => `        <option value="audio/${encodeURIComponent(m.file)}" data-seg="${pad(i)}">${esc(m.title)}</option>`)
     .join('\n');
 
+/* שורת ההורדה קיימת תמיד. אם לא ניתן קישור — href="#" עם סימון ברור לעריכה. */
+const href = downloadUrl ? esc(downloadUrl) : '#';
+const placeholder = downloadUrl ? '' : ' data-download-placeholder';
+
 const block =
     `<div class="audio-player no-tts">\n` +
     `    <div class="audio-player-title">🎧 האזנה להקלטה — קול הילה</div>\n` +
@@ -265,6 +271,12 @@ const block =
         ? `    <select class="audio-chapter-select" aria-label="בחירת פרק להאזנה">\n${options}\n    </select>\n`
         : `    <select class="audio-chapter-select" aria-label="בחירת פרק להאזנה" hidden>\n${options}\n    </select>\n`) +
     `    <audio controls preload="none"></audio>\n` +
+    `    <div class="audio-get">\n` +
+    `        <a class="audio-download" href="${href}"${placeholder} target="_blank" rel="noopener">📥 להורדת קובץ השמיעה לחץ כאן</a>\n` +
+    `        <button type="button" class="audio-pick-btn">📂 בחר את הקובץ שהורדת</button>\n` +
+    `        <input type="file" class="audio-pick-input" accept="audio/*" multiple hidden>\n` +
+    `        <span class="audio-note"></span>\n` +
+    `    </div>\n` +
     `</div>`;
 
 const existing = document.querySelector('.audio-player');

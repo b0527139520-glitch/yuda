@@ -113,6 +113,25 @@ if (cuesTag) {
 }
 check(/data-seg="\d+"/.test(hiHtml), 'לכל אפשרות בבורר יש data-seg שמקשר לתזמונים');
 
+/* ---------- שורת ההורדה ובחירת קובץ מהמחשב ---------- */
+console.log('\n--- הורדה ובחירה ידנית ---');
+const dl1 = path.join(tmp, 'dl1.html');
+fs.copyFileSync(path.join(TESTS, 'demo.html'), dl1);
+run(dl1);
+const h1 = fs.readFileSync(dl1, 'utf8');
+check(/class="audio-download"[^>]*href="#"[^>]*data-download-placeholder/.test(h1),
+      'בלי --download-url נשתל מציין מקום שאפשר לחפש ולערוך');
+check(/class="audio-pick-input"[^>]*accept="audio\/\*"/.test(h1), 'קיים בורר קובץ מקומי');
+check(/📥 להורדת קובץ השמיעה לחץ כאן/.test(h1), 'שורת ההורדה קיימת תמיד');
+
+const dl2 = path.join(tmp, 'dl2.html');
+fs.copyFileSync(path.join(TESTS, 'demo.html'), dl2);
+const URL_ = 'https://drive.google.com/file/d/ABC123/view';
+run(dl2, '--download-url', URL_);
+const h2 = fs.readFileSync(dl2, 'utf8');
+check(h2.includes(`href="${URL_}"`), 'הקישור שניתן נכנס ל-href');
+check(!/data-download-placeholder/.test(h2), 'מציין המקום נעלם כשיש קישור אמיתי');
+
 /* ---------- קוד הנגן עצמו ---------- */
 console.log('\n--- audio-player.js ---');
 const playerSrc = fs.readFileSync(path.join(ROOT, 'assets', 'audio-player.js'), 'utf8');

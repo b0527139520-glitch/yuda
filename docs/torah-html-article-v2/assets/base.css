@@ -255,6 +255,22 @@ em { color: var(--blue); font-style: italic; }
     font-weight: 700; color: var(--purple); margin-bottom: 10px; font-size: 1.05em;
 }
 .audio-player audio { width: 100%; display: block; }
+.audio-get {
+    margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    font-size: .95em;
+}
+.audio-download {
+    color: var(--purple); font-weight: 700; text-decoration: none;
+    border-bottom: 2px dotted var(--purple); padding-bottom: 1px;
+}
+.audio-download:hover { color: var(--pink); border-color: var(--pink); }
+.audio-pick-btn {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+    color: #fff; border: none; border-radius: 30px; padding: 7px 16px;
+    font-family: inherit; font-size: .95em; cursor: pointer;
+}
+.audio-pick-btn:hover { filter: brightness(1.08); }
+.audio-note { color: var(--muted); font-size: .9em; flex: 1 1 100%; }
 
 /* ---------- נייד ---------- */
 @media (max-width: 768px) {
@@ -309,6 +325,7 @@ em { color: var(--blue); font-style: italic; }
     .listen-voice select { background: #2a2438; color: var(--ink); }
     .tts-clickable:hover { background: rgba(251,191,36,.12); }
     .audio-player-title { color: #e9d5ff; }
+    .audio-download { color: #e9d5ff; border-color: #c084fc; }
 }
 
 /* ---------- הדפסה A4 ---------- */

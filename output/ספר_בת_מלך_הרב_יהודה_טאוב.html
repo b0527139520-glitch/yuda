@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>בת מלך: הדרכה לבעל המכבד</title>
+<style>
+/* =============================================================================
+   קול תודה — סגנון בית למאמרים תורניים   |   base.css   v2.0
+   העתק כמות שהוא לתוך <style>. מותר להוסיף אחריו כללים ייחודיים למאמר,
+   אסור לשנות את הקיים.
+   ============================================================================= */
+
+:root {
+    --purple: #7e22ce;  --blue: #2563eb;   --green: #059669;
+    --gold:   #f59e0b;  --pink: #ec4899;   --ink:   #1f2937;
+    --paper:  #ffffff;  --muted: #6b7280;  --line:  rgba(0,0,0,.08);
+    --g-page:      linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --g-verse:     linear-gradient(135deg, #e0e7ff 0%, #fce7f3 100%);
+    --g-highlight: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+    --g-quote:     linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    --g-story:     linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+    --g-divider:   linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #ec4899 100%);
+    --g-title:     linear-gradient(135deg, #7e22ce 0%, #ec4899 50%, #f59e0b 100%);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0; padding: 40px 20px;
+    font-family: 'Segoe UI', 'Assistant', 'Noto Sans Hebrew', Arial, sans-serif;
+    background: var(--g-page);
+    color: var(--ink);
+    line-height: 1.8;
+}
+
+.container {
+    max-width: 900px; margin: 0 auto;
+    padding: 60px 80px;
+    background: var(--paper);
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.1);
+}
+
+/* ---------- כותרות ---------- */
+.main-title {
+    font-size: 3em; font-weight: bold; text-align: center; margin: 0 0 10px;
+    background: var(--g-title); -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: var(--purple);
+}
+.subtitle { text-align: center; font-size: 1.25em; color: var(--muted); margin-bottom: 8px; }
+.author   { text-align: center; font-size: 1.05em; color: var(--purple); font-weight: bold; margin-bottom: 10px; }
+
+h2 { font-size: 2.2em; color: var(--purple); border-right: 6px solid var(--purple);
+     padding-right: 20px; margin: 50px 0 20px; }
+h3 { font-size: 1.8em; color: var(--blue);  margin: 35px 0 15px; }
+h4 { font-size: 1.5em; color: var(--green); margin: 25px 0 12px; }
+/* יישור לשני הצדדים — חובה בסגנון הבית, נותן מראה של ספר מודפס. */
+p, li { font-size: 1.15em; line-height: 1.8; margin: 0 0 20px; text-align: justify; text-justify: inter-word; }
+li { margin-bottom: 10px; }
+.verse-box p, .section-divider, .chapter-card p, .footer p { text-align: center; }
+.toc li, .listen-bar p { text-align: right; }
+
+.emphasis { color: var(--purple); font-weight: bold; }
+em { color: var(--blue); font-style: italic; }
+
+/* ---------- מעבר בין פרקים ---------- */
+/* כרטיס הפרק מחליף על המסך את תחושת "הדף החדש" שיש בספר מודפס.
+   בהדפסה הוא מיותר — שם יש מעבר עמוד אמיתי — ולכן הוא מוסתר. */
+.chapter-card {
+    min-height: 55vh; margin: 60px -80px 0; padding: 40px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--g-title); color: #fff; text-align: center;
+}
+.chapter-card .num { font-size: 5.5em; font-weight: bold; line-height: 1; opacity: .85; }
+.chapter-card .name { font-size: 2.2em; font-weight: bold; margin-top: 18px; max-width: 18ch; }
+.chapter-divider {
+    display: flex; align-items: center; gap: 15px; margin: 45px 0;
+    color: var(--gold); font-size: 1.4em;
+}
+.chapter-divider::before, .chapter-divider::after {
+    content: ''; flex: 1; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.chapter-label {
+    display: inline-block; margin-bottom: 6px; padding: 3px 14px;
+    background: var(--purple); color: #fff; border-radius: 20px;
+    font-size: .55em; font-weight: bold; letter-spacing: .5px; vertical-align: middle;
+}
+.in-this-chapter {
+    background: var(--g-highlight); border-right: 6px solid var(--blue);
+    border-radius: 12px; padding: 22px 26px; margin: 22px 0 32px;
+}
+.in-this-chapter h4 { margin: 0 0 10px; font-size: 1.1em; color: var(--blue); }
+.in-this-chapter ul { margin: 0; padding-right: 20px; }
+.in-this-chapter li { font-size: 1em; margin-bottom: 6px; text-align: right; }
+
+.story-title { display: block; font-size: 1.25em; font-weight: bold; color: var(--green); margin-bottom: 12px; }
+
+/* ---------- קופסאות תוכן ---------- */
+.verse-box, .highlight-box, .quote-box, .story-box, .qa-box {
+    padding: 28px; margin: 30px 0; border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.1);
+}
+.verse-box     { background: var(--g-verse); border: 2px solid var(--purple);
+                 text-align: center; font-size: 1.3em; font-weight: 600; color: var(--purple); }
+.verse-box p   { font-size: 1em; margin: 0; }
+.highlight-box { background: var(--g-highlight); border-right: 6px solid var(--blue);
+                 box-shadow: 0 5px 15px rgba(126,34,206,.15); }
+.quote-box     { background: var(--g-quote); border-right: 6px solid var(--gold); font-style: italic; }
+.story-box     { background: var(--g-story); border-right: 6px solid var(--green); }
+.qa-box        { background: #fff; border: 2px dashed var(--pink); }
+.verse-box p:last-child, .highlight-box p:last-child, .quote-box p:last-child,
+.story-box p:last-child, .qa-box p:last-child { margin-bottom: 0; }
+
+.source-tag { display: block; margin-top: 12px; font-size: .9em; font-style: normal;
+              color: var(--muted); font-weight: bold; }
+
+.section-divider {
+    background: var(--g-divider); color: #fff; text-align: center;
+    padding: 18px 25px; margin: 45px 0; border-radius: 10px;
+    font-size: 1.3em; font-weight: bold; letter-spacing: .5px;
+}
+
+.two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 30px 0; }
+.two-columns > div { padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.col-purple { background: var(--g-verse);  border-top: 5px solid var(--purple); }
+.col-gold   { background: var(--g-quote);  border-top: 5px solid var(--gold); }
+
+/* ---------- תוכן עניינים / מקורות / חתימה ---------- */
+.toc { background: #faf5ff; border: 2px solid #e9d5ff; border-radius: 12px; padding: 25px 30px; margin: 30px 0; }
+.toc h3 { margin-top: 0; color: var(--purple); }
+.toc ul { list-style: none; padding: 0; margin: 0; }
+.toc li { margin-bottom: 8px; }
+.toc a { color: var(--blue); text-decoration: none; font-size: 1.05em; }
+.toc a:hover { text-decoration: underline; color: var(--purple); }
+/* מפתח עניינים היררכי: כותרת הפרק בבולד, ומתחתיה שורה מעומעמת של תתי-הסעיפים,
+   כשכל אחד מהם קישור עצמאי. */
+.toc > ul > li { margin-bottom: 14px; }
+.toc-chapter { font-weight: bold; font-size: 1.1em; color: var(--purple); }
+.toc-subs { display: block; margin-top: 3px; font-size: .9em; color: var(--muted); line-height: 1.7; }
+.toc-subs a { font-size: 1em; color: var(--muted); }
+.toc-subs a:hover { color: var(--blue); }
+.toc-subs span { margin: 0 6px; opacity: .5; }
+
+/* ---------- מבט-על: רשת הפרקים ----------
+   בא *לפני* מפתח העניינים המפורט. תפקידו שונה: לא ניווט מדויק אלא תחושה
+   מיידית של היקף הספר — כמה פרקים יש ומה מכסה כל אחד. */
+.chapter-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 22px;
+    background: linear-gradient(160deg, #fffdf7 0%, #fdf8ee 100%);
+    border: 1px solid #efe4cd; border-radius: 18px;
+    padding: 34px 30px; margin: 30px 0;
+}
+.chapter-grid .grid-title {
+    grid-column: 1 / -1; text-align: center; margin: 0 0 14px;
+    font-size: 1.6em; color: var(--purple); letter-spacing: 1px;
+    border: none; padding: 0;   /* מבטל את הפס הסגול שיורש מ-h2 */
+}
+.chapter-chip {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--ink); text-decoration: none; font-size: 1.02em; line-height: 1.45;
+    padding: 6px 8px; border-radius: 10px; transition: background .18s, transform .18s;
+}
+.chapter-chip:hover { background: rgba(245,158,11,.12); transform: translateX(-3px); }
+.chapter-chip .n {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #c9982f; color: #fff; font-size: .82em; font-weight: bold;
+}
+/* הקדמה, מבוא, נספחים — לא ממוספרים, ומסומנים אחרת */
+.chapter-chip.is-front .n { background: #1e2a5a; font-size: .7em; }
+
+@media (max-width: 900px) { .chapter-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .chapter-grid { grid-template-columns: 1fr; padding: 24px 18px; } }
+
+.sources { background: #f9fafb; border-radius: 12px; padding: 25px 30px; margin-top: 50px; border: 1px solid var(--line); }
+.sources h3 { margin-top: 0; }
+.sources li { font-size: 1em; }
+
+.footer { margin-top: 55px; padding-top: 30px; border-top: 3px solid var(--gold);
+          text-align: center; font-size: 1.05em; }
+.footer a { color: var(--blue); }
+
+.scroll-top {
+    position: fixed; bottom: 30px; left: 30px; z-index: 50;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--g-title); color: #fff; text-decoration: none;
+    display: none; align-items: center; justify-content: center;
+    font-size: 1.3em; box-shadow: 0 5px 15px rgba(0,0,0,.25);
+}
+.scroll-top.visible { display: flex; }
+
+/* ---------- סרגל ההאזנה ---------- */
+.listen-bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 15px;
+    margin: 25px 0; padding: 18px 25px;
+    background: var(--g-quote); border-radius: 12px;
+    border-right: 6px solid var(--gold);
+    box-shadow: 0 3px 10px rgba(0,0,0,.1);
+}
+.listen-btn-group { display: flex; gap: 8px; align-items: center; }
+.listen-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+    color: #fff; border: none; border-radius: 30px; padding: 10px 22px;
+    font-size: 1em; font-weight: bold; font-family: inherit; cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+}
+.listen-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(126,34,206,.3); }
+.listen-btn:active { transform: translateY(0); }
+.listen-stop-btn, .listen-skip-btn {
+    background: #fff; color: var(--purple); border: 2px solid var(--purple);
+    border-radius: 30px; padding: 8px 16px; font-size: .95em; font-weight: bold;
+    font-family: inherit; cursor: pointer; transition: transform .15s, background .15s;
+}
+.listen-skip-btn { padding: 8px 12px; }
+.listen-stop-btn:hover, .listen-skip-btn:hover { transform: translateY(-2px); background: #f3e8ff; }
+
+/* מתג "לחיצה על פסקה מקריאה". כשהוא כבוי הוא נראה כבוי — אפור ודהוי — כדי
+   שיהיה ברור במבט אחד למה נגיעה בטקסט לא עושה כלום. */
+.listen-toggle-btn {
+    background: #fff; color: var(--purple); border: 2px solid var(--purple);
+    border-radius: 30px; padding: 8px 14px; font-size: .88em; font-weight: bold;
+    font-family: inherit; cursor: pointer; white-space: nowrap;
+    transition: transform .15s, background .15s, opacity .15s;
+}
+.listen-toggle-btn:hover { transform: translateY(-2px); background: #f3e8ff; }
+.listen-toggle-btn[aria-pressed="false"] {
+    color: var(--muted); border-color: #d1d5db; background: #f9fafb; opacity: .8;
+}
+.listen-toggle-btn:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+.listen-btn:focus-visible, .listen-stop-btn:focus-visible,
+.listen-skip-btn:focus-visible, .listen-voice select:focus-visible,
+.listen-rate input:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+
+.listen-status   { font-size: .95em; color: #78350f; flex: 1 1 200px; }
+.listen-progress { font-size: .9em; color: #78350f; font-weight: bold; white-space: nowrap; }
+.listen-rate, .listen-voice { display: flex; align-items: center; gap: 6px; font-size: .9em; color: #78350f; }
+.listen-rate input { accent-color: var(--purple); }
+.listen-rate output { font-weight: bold; min-width: 2.6em; }
+.listen-voice select {
+    border-radius: 20px; border: 1px solid var(--gold); padding: 4px 10px;
+    font-family: inherit; background: #fff; color: var(--ink); max-width: 190px;
+}
+
+.tts-clickable { cursor: pointer; transition: background .2s; border-radius: 6px; }
+.tts-clickable:hover { background: rgba(245,158,11,.10); }
+.reading-highlight {
+    background: var(--g-verse); border-radius: 6px;
+    box-shadow: 0 0 0 3px var(--pink) inset; transition: background .3s;
+}
+
+/* ---------- נייד ---------- */
+@media (max-width: 768px) {
+    body { padding: 15px 10px; }
+    .container { padding: 30px 22px; border-radius: 12px; }
+    .main-title { font-size: 2em; }
+    h2 { font-size: 1.6em; padding-right: 14px; margin-top: 35px; }
+    h3 { font-size: 1.35em; } h4 { font-size: 1.15em; }
+    p, li { font-size: 1.08em; }
+    .two-columns { grid-template-columns: 1fr; }
+    .verse-box, .highlight-box, .quote-box, .story-box, .qa-box { padding: 20px; }
+    .listen-bar { padding: 15px; gap: 10px; }
+    .listen-status { flex: 1 1 100%; }
+    .listen-voice select { max-width: 140px; }
+    .scroll-top { bottom: 18px; left: 18px; width: 44px; height: 44px; }
+    .chapter-card { margin-left: -22px; margin-right: -22px; min-height: 42vh; padding: 30px 20px; }
+    .chapter-card .num { font-size: 3.8em; }
+    .chapter-card .name { font-size: 1.5em; }
+}
+
+/* ---------- העדפת תנועה מופחתת ---------- */
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    .listen-btn:hover, .listen-stop-btn:hover, .listen-skip-btn:hover { transform: none; }
+}
+
+/* ---------- מצב כהה (קריאה בטלפון בלילה) ---------- */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --paper: #1c1b22; --ink: #e8e6ef; --muted: #a8a4b8; --line: rgba(255,255,255,.10);
+        --purple: #c084fc; --blue: #7dd3fc; --green: #4ade80; --gold: #fbbf24; --pink: #f9a8d4;
+        --g-page:      linear-gradient(135deg, #14131a 0%, #221f2e 100%);
+        --g-verse:     linear-gradient(135deg, #2a2440 0%, #3a2436 100%);
+        --g-highlight: linear-gradient(135deg, #1e2c44 0%, #262244 100%);
+        --g-quote:     linear-gradient(135deg, #3a2f16 0%, #4a3a18 100%);
+        --g-story:     linear-gradient(135deg, #16332a 0%, #14291f 100%);
+    }
+    .container { box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+    .toc     { background: #241f33; border-color: #3d2f57; }
+    .chapter-grid { background: linear-gradient(160deg, #262133 0%, #201c2b 100%); border-color: #3d3350; }
+    .chapter-chip { color: var(--ink); }
+    .chapter-chip .n { background: #b08a2e; }
+    .chapter-chip.is-front .n { background: #3b4a86; }
+    .sources { background: #201f28; }
+    .qa-box  { background: #201f28; }
+    .listen-status, .listen-progress, .listen-rate, .listen-voice { color: #fde68a; }
+    .listen-stop-btn, .listen-skip-btn, .listen-toggle-btn { background: #2a2438; color: #e9d5ff; border-color: #c084fc; }
+    .listen-toggle-btn[aria-pressed="false"] { background: #232029; color: #8b8698; border-color: #3f3b4a; }
+    .listen-stop-btn:hover, .listen-skip-btn:hover { background: #3a3050; }
+    .listen-voice select { background: #2a2438; color: var(--ink); }
+    .tts-clickable:hover { background: rgba(251,191,36,.12); }
+}
+
+/* ---------- הדפסה A4 ---------- */
+@media print {
+    @page { size: A4 portrait; margin: 20mm 18mm; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #fff !important; color: #000 !important; padding: 0 !important; font-size: 11pt; }
+    .container { max-width: 100% !important; padding: 0 !important;
+                 box-shadow: none !important; border-radius: 0 !important; background: #fff !important; }
+    /* כרטיס הפרק והמפריד קיימים כדי לדמות "דף חדש" על המסך.
+       בנייר יש מעבר עמוד אמיתי, ולכן הם רק היו מבזבזים עמוד שלם. */
+    .scroll-top, .listen-bar, .chapter-card, .chapter-divider, .chapter-grid { display: none !important; }
+    .chapter-label { background: none !important; color: #4a0080 !important; padding: 0 !important; }
+    .in-this-chapter { page-break-inside: avoid; break-inside: avoid; }
+    p, li { text-align: justify; }
+    .reading-highlight { box-shadow: none !important; background: none !important; }
+    .tts-clickable { cursor: auto; }
+    h2 { page-break-before: always; break-before: page; font-size: 16pt !important; }
+    h2:first-of-type { page-break-before: avoid; break-before: avoid; }
+    h3, h4 { page-break-after: avoid; break-after: avoid; }
+    h3 { font-size: 13pt !important; } h4 { font-size: 12pt !important; }
+    p, li { font-size: 11pt !important; orphans: 3; widows: 3; }
+    .verse-box, .highlight-box, .quote-box, .story-box, .two-columns, .qa-box, .section-divider {
+        page-break-inside: avoid; break-inside: avoid;
+    }
+    .toc { page-break-after: always; break-after: page; }
+    .main-title { font-size: 26pt !important; background: none !important;
+                  -webkit-text-fill-color: #4a0080 !important; color: #4a0080 !important; }
+    .footer { page-break-before: always; break-before: page; }
+    a { color: #000 !important; text-decoration: none; }
+    a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #444; }
+    [style*="display: flex"], [style*="display: grid"] { display: block !important; }
+}
+
+/* ===== תוספת ייחודית למאמר זה — אינה משנה כלל קיים ב-base.css ===== */
+/* בסרגל ההאזנה יש שבעה כפתורים; בטלפון צר (375px) קבוצת הכפתורים לא נשברת
+   שורות ובכך גורמת לגלילה אופקית של כל הדף. הוספת flex-wrap פותרת זאת בלי
+   לגעת באף כלל קיים. */
+@media (max-width: 480px) {
+    .listen-btn-group { flex-wrap: wrap; row-gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="main-title" id="top">בַּת מֶלֶךְ</h1>
+    <div class="subtitle">הַדְּרָכָה לְבַעַל הַמְכַבֵּד — יְסוֹדוֹת הַכָּבוֹד, הַהַעֲרָכָה וְהָאַהֲבָה לְאִשְׁתְּךָ</div>
+    <div class="author">מאת: הרב יהודה טאוב</div>
+
+    <!-- ===== סרגל האזנה — חובה. מבנה מדויק, אל תשנה id-ים ===== -->
+    <div class="listen-bar">
+        <div class="listen-btn-group">
+            <button class="listen-btn" id="listenBtn" onclick="toggleListen()"
+                    aria-pressed="false" aria-label="הפעל או השהה הקראה">🔊 האזן למאמר</button>
+            <button class="listen-skip-btn" onclick="skipChapter(-1)" aria-label="פרק קודם" title="פרק קודם">⏪</button>
+            <button class="listen-skip-btn" onclick="skipListen(-1)" aria-label="פסקה קודמת" title="פסקה קודמת">⏮</button>
+            <button class="listen-skip-btn" onclick="skipListen(1)"  aria-label="פסקה הבאה"  title="פסקה הבאה">⏭</button>
+            <button class="listen-skip-btn" onclick="skipChapter(1)"  aria-label="פרק הבא"   title="פרק הבא">⏩</button>
+            <button class="listen-stop-btn" onclick="stopListen()"   aria-label="עצור הקראה">⏹ עצור</button>
+            <button class="listen-toggle-btn" id="clickReadBtn" onclick="toggleClickRead()"
+                    aria-pressed="true" aria-label="לחיצה על פסקה מתחילה הקראה">👆 לחיצה: פעילה</button>
+        </div>
+        <span class="listen-status" id="listenStatus" role="status" aria-live="polite">לחץ כדי להתחיל האזנה, או לחץ על כל פסקה כדי להתחיל להקריא ממנה</span>
+        <span class="listen-progress" id="listenProgress"></span>
+        <div class="listen-rate">
+            <label for="rateRange">מהירות:</label>
+            <input type="range" id="rateRange" min="0.5" max="1.6" step="0.1" value="1"
+                   oninput="setListenRate(this.value)" onchange="applyListenRate(this.value)"
+                   aria-label="מהירות הקראה">
+            <output id="rateValue" for="rateRange">1.0×</output>
+        </div>
+        <div class="listen-voice">
+            <label for="voiceSelect">קול:</label>
+            <select id="voiceSelect" onchange="setListenVoice(this.value)" aria-label="בחירת קול"></select>
+        </div>
+    </div>
+
+    <!-- מבט-על על הספר. בא לפני מפתח העניינים המפורט, לא במקומו. -->
+    <nav class="chapter-grid" aria-label="מבט על פרקי הספר">
+        <h2 class="grid-title">תּוֹכֶן הָעִנְיָנִים — מַבָּט עַל</h2>
+        <a class="chapter-chip" href="#section1"><span class="n">1</span>"מגיע לך נשיקה" — כשהכבוד חסר</a>
+        <a class="chapter-chip" href="#section2"><span class="n">2</span>מי היא באמת — שונות המינים</a>
+        <a class="chapter-chip" href="#section3"><span class="n">3</span>"אם בישראל" — ייעוד ומשימה</a>
+        <a class="chapter-chip" href="#section4"><span class="n">4</span>לראותה כצדיקה ומלכה</a>
+        <a class="chapter-chip" href="#section5"><span class="n">5</span>אמנות המחמאה</a>
+        <a class="chapter-chip" href="#section6"><span class="n">6</span>הכרת הטוב — מפתח לכל השפע</a>
+        <a class="chapter-chip" href="#section7"><span class="n">7</span>הודיה לבורא על מתנת הזיווג</a>
+        <a class="chapter-chip" href="#section8"><span class="n">8</span>להקשיב, להבין וללמוד אותה</a>
+        <a class="chapter-chip" href="#section9"><span class="n">9</span>מעשים שמדברים</a>
+        <a class="chapter-chip" href="#section10"><span class="n">10</span>המלכתה בפועל</a>
+        <a class="chapter-chip" href="#section11"><span class="n">11</span>קדושת הבית והשכינה</a>
+        <a class="chapter-chip" href="#section12"><span class="n">12</span>תיקון עוולת הדורות וסיכום</a>
+    </nav>
+
+    <div class="toc">
+        <h3>📑 תוכן העניינים מפורט</h3>
+        <ul>
+            <li>
+                <a class="toc-chapter" href="#section1">פרק א — "מגיע לך נשיקה": כשהכבוד חסר גם במילים אוהבות</a>
+                <span class="toc-subs">
+                    <a href="#s1a">הסיפור שפתח הכל</a><span>·</span><a href="#s1b">הבית כמקדש, האישה ככהן גדול</a><span>·</span><a href="#s1c">אהבה וכבוד — מה קודם למה</a><span>·</span><a href="#s1d">מדוע לכבדה יותר מגופו</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section2">פרק ב — מי היא באמת: שונות המינים ומעלתה הרוחנית</a>
+                <span class="toc-subs">
+                    <a href="#s2a">"בינה יתרה" — אינטליגנציה נשית ייחודית</a><span>·</span><a href="#s2b">שכרה של האישה לעולם הבא</a><span>·</span><a href="#s2c">שונות בתכלית, לא ניגוד</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section3">פרק ג — "אם בישראל": ייעוד, כוח מאזן, ומשימה לאומית</a>
+                <span class="toc-subs">
+                    <a href="#s3a">תפקיד מרכזי</a><span>·</span><a href="#s3b">פיתוח הייעוד הייחודי</a><span>·</span><a href="#s3c">כוח נפשי מאזן וחיוניות למשימה הלאומית</a><span>·</span><a href="#s3d">אב לעומת אם — תפקידים משלימים</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section4">פרק ד — לראותה כצדיקה ומלכה: עבודת ההתבוננות</a>
+                <span class="toc-subs">
+                    <a href="#s4a">"לחשוב בכל לבי כמה היא צדיקה"</a><span>·</span><a href="#s4b">לדמיין אותה מלכה</a><span>·</span><a href="#s4c">משל הוויטרינה ופח הזבל</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section5">פרק ה — אמנות המחמאה: מה, איך ומתי לומר</a>
+                <span class="toc-subs">
+                    <a href="#s5a">מחמאה עם ביקורת סמויה</a><span>·</span><a href="#s5b">מה כן לומר</a><span>·</span><a href="#s5c">להכין מראש</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section6">פרק ו — הכרת הטוב: המפתח לכל השפע</a>
+                <span class="toc-subs">
+                    <a href="#s6a">"אוקירו לנשייכו כי היכי דתתעתרו"</a><span>·</span><a href="#s6b">לזכור רק את הטוב</a><span>·</span><a href="#s6c">סיפור: כשגילה שאשתו חולה בקלפטומניה</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section7">פרק ז — הודיה לבורא עולם על מתנת הזיווג</a>
+                <span class="toc-subs">
+                    <a href="#s7a">האישה כמתנה מהבורא</a><span>·</span><a href="#s7b">הודיה במחשבה, בדיבור ובמעשה</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section8">פרק ח — להקשיב, להבין וללמוד אותה</a>
+                <span class="toc-subs">
+                    <a href="#s8a">"להסכים איתה שכואב לה"</a><span>·</span><a href="#s8b">"מתי היא רוצה ורק לא אמרה"</a><span>·</span><a href="#s8c">כיבוד גבולות וזמן</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section9">פרק ט — מעשים שמדברים: זריזות, עזרה והפתעות</a>
+                <span class="toc-subs">
+                    <a href="#s9a">זריזות שמדברת כבוד</a><span>·</span><a href="#s9b">סיפור: כוס התה של הרב שך</a><span>·</span><a href="#s9c">עוד סיפורי מסירות</a><span>·</span><a href="#s9d">הפתעות ותאריכים חשובים</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section10">פרק י — המלכתה בפועל: כבוד ויראת כבוד יומיומיים</a>
+                <span class="toc-subs">
+                    <a href="#s10a">יראת כבוד — "ביתו של מלך"</a><span>·</span><a href="#s10b">להקדים את צרכיה</a><span>·</span><a href="#s10c">ביטול רצון</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section11">פרק יא — קדושת הבית והשכינה: שלום בית כתכלית עליונה</a>
+                <span class="toc-subs">
+                    <a href="#s11a">הבית כמקדש והשכינה השורה בו</a><span>·</span><a href="#s11b">שלום בית כשער לאהבת ה'</a><span>·</span><a href="#s11c">עונג שאין לו שביעה</a><span>·</span><a href="#s11d">סיפור: "אני מתכונן להיכנס אל השכינה"</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section12">פרק יב — תיקון עוולת הדורות: כבוד האישה מול אתגרי התרבות</a>
+                <span class="toc-subs">
+                    <a href="#s12a">אתגרי התרבות הכללית</a><span>·</span><a href="#s12b">תיקון עוולת הדורות</a><span>·</span><a href="#s12c">פרויקט החיים שלנו</a>
+                </span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ===== גוף הספר ===== -->
+
+    <div class="section-divider">חֵלֶק רִאשׁוֹן — מִי הִיא בֶּאֱמֶת</div>
+
+    <div class="chapter-card">
+        <div class="num">1</div>
+        <div class="name">"מגיע לך נשיקה" — כשהכבוד חסר גם במילים אוהבות</div>
+    </div>
+    <div class="chapter-divider">✡</div>
+
+    <span class="chapter-label">פרק א</span>
+    <h2 id="section1">"מגיע לך נשיקה" — כשהכבוד חסר גם במילים אוהבות</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>הסיפור שפתח הכל: הערה קטנה של אישה על משפט חיבה של בעלה, שחשפה חיסרון עמוק בכבוד.</li>
+            <li>הבית הישראלי כ"מקדש", והאישה כ"כהן הגדול" שבתוכו.</li>
+            <li>מה קודם למה — אהבה או כבוד? המתח שבין לשון הגמרא ללשון הרמב"ם.</li>
+            <li>מדוע מצווים אנו לכבד את האישה יותר מגופנו.</li>
+        </ul>
+    </div>
+
+    <h3 id="s1a">הסיפור שפתח הכל</h3>
+    <p>ערב אחד, לאחר שהניח את ילדיו לישון, פנה בעל לאשתו ואמר לה במילים חמות: "מגיע לך נשיקה". הוא התכוון לחיבה. הוא רצה להעניק לה משהו טוב. אבל אשתו, במקום לחייך, עצרה אותו. "אתה יודע", אמרה לו בשקט, "זה משפט שאדם אומר למי שהוא לא ממש מכבד אותו". הוא הביט בה בתמיהה, והיא המשיכה להסביר: "אתה לא היית אומר משפט כזה לאמא שלך. לאמא שלך יש לך יחס של כבוד. אבל כשאתה אומר לי 'מגיע לך', אני מרגישה כאילו אני צריכה לקבל ממך פרס, כמו ילדה קטנה שמחכה למחמאה מההורה שלה".</p>
+    <p>המילים האלה ליוו אותו הרבה אחרי אותו ערב. הוא לא התכוון לפגוע. להפך, הוא רצה לתת. אך דווקא בנתינה הזאת התגלה חוסר. לא חוסר באהבה, אלא חוסר בכבוד. הוא לא הרגיש כלפיה יראת כבוד עמוקה, מהסוג שגורם לאדם לדבר אל השני כאל שווה, כאל בת מלך, ולא כאל מי שממתינה לאישור. וזו הנקודה שממנה יוצא כל הספר הזה: לפני שמדברים על מחמאות, על עזרה, על הפתעות ועל כל הביטויים החיצוניים של האהבה, צריך לעצור ולשאול — האם יש כאן, בלב פנימה, יחס אמיתי של כבוד?</p>
+
+    <div class="qa-box">
+        <p><strong>— "מגיע לך נשיקה", אמר הבעל.</strong></p>
+        <p><strong>— "את זה אתה לא היית אומר לאמא שלך", ענתה האישה. "כי לאמא שלך יש לך כבוד. ואילי, כשאתה אומר לי ככה, אני מרגישה כמו ילדה שמחכה לפרס".</strong></p>
+        <p>נקודת האמת שבסיפור הזה אינה במילה עצמה, אלא במה שהיא חשפה: יחס שנשמע אוהב מבחוץ, אך חסר בו עומק של הערכה מבפנים.</p>
+    </div>
+
+    <h3 id="s1b">הבית כמקדש, האישה ככהן גדול</h3>
+    <p>כדי להבין למה כבוד הוא כה יסודי, צריך להבין קודם מה זה בית יהודי. התרבות הכללית רואה בבית מקום מנוחה, תחנת דלק שממנה יוצאים לעולם הגדול של קריירה, כסף וכוח. אבל חכמינו מלמדים אחרת לגמרי: הבית הישראלי הוא <span class="emphasis">מקדש</span>. מקום שבו שוכנת קדושה. ואם הבית הוא מקדש, לאישה יש בו תפקיד של כהן גדול. היא זו שמביאה חיים לעולם, מחנכת נפשות, ובזכותה שורה בבית שפע רוחני וגשמי כאחד.</p>
+    <p>ומכאן גם הכינוי הידוע: <span class="emphasis">"אשת חיל עטרת בעלה"</span>. היא הכתר של בעלה, לא נספח לחייו. כתר אינו דבר שמניחים בצד כשנוח, אלא דבר שמעניק לכל מה שסביבו את משמעותו. בעל שמבין זאת, מבין שהיחס לאשתו אינו עוד תחום בחיים לצד העבודה והלימוד, אלא הבסיס שעליו עומד הכל.</p>
+
+    <div class="verse-box">
+        <p>"וּלְאַבְרָם הֵיטִיב בַּעֲבוּרָהּ."</p>
+        <p style="font-size:.8em; margin-top:10px;">(בראשית יב, טז)</p>
+    </div>
+
+    <h3 id="s1c">אהבה וכבוד — מה קודם למה</h3>
+    <p>וכאן עולה שאלה מעניינת. חכמינו ציוו עלינו הן לאהוב את האישה והן לכבדה, אך יש הבדל דק בסדר שבו הדברים מנוסחים במקורות. בגמרא, סדר הדברים הוא: <span class="emphasis">"האוהב את אשתו כגופו, והמכבדה יותר מגופו"</span>. אהבה קודם, אחר כך כבוד. לעומת זאת, הרמב"ם, בספרו ההלכתי, הופך את הסדר: <span class="emphasis">"וכן צוו חכמים שיהיה אדם מכבד את אשתו יתר מגופו, ואוהבה כגופו"</span>. כבוד קודם, אחר כך אהבה. לכאורה סתירה. אך למעשה, שני הניסוחים משלימים זה את זה, ומלמדים על שני מישורים שונים.</p>
+
+    <div class="two-columns">
+        <div class="col-purple">
+            <h4>הגמרא: מעלת האהבה</h4>
+            <p>הגמרא עוסקת במעלות האדם, ומציינת שהאהבה היא המעלה הגבוהה יותר — היא היעד הסופי, החיבור העמוק ביותר שאליו שואפים. זהו תיאור של המקום שאליו מגיעים.</p>
+        </div>
+        <div class="col-gold">
+            <h4>הרמב"ם: סדר העבודה</h4>
+            <p>הרמב"ם, כספר הלכה המדריך את סדר העבודה הרוחנית, מלמד כיצד מגיעים לשם: מתחילים בכיבוד, ומתוך הכבוד המתמיד מגיעים בסופו של דבר לאהבה האמיתית. הכבוד הוא השער.</p>
+        </div>
+    </div>
+
+    <p>וכשם שתפקיד האדם הוא להגיע לאהבת ה' יתברך, אך הדרך לשם עוברת דרך הרבות כבודו בעולם, כך גם ביחסי איש ואישה. אי אפשר לדלג ישר לאהבה בלי לעבור דרך הכבוד. מי שמנסה לקצר את הדרך, מגיע בדיוק למה שקרה בסיפור הפתיחה: מילים שנשמעות כמו אהבה, אך נטולות הכבוד שהיה צריך לעמוד בבסיסן.</p>
+
+    <h3 id="s1d">מדוע לכבדה יותר מגופו</h3>
+    <p>ולמה, בעצם, מצווים אנו לכבד את האישה יותר מאשר את עצמנו? חכמינו נותנים לכך כמה טעמים, וכל אחד מהם פותח צוהר נוסף להבנת מעמדה.</p>
+    <p>הטעם הראשון נוגע לרגישות. כפי שמובא בדברי הראשונים, <span class="emphasis">"זילותא דאיתתא קשה מדגברא"</span> — פגיעה בכבודה של אישה קשה וכואבת לה יותר מפגיעה מקבילה בכבודו של גבר. ומכיוון שכך, על הבעל להיזהר בכבודה ביתר שאת, בדיוק כפי שאדם נזהר יותר במקום שבו הכאב חזק יותר.</p>
+    <p>הטעם השני נוגע למהות. כפי שיתברר בהרחבה בפרק הבא, יש הרואים ברמז הזה — "יתר מגופו" — עדות למעלה הפנימית שבנפש האישה: מטבע בריאתה היא קרובה יותר לרוחניות, ולכן יש לכבד את המעלה הזו. והטעם השלישי הוא חינוכי: כשם שחכמינו לימדו להרבות בכבוד תלמיד חכם מעבר למה שנראה מתבקש, כדי להגיע בסופו של דבר למידת הכבוד הראויה, כך גם כאן — רק על ידי שמכוונים "יותר מגופו" מגיעים בפועל לכבוד השלם שהאישה זכאית לו.</p>
+
+    <div class="highlight-box">
+        <p>הנקודה שממנה יוצא הספר כולו היא זו: כבוד אינו קישוט על גבי האהבה, אלא היסוד שעליו האהבה נבנית. לפני שנלמד כיצד לומר מחמאה, כיצד לעזור, וכיצד להפתיע — עלינו לעצור ולבנות בלב את היחס הפנימי הזה: הערכה עמוקה, אמיתית, שאינה תלויה במעשה זה או אחר, אלא רואה באישה את מי שהיא.</p>
+    </div>
+
+    <div class="section-divider">חֵלֶק רִאשׁוֹן — מִי הִיא בֶּאֱמֶת (המשך)</div>
+
+    <div class="chapter-card">
+        <div class="num">2</div>
+        <div class="name">מי היא באמת — שונות המינים ומעלתה הרוחנית</div>
+    </div>
+    <div class="chapter-divider">✡</div>
+
+    <span class="chapter-label">פרק ב</span>
+    <h2 id="section2">מי היא באמת — שונות המינים ומעלתה הרוחנית</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>"בינה יתרה" — מה זו בעצם האינטואיציה הנשית, ובמה היא שונה מהשכל הגברי.</li>
+            <li>מדוע חכמינו הבטיחו שהאישה תזכה לשכר גדול יותר לעתיד לבוא.</li>
+            <li>מדוע השונות בין המינים היא יסוד, ולא פגם שיש לתקן.</li>
+        </ul>
+    </div>
+
+    <h3 id="s2a">"בינה יתרה" — אינטליגנציה נשית ייחודית</h3>
+    <p>כדי לכבד מישהו באמת, צריך קודם כל להכיר בו. וכבוד לאישה מתחיל בהכרה במעלות שנמצאות בה, מעלות שהאיש, מעצם טבעו, לא תמיד רואה או מבין. חכמינו מלמדים שהאישה ניחנה ב<span class="emphasis">"בינה יתרה"</span> — אינטליגנציה נשית, שונה לחלוטין מהאינטליגנציה הגברית. זו אינה רק חוכמה שכלית רגילה, אלא יכולת לתפוס מציאות שלמה בבת אחת, באינטואיציה, בטביעת עין. חז"ל מבטאים זאת באמרה: <span class="emphasis">"האישה מכרת באורחין יותר מן האיש"</span> — היא קולטת את אישיותו של אורח במבט אחד, בעוד שהעין הגברית, המנתחת ומפרקת לפרטים, מפספסת לעיתים את התמונה השלמה.</p>
+    <p>ויש הסבר עמוק יותר לבינה הזו. האיש נברא מעפר האדמה, ורק לאחר מכן נופחה בו נשמת חיים. האישה, לעומת זאת, נבראה מצלעו של האיש — לאחר שכבר נופחה בו הנשמה. כלומר, מראשית בריאתה היא נבנתה מחומר שכבר היה רווי רוחניות. ומכאן, לומדים חכמינו, שהאישה, במובן מסוים, קרובה יותר לרצון ה' מעצם טבעה. היא אינה זקוקה לאותו מאבק ועמל שהגבר זקוק לו כדי להגיע אל הרוחניות, משום שהיא "שלמה ומתוקנת" יותר כבר מלכתחילה. ומתוך שלמות זו, תפקידה בעולם הוא לעזור לזולתה — לבעלה ולילדיה — להתעלות גם הם.</p>
+
+    <div class="highlight-box">
+        <p>לא מדובר כאן בהשוואה של "מי טוב יותר". חכמינו מדמים זאת ליחס שבין המוח ללב: אין טעם לשאול איזה מהם חשוב יותר, כי כל אחד ממלא תפקיד שהשני אינו יכול למלא. כך גם באיש ובאישה — שניהם יחד יוצרים "אדם" שלם.</p>
+    </div>
+
+    <h3 id="s2b">שכרה של האישה לעולם הבא</h3>
+    <p>נקודה מפתיעה שחכמינו מלמדים היא ששכרה של האישה לעתיד לבוא גדול משכרו של האיש. המהר"ל מסביר את הדבר כך: האישה מגיעה, מצד טבעה, יותר מוכנה למנוחת העולם הבא. היא "שאננה" ורגועה מטבעה, בעוד שהאיש, בעולם הזה, זקוק לעמל ולמאבק תמידי. ולכן, אפילו סיוע קטן שהיא נותנת לתורה — בכך שהיא שולחת את ילדיה ללמוד, ומחכה לבעלה שיחזור מבית המדרש — נחשב לה לשכר גדול. וכך אמרו חכמינו: "גדול המעשה יותר מן העושה" — האישה, שאינה מרגישה את התענוג הישיר שבלימוד, אך נותנת את כל כולה כדי לאפשר אותו, נחשבת לגדולה יותר, שהרי כל מעשיה הם מסירות טהורה, בלי גמול מיידי.</p>
+    <p>גם ראש חודש נחשב יום טוב מיוחד לנשים, כהוקרה על שלא חטאו בחטא העגל, ועל כך שהן מתחדשות בכל חודש, כמו הלבנה המתחדשת. ואפילו לגבי גאולת מצרים אמרו חכמינו שבזכות נשים צדקניות נגאלו ישראל ממצרים. כל אלה מלמדים: המעלה הרוחנית של האישה אינה עניין שולי, אלא נדבך יסודי בבניין עם ישראל.</p>
+
+    <h3 id="s2c">שונות בתכלית, לא ניגוד</h3>
+    <p>השוני המהותי בין האיש לאישה אינו חיסרון שיש לטשטש, אלא תכנית מכוונת שעליה בנוי הבית. יש אופי גברי ויש אופי נשי, ותכונות של זה שונות מתכונות של זו. האיש זקוק לחינוך תובעני יותר, לאתגר שיאלץ אותו להתמודד ולהילחם בדחפיו. חינוך הבנות, לעומת זאת, צריך להיות מותאם לנפש האישה, לעדינותה ולייעודה. וכאשר מנסים לכפות על שניהם את אותה תבנית חינוכית, מפסידים את הטוב שבשונות.</p>
+    <p>מעלתה של האישה מתגלה גם ביכולתה לקחת דבר גשמי ולהפוך אותו לרוחני. כל מעשה קטן שהיא עושה בביתה — ארוחה, סידור, טיפול בילד — נועד להעלות את בני ביתה בעבודת ה'. היא זריזה, חרוצה, נותנת את הלב בכל דבר שהיא עושה, וניחנה בסבלנות שאין לה תחליף.</p>
+
+    <div class="quote-box">
+        <p>לצערנו, התרבות הכללית זלזלה במהות הזו, וקראה לאישה לפתח דווקא "צדדים גבריים" — שתלטנות, יחצנות, מרוץ אחר כוח וכסף — כביכול רק בכך תזכה לכבוד הראוי לה. אך זו למעשה השפלה נוספת, זלזול חדש בנשיות האמיתית, שרק לבש צורה חדשה. הפתרון האמיתי אינו בטשטוש השונות, אלא בהכרה בערכה העצמי של הדרך הנשית.</p>
+    </div>
+
+    <div class="chapter-card">
+        <div class="num">3</div>
+        <div class="name">"אם בישראל" — ייעוד, כוח מאזן, ומשימה לאומית</div>
+    </div>
+    <div class="chapter-divider">✡</div>
+
+    <span class="chapter-label">פרק ג</span>
+    <h2 id="section3">"אם בישראל" — ייעוד, כוח מאזן, ומשימה לאומית</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מהו התפקיד המרכזי של "אם בישראל" בבניין הבית.</li>
+            <li>כיצד יש לפתח את ייעודה הייחודי, "על פי דרכה", ולא על פי דרכו של הגבר.</li>
+            <li>מדוע האישה היא הכוח הנפשי המאזן, ומדוע היא חיונית למשימה הלאומית של עם ישראל.</li>
+            <li>ההבדל המשלים בין תפקיד האב לתפקיד האם.</li>
+        </ul>
+    </div>
+
+    <h3 id="s3a">תפקיד מרכזי</h3>
+    <p>לדמות "אם בישראל" יש תפקיד מרכזי ועוצמתי בבריאה. תפקידה להביא נשמות לעולם, לחנך אותן באהבת ה' ותורתו, ולבנות בית שכולו אהבה וחום. היא הלב של הבית היהודי — זו שיודעת לקחת דבר גשמי ולהפכו לרוחני, כדי שכל בני הבית יוכלו לעבוד את ה' מתוך שלווה. היא הכוח המאזן שבבית, וכל הברכות, אפילו השראת השכינה, שורות בבית בזכותה.</p>
+
+    <h3 id="s3b">פיתוח הייעוד הייחודי</h3>
+    <p>מכיוון שהאישה ניחנה ב"בינה יתרה" ובאינטואיציה מיוחדת, החינוך שלה צריך להתפתח "על פי דרכה", ולא על פי דרכו של הגבר. הטבע הנשי אינו סובל לחץ. הוא נמשך לדברים מכוח רצון פנימי, ולא מתוך דרישה חיצונית. האישה קולטת את הרוח והכיוון של הדברים באופן ישיר, מהיר וחוויתי, יותר מהגברים. זהו כישרונה המיוחד, וזוהי גם האחריות שמוטלת עלינו — לא לדחוק אותה לתבניות שאינן שלה, אלא לתת לייעוד הזה מקום לצמוח.</p>
+
+    <h3 id="s3c">כוח נפשי מאזן וחיוניות למשימה הלאומית</h3>
+    <p>האישה היא ה"עזר כנגדו" של האיש, במובן העמוק של המילה: היא הכוח הנפשי המאזן למתח שהוא חווה, בין אם בעמל לימוד התורה ובין אם בפעילות בעולם הגשמי. היא משלימה את מה שחסר לו מתוך מאמציו האידיאליסטיים, ומביאה נועם לחיים הפשוטים והטבעיים. עצם נוכחותה משרה רוגע ושלווה בבית.</p>
+    <p>ומעבר לבית הפרטי, האישה חיונית למשימה הלאומית של עם ישראל כולו. חכמינו לימדו: <span class="emphasis">"אין הברכה מצויה בתוך ביתו של אדם אלא בשביל אשתו"</span>. השיקום האמיתי של האומה — הרוחני והתרבותי גם יחד — תלוי בהרמת קרנה של הנשיות האותנטית. היא זו שמגדלת את ילדינו באהבה, בחום, בשקט ובאמון, ובונה בהם תשתית נפשית בריאה, שהיא הבסיס לכל דור עתידי.</p>
+
+    <h3 id="s3d">אב לעומת אם — תפקידים משלימים</h3>
+    <p>ולסיום פרק זה, שווה להעיר על נקודה שקל לפספס. השאיפה הגבוהה ביותר של גבר אינה בהכרח להיות "אב בישראל" במובן שזה עיקר תפקידו בבית. לאב יש משימות רחבות נוספות — פיתוח התרבות והמוסר, לימוד תורה, ניהול הבית והפרנסה. כל אלה נדרשים למען מימוש סגולות החיים של עם ישראל. תפקידו לעזור לאישה בכל מה שצריך, אך היא זו שהוכשרה באופן טבעי לגידול הילדים, בייחוד בגיל הרך. זהו שוני מהותי בתפקידים, ושניהם — האב והאם — חיוניים ומשלימים זה את זה בבניין המשפחה השלם.</p>
+
+    <div class="section-divider">חֵלֶק שֵׁנִי — עֲבוֹדַת הַלֵּב</div>
+
+    <div class="chapter-card">
+        <div class="num">4</div>
+        <div class="name">לראותה כצדיקה ומלכה — עבודת ההתבוננות</div>
+    </div>
+    <div class="chapter-divider">📖</div>
+
+    <span class="chapter-label">פרק ד</span>
+    <h2 id="section4">לראותה כצדיקה ומלכה — עבודת ההתבוננות</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>למה צריך "לחשוב בכל הלב" עד כמה האישה צדיקה, ולא להסתפק בהרגשה כללית.</li>
+            <li>מה זה אומר בפועל לדמיין את האישה כמלכה.</li>
+            <li>משל הוויטרינה ופח הזבל — כיצד בוחרים במה להתמקד.</li>
+        </ul>
+    </div>
+
+    <h3 id="s4a">"לחשוב בכל לבי כמה היא צדיקה"</h3>
+    <p>אחרי שהנחנו את היסוד — כבוד ולא רק אהבה, והכרה במעלתה הרוחנית — מגיע השלב המעשי הראשון: עבודת ההתבוננות. זו אינה פעולה חד-פעמית, אלא הרגל יומי. יש לשבת ולראות את מעלותיה של האישה, כמה שרק אפשר. אם היא מרגישה שבעלה חושב עליה כעל "רשעית", אזי מוטל עליו לתת לה "המון מחמאות שהיא צדיקה" — לא כמס שפתיים, אלא מתוך שינוי תודעתי אמיתי: <span class="emphasis">"עלי לחשוב בכל לבי כמה היא צדיקה"</span>.</p>
+    <p>חלק בלתי נפרד מעבודה זו הוא לעבוד על "עין טובה" כלפיה: לא לראות בה רע כלל. ואפילו אם יש לה חסרונות, לדעת שגם הם, בסופו של דבר, לטובתו — הזדמנות לעבוד על מידותיו ולהתקרב לבורא עולם.</p>
+
+    <h3 id="s4b">לדמיין אותה מלכה</h3>
+    <p>יש לדמיין תמיד כאילו האישה היא מלכה, וכך להתייחס אליה בפועל. היא "ביתו של מלך", ולכן יש לחוש כלפיה יראה מסוימת, ממש כמו כלפי מלך בשר ודם. הדבר החשוב ביותר לתפקידנו בעולם — כך מלמדים חכמינו — הוא ללמוד לכבד את בת המלך, לחפש את שמחתה ולענגה.</p>
+
+    <div class="highlight-box">
+        <p>תחשוב לרגע: אם בעיני הבורא היא כה חשובה עד כדי כך שפניה מייצגות את השכינה, כיצד ייתכן שבעיניך היא לא תהיה חשובה באותה מידה?</p>
+    </div>
+
+    <h3 id="s4c">משל הוויטרינה ופח הזבל</h3>
+    <p>חכמינו המשילו את בחירת המבט הזו למשל נפלא. בבית מסוים יש ויטרינה יפה עם כלי כסף מבהיקים, ויש בו גם פח זבל. אדם אחד חש תמיד את יופייה של הוויטרינה, מתפעם ממנה, וחייו מלאי אושר. אדם אחר, לעומתו, חושב רק על פח הזבל, נחנק מהריח, ומתלונן ללא הפוגה. אותו בית, אותה מציאות — אך שני עולמות שונים לגמרי, בהתאם למה שבוחרים להתמקד בו.</p>
+    <p>כך בדיוק בזוגיות. אפשר לחפש בה את הטוב שבה, ולנסות להסתכל עליו כמו ב"זכוכית מגדלת" — ואז מגלים "מעלות מיוחדות מאוד" שקל היה לפספס. ואפשר, חלילה, לעשות את ההפך: להתמקד דווקא במה שחסר. הבחירה היא תמיד שלנו.</p>
+
+    <div class="story-box">
+        <span class="story-title">אהבתה של האישה — נקודה שקל לפספס</span>
+        <p>אחד הדברים שראויים להתבוננות מיוחדת הוא אהבתה של האישה ליהודים: היא אוהבת כל יהודי, ואכפת לה ממנו עד כדי כך שהיא לא נרדמת בלילה כשהיא חושבת כיצד תוכל לעזור לו. זוהי מעלה נדירה וגדולה, מהסוג שקל לעבור לידו בשגרת היום-יום — אלא אם כן מתאמנים לשים לב אליו במיוחד.</p>
+    </div>
+
+    <div class="chapter-card">
+        <div class="num">5</div>
+        <div class="name">אמנות המחמאה — מה, איך ומתי לומר</div>
+    </div>
+    <div class="chapter-divider">📖</div>
+
+    <span class="chapter-label">פרק ה</span>
+    <h2 id="section5">אמנות המחמאה — מה, איך ומתי לומר</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>למה מחמאה על דבר "מובן מאליו" עלולה להישמע כביקורת סמויה.</li>
+            <li>איזה מחמאות דווקא כן משמחות, ולמה.</li>
+            <li>איך מכינים מחמאות מראש, ולא מסתמכים על ההשראה של הרגע.</li>
+        </ul>
+    </div>
+
+    <h3 id="s5a">מחמאה עם ביקורת סמויה</h3>
+    <p>נחזור לסיפור מהפרק הראשון. אילו אותו בעל, במקום "מגיע לך נשיקה", היה אומר משפט אחר — האם כל מילה טובה הייתה מספיקה? התשובה היא לא. יש הבדל מהותי בין מחמאה אמיתית לבין מחמאה שיש בה, מבלי משים, ביקורת סמויה.</p>
+    <p>אישה רוצה הערכה על דברים שהיא <span class="emphasis">מושלמת</span> בהם, ולא על דברים שבהם היא אינה מושלמת. הבעיה בזה מתחוורת מיד כשנותנים לה דוגמה: האמירה "כל הכבוד שקמת מוקדם" נשמעת כמו מחמאה, אך אם היא לא קמה מוקדם בכל יום, יש במשפט הזה גם ביקורת עדינה — הרי הוא רומז ש"בדרך כלל את לא קמה מוקדם, אבל היום כן". וכך גם עם מחמאות שמראות כאילו היא ילדה שמשבחים אותה על דברים מובנים מאליהם: "איזו צדיקה", "כל הכבוד שהכנת ארוחת צהריים" — משפטים כאלה, למרות כוונתם הטובה, גורמים לה להרגיש כאילו היא נבחנת על משהו שממילא מצופה ממנה.</p>
+
+    <h3 id="s5b">מה כן לומר</h3>
+
+    <div class="two-columns">
+        <div class="col-gold">
+            <h4>מה נמנעים ממנו</h4>
+            <p>"כל הכבוד שקמת מוקדם" (אם זה לא כל יום).<br>"איזו צדיקה".<br>"כל הכבוד שהכנת ארוחת צהריים".</p>
+        </div>
+        <div class="col-purple">
+            <h4>מה אומרים במקום</h4>
+            <p>"כמה נעים לי שהחדר מסודר".<br>"כמה טעים לי הארוחה".<br>"מאוד יפה שאת זוכרת בדיוק איפה מונח המגן ראש של התינוק".</p>
+        </div>
+    </div>
+
+    <p>ההבדל דק אך מכריע: במקום להעריך את הפעולה כאילו היא מבחן שהיא עברה, יש להתייחס לרגש או להשפעה שנגרמו ממנה. מחמאה כזו משמחת את האישה בכך שהיא ממלאת את תפקידה בבית "כראוי ומוצלח", בלי שום שמץ של ביקורת נלווית.</p>
+    <p>וחשוב לא פחות: לתת מחמאה על הרגש, ולא רק על הפעולה החיצונית. כאשר האישה מספרת סיפור שקראה, היא עושה זאת מתוך מחשבה שהמסר יעניין את בעלה — לכן חשוב מאוד להראות כמה הסיפור באמת עניין אותו, ולא רק לומר "יפה". וכאשר היא מספרת כמה קשה לה, תפקידו אינו להציע פתרונות, אלא להסכים איתה שכואב לה. ואם היא נפגעת מהערה כלשהי — יש להתבונן: אולי רגישותה דווקא מעלה, לא חיסרון, והיא פשוט אמא עם לב רגיש.</p>
+
+    <h3 id="s5c">להכין מראש</h3>
+    <p>מחמאה טובה כמעט אף פעם לא נולדת ברגע. היא דורשת הכנה. מומלץ להקדיש בכל יום לפחות עשר דקות לשבת ולהתבונן — מה בדיוק היא עשתה, מה מעלותיה שבאו לידי ביטוי היום. אפשר אף להכין פתקים עם מחמאות מראש, ולתת אותם ברגע המתאים. ומי שרוצה להעמיק, יכול להכין גם סיפורים ודברי תורה שיחזקו אותה — כי דבר תורה שנועד לחזק אישה הוא, במידה רבה, גם הוא מעין מחמאה: הוא אומר לה, במילים אחרות, "כמה את טובה וגדולה".</p>
+
+    <div class="chapter-card">
+        <div class="num">6</div>
+        <div class="name">הכרת הטוב — המפתח לכל השפע</div>
+    </div>
+    <div class="chapter-divider">📖</div>
+
+    <span class="chapter-label">פרק ו</span>
+    <h2 id="section6">הכרת הטוב — המפתח לכל השפע</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>הציווי "אוקירו לנשייכו" ומקור הברכה שבבית.</li>
+            <li>למה יש לזכור רק את הטוב, ולעולם לא להזכיר את מה שהיה לא טוב.</li>
+            <li>סיפור: הבעל שגילה שאשתו חולה בקלפטומניה — ומה עשה עם הגילוי הזה.</li>
+        </ul>
+    </div>
+
+    <h3 id="s6a">"אוקירו לנשייכו כי היכי דתתעתרו"</h3>
+    <p>אחרי ההתבוננות ואחרי המחמאה, מגיע היסוד השלישי: הכרת הטוב. חכמינו מלמדים שאין הברכה מצויה בתוך ביתו של אדם אלא בשביל אשתו, שנאמר "ולאברם היטיב בעבורה". ורבא היה אומר לבני עירו מחוזא: <span class="emphasis">"אוקירו לנשייכו כי היכי דתתעתרו"</span> — כבדו את נשותיכם כדי שתתעשרו. זו אינה רק הבטחה לעושר חומרי, אלא סוד רוחני: מי שאינו מכיר בכך שהשפע מגיע בזכות אשתו, עלול פשוט לא לקבל עוד שפע. כשם שמשה רבנו לא זכה לדיבור מפי ה' בשעה שעם ישראל היה נזוף — ללמדנו שאין השכינה שורה על הנביא אלא בזכות ישראל — כך גם הבעל: הברכה שבביתו אינה שלו לבדו, אלא מגיעה אליו בזכות אשתו.</p>
+
+    <h3 id="s6b">לזכור רק את הטוב</h3>
+    <p>חובת הכרת הטוב איננה תלוית מצב. גם אם האישה עשתה עתה דבר שאינו טוב, אסור לזכור לה זאת — יש לזכור רק את כל הטוב שתמיד גמלה עם בעלה. יתרה מזו: אם היא לא מתנהגת כראוי, יש אפילו לשמוח על כך, שהרי זו הזדמנות ל"עמל ויגיעה" נוספים באהבתה, וגם הזדמנות למחיקת חטאים.</p>
+    <p>הכרת הטוב הזו נדרשת על כל תחום: על גידול הילדים במסירות נפש, על כך שהיא מצילה את בעלה מן החטא, על דאגתה לבית ולצרכיו — שבזכותה הוא יכול ללמוד תורה ולעסוק במצוות. וכפי שאמר רבי חייא לתלמידו שהתלונן על אשתו: <span class="emphasis">"דיינו שמגדלות בנינו ומצילות אותנו מן החטא"</span>. אפילו כאשר יש קושי אמיתי בזוגיות, יש למצוא בו את הטוב — ולזכור שגם הפרנסה והשפע מגיעים בזכות האישה.</p>
+    <p>וכשם שהכרת הטוב לאישה עצמה חיונית, כך גם הכרת הטוב להוריה. רעיון נפלא הוא להכיר טובה להורי האישה על ידי מתן יחס נפלא לבתם — כך למעשה מחזירים להם, בעקיפין, על כל מה שהשקיעו בגידולה.</p>
+
+    <div class="story-box" id="s6c">
+        <span class="story-title">כשגילה שאשתו חולה בקלפטומניה</span>
+        <p>סיפור מטלטל, שמלמד עד כמה עמוקה יכולה להיות עבודת הכרת הטוב, נוגע לאברך שגילה יום אחד כי אשתו סובלת ממחלת הקלפטומניה — נטייה כפייתית לקחת דברים בלי לשלם עליהם. במקום לנטוש אותה, או להתמלא בכעס ובבושה, הוא בחר בדרך אחרת לגמרי: הוא פנה לבעלי החנויות, הסביר להם את המצב, ודאג לשלם עבור כל דבר שאשתו לקחה. הוא ראה בכך ניסיון שנשלח לו מן השמים, והחליט להגיב אליו מתוך ביטחון וחסד, לא מתוך דין וביקורת.</p>
+        <p>ילדיהם, שגדלו בבית שבו אביהם בחר להגן על כבוד אמם ולא לחשוף את מחלתה, גדלו לתלמידי חכמים ויראי שמים. הסיפור מלמד שהכרת הטוב אינה עניין תלוי-מצב, המחכה לרגעים הנוחים — היא בחירה שנבחרת דווקא ברגעים הקשים ביותר, ודווקא אז היא נושאת פרי.</p>
+    </div>
+
+    <div class="chapter-card">
+        <div class="num">7</div>
+        <div class="name">הודיה לבורא עולם על מתנת הזיווג</div>
+    </div>
+    <div class="chapter-divider">📖</div>
+
+    <span class="chapter-label">פרק ז</span>
+    <h2 id="section7">הודיה לבורא עולם על מתנת הזיווג</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מדוע האישה היא, לפני הכל, מתנה מהבורא — לא רק "בת זוג".</li>
+            <li>שלוש דרכים להביע הודיה: במחשבה, בדיבור ובמעשה.</li>
+        </ul>
+    </div>
+
+    <h3 id="s7a">האישה כמתנה מהבורא</h3>
+    <p>הכרת הטוב שדיברנו עליה בפרק הקודם מכוונת כלפי האישה עצמה. אך יש שכבה נוספת, עמוקה יותר: הודיה לבורא עולם על שנתן לנו את המתנה הזו מלכתחילה. האישה אינה רק "בת זוג" או "עזר כנגדו" במובן הטכני. היא מתנה נפלאה שקיבלנו ישירות מבורא עולם, מתוך נדיבותו ואהבתו המופלגת אלינו. תפקידנו בבריאה, כך מלמדים חכמינו, הוא להתאמץ מאוד לענג את "בת המלך" — כשם שהאדם לא נברא אלא כדי להתענג על ה' וליהנות מזיו שכינתו, כך תפקידנו לענג אותה בכל מאודנו.</p>
+    <p>מי שלא מכיר בכך שהמתנה הזו היא באמת מתנה, עלול להתייחס אליה כאל מובן מאליו. וזו, למעשה, השורש של חטאו של אדם הראשון — כפיות טובה על מתנת האישה. הוא לא הכיר במלוא ערכה של המתנה שקיבל, וזה גרם לטוב שבקשר להיפגם.</p>
+
+    <h3 id="s7b">הודיה במחשבה, בדיבור ובמעשה</h3>
+    <p>הודיה זו אינה יכולה להישאר רק רגש פנימי מעורפל. היא צריכה לבוא לידי ביטוי בשלושה מישורים.</p>
+    <p><span class="emphasis">במחשבה</span>: להתבונן במעלותיה הייחודיות, לדמיין אותה כ"בת מלך", ולהכיר בטובה בכל מצב — גם אם יש קושי, יש עדיין הרבה טוב שיש להודות עליו. מומלץ להקדיש רבע שעה בכל יום להתבונן במעלותיה, ולחשוב כיצד לשמח אותה.</p>
+    <p><span class="emphasis">בדיבור</span>: להרבות במחמאות כנות ואמיתיות, ולומר לה במילים פשוטות כמה שמחים בה — "איזה כיף לנו שזכינו לכזאת אמא נפלאה", "את אישה למופת, לא יכולתי לבקש אישה יותר טובה ממך". וגם לשאול אותה שאלות מעצימות: "מה את מרגישה שטוב בשבילך? מה ישמח אותך?" — שאלות שמראות שאכפת לו ממה שקורה בפנים, לא רק ממה שנראה מבחוץ.</p>
+    <p><span class="emphasis">במעשה</span>: לעזור בזריזות, לא לסרב לבקשותיה ככל האפשר, להכין הפתעות, ולדאוג גם לרוחניותה — להתפלל על חסרונותיה, ולדאוג שתהיה יותר רוחנית, בדיוק כפי שדואגים לצרכיה הגשמיים.</p>
+
+    <div class="highlight-box">
+        <p>הודיה אמיתית לבורא עולם ולאישה גם יחד בונה שלום בית, מביאה שמחה, ופותחת שערי שפע גשמי ורוחני כאחד. זהו הבסיס שממנו יוצאים כל שאר הפרקים המעשיים שבספר הזה.</p>
+    </div>
+
+    <div class="section-divider">חֵלֶק שְׁלִישִׁי — עֲבוֹדַת הַמַּעֲשֶׂה</div>
+
+    <div class="chapter-card">
+        <div class="num">8</div>
+        <div class="name">להקשיב, להבין וללמוד אותה</div>
+    </div>
+    <div class="chapter-divider">📖</div>
+
+    <span class="chapter-label">פרק ח</span>
+    <h2 id="section8">להקשיב, להבין וללמוד אותה</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מדוע התפקיד בשעת קושי הוא להסכים שכואב, לא להציע פתרון.</li>
+            <li>כיצד לומדים "מתי היא רוצה, ורק לא אמרה".</li>
+            <li>כיבוד גבולות — זמן, מרחב אישי, והחלטות משותפות.</li>
+        </ul>
+    </div>
+
+    <h3 id="s8a">"להסכים איתה שכואב לה"</h3>
+    <p>עבודת הלב — ההתבוננות, המחמאה, הכרת הטוב וההודיה — חייבת להתבטא גם בתקשורת היומיומית. וכאן טמונה טעות נפוצה: כשאישה מספרת לבעלה כמה קשה לה, הנטייה הטבעית של רוב הגברים היא לנתח את הבעיה ולהציע פתרון. אך זה בדיוק לא מה שהיא צריכה באותו רגע. תפקידו אינו להציע פתרונות, אלא <span class="emphasis">להסכים איתה שכואב לה</span>. יש "לחיות את הבעיה" יחד איתה, ולתת לה את ההרגשה שהוא באמת הבין אותה. מחקרים על תקשורת זוגית ומקורות תורניים כאחד מסכימים בנקודה הזו: ההרגשה שמישהו מקשיב באמת, ולא ממהר לפתור, היא לעיתים העזרה הגדולה ביותר שאפשר לתת.</p>
+    <p>וכשהאישה מספרת סיפור שקראה, יש להראות עניין אמיתי — לא רק "יפה", אלא עניין שנובע מהבנה שהיא בחרה לשתף אותו במשהו שנגע ללבה. וכשהיא נפגעת מהערה כלשהי, יש להתבונן: אולי הרגישות הזו היא בעצם מעלה, לא חיסרון — עדות ללב רגיש שדואג לילדים ולבית.</p>
+
+    <h3 id="s8b">"מתי היא רוצה, ורק לא אמרה"</h3>
+    <p>אחד השיעורים החשובים ביותר שאישה יכולה ללמד את בעלה הוא זה: היא לא תמיד תגיד לו "לא", וגם לא תמיד תבטא במפורש את מה שהיא צריכה. לכן, על הבעל ללמוד להכיר מתי היא רוצה דבר מה — ורק לא אמרה. עליו "ללמוד אותה", "לחיות אותה", ללמוד ממה היא נהנית וממה היא מתרגשת. זוהי מתנה גדולה בשבילה: לדעת לחיות את מה שהיא צריכה, בלי שהיא תצטרך לבקש כל דבר במפורש.</p>
+    <p>הדרך להגיע לזה היא לא רק לדבר איתה, אלא ללמוד אותה — כמו לומדים סוגיה במשך זמן, בסבלנות ובתשומת לב. לחשוב מה חסר לה מבחינה גשמית, ומה חסר לה מבחינה רוחנית, וכיצד אפשר לתת לה זאת.</p>
+
+    <h3 id="s8c">כיבוד גבולות וזמן</h3>
+    <p>כיבוד אמיתי מתבטא גם בדברים שנראים "קטנים". כשהאישה מדברת בטלפון, ראוי שלא לעשות פעולות נוספות באותו זמן — לכבד את "צלם האלוקים" שבה בהקשבה מלאה, ולא לבזבז את הזמן שהיא מדברת, אלא להתבונן במעלותיה. כיבוד זמן משמעו גם להקפיד להגיע בזמן לפגישות משותפות, ולהודיע מראש על כל שינוי.</p>
+    <p>וכל אישה זקוקה גם למרחב אישי — פיזי, רגשי, ולעיתים גם דיגיטלי. זה אומר לא להתערב יתר על המידה, ולא לדרוש דברים שעלולים לגרום לה להרגיש מבוקרת. ולבסוף, כיבוד גבולות מתבטא גם במעמדה כשותפה שווה: חלוקה הוגנת של האחריות בניהול הבית, והתייעצות אמיתית איתה לפני החלטות — לא רק דיווח לאחר מעשה.</p>
+
+    <div class="chapter-card">
+        <div class="num">9</div>
+        <div class="name">מעשים שמדברים — זריזות, עזרה והפתעות</div>
+    </div>
+    <div class="chapter-divider">📖</div>
+
+    <span class="chapter-label">פרק ט</span>
+    <h2 id="section9">מעשים שמדברים — זריזות, עזרה והפתעות</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>למה זריזות בעזרה היא כשלעצמה ביטוי של כבוד.</li>
+            <li>סיפור: כוס התה של הרב שך, ומה היא מלמדת על סדר העדיפויות.</li>
+            <li>עוד סיפורי מסירות: הסוכה של החפץ חיים, הרבנית קניבסקי, הרב משה פיינשטיין, ר' חייא.</li>
+            <li>הפתעות קטנות ותאריכים שאסור לשכוח.</li>
+        </ul>
+    </div>
+
+    <h3 id="s9a">זריזות שמדברת כבוד</h3>
+    <p>כל מה שנאמר עד כה — ההתבוננות, המחמאה, ההקשבה — צריך בסופו של דבר להתגלם במעשה. אחד המעשים החשובים ביותר הוא <span class="emphasis">זריזות</span>. כאשר האישה קוראת לעזרה, גם אם הבעל בקצה השני של הבית, ואפילו אם הוא עסוק בעניינים שנראים לו חשובים ביותר — יש לו כאן "הזדמנות פז" לקיים מצוות חסד: לעזוב הכל וללכת בזריזות לעזור. הזריזות עצמה היא מסר: היא אומרת "את חשובה לי יותר ממה שאני עסוק בו כרגע". איטיות, לעומת זאת, גם אם היא לא מכוונת, משדרת בדיוק את ההפך.</p>
+
+    <div class="story-box" id="s9b">
+        <span class="story-title">כוס התה שנקטעה בזמנה</span>
+        <p>מספרים תלמידיו של מרן הרב שך זכר צדיק לברכה, שראשו ורובו היה שקוע בלימוד תורה עד כדי כך שנראה כאילו אינו רואה ואינו שומע דבר מסביבו. אך היו רגעים שבהם הוא הפתיע את כולם: מדי שעה בשעה, בדיוק נמרץ, הוא היה עוזב בחיפזון את הלימוד ואת החבורה שהקיפה אותו, פונה במרוצה לביתו, מכין לאשתו כוס תה, מגיש לה תרופה, ודורש בשלומה. ולאחר מכן היה חוזר ללימוד, כאילו לא הייתה שום הפסקה.</p>
+        <p>המסר עמוק: המסירות לאשתו לא הייתה "הפסקה" מהלימוד, אלא נבעה מאותו מקור רוחני רומם ממש כמו הלימוד עצמו. עבורו, כבוד השכינה שבבית לא פחת בערכו מכבוד השכינה שבבית המדרש.</p>
+    </div>
+
+    <h3 id="s9c">עוד סיפורי מסירות</h3>
+    <p>סיפורים דומים מלווים את דמויותיהם של גדולי הדור, כל אחד מלמד זווית משלו.</p>
+
+    <div class="story-box">
+        <span class="story-title">הסוכה שנבנתה פעמיים</span>
+        <p>מספרים על החפץ חיים זצוק"ל, גדול הדור, שאשתו ביקשה ממנו להעביר את מקום הסוכה. הוא לא היסס, פירק אותה ובנה אותה מחדש במקום שביקשה. וכשלאחר זמן היא ביקשה להחזירה למקומה הראשון — עשה זאת שוב, ללא שמץ של תרעומת. עבור אדם שכל רגע מזמנו יקר כל כך, זהו שיעור עצום במסירות נפש לשלום בית: לא הפעולה עצמה חשובה, אלא נכונות הלב.</p>
+    </div>
+
+    <div class="story-box">
+        <span class="story-title">כוס קפה בשעה שתיים בלילה</span>
+        <p>הרבנית קניבסקי עליה השלום נהגה לקום בכל לילה, בשעה שתיים, כדי להכין תה או קפה לבעלה, הרב חיים קניבסקי זצוק"ל, מתוך רצון לחוס על זמנו היקר לתורה. וכך גם ר' משה קלירס זצ"ל, רבה של טבריה, שהיה מגיש לרעייתו כוס קפה למיטה בכל בוקר — לא משום שהייתה חולה, אלא כדי לקיים בפועל "ואהבת לרעך כמוך". שני הסיפורים, אף שהם הפוכים בכיוונם, מלמדים אותו עיקרון: מעשה קטן שחוזר על עצמו יום־יום בונה, לאורך זמן, קשר עמוק יותר מכל מחווה חד-פעמית.</p>
+    </div>
+
+    <div class="story-box">
+        <span class="story-title">הרב פיינשטיין ליד הכיור</span>
+        <p>בני ביתו של הרב משה פיינשטיין זצ"ל התפלאו יום אחד לראותו, כשכבר היה בא בימים, עומד במטבח ומדיח כלים בעצמו. כששאלו אותו לפשר הדבר, הסביר בפשטות: "הרבנית אינה חשה בטוב, ויודע אני עד כמה היא אינה אוהבת לראות כלים שאינם מודחים". גם דבר "קטן" כזה, כשהוא נעשה מתוך הבנה עמוקה של מה שמשמח את בת הזוג, הוא ביטוי אמיתי לכבוד.</p>
+    </div>
+
+    <div class="story-box">
+        <span class="story-title">ר' חייא והמתנה מן השוק</span>
+        <p>ר' חייא, כך מסופר, למרות שאשתו הייתה מצערת אותו לעיתים, לא נמנע מלהביא לה מתנות קטנות בכל פעם שמצא בשוק דבר שחשב שישמח אותה. וכשתלמידו תמה על כך, ענה לו במשפט שהפך לאחד המפורסמים שבנושא: <span class="emphasis">"דיינו שמגדלות בנינו ומצילות אותנו מן החטא"</span>. תשובה זו, לכאורה תמציתית, מכילה בתוכה את כל היסוד של הכרת הטוב: להתמקד תמיד בטוב הגדול, ולא לתת לקשיים היומיומיים לטשטש אותו.</p>
+    </div>
+
+    <h3 id="s9d">הפתעות ותאריכים חשובים</h3>
+    <p>מעבר לזריזות ולעזרה השוטפת, יש מקום מיוחד ל<span class="emphasis">הפתעות קטנות</span> — פתק אוהב שמונח על המקרר או על הכרית, שוקולד שהיא אוהבת, ארוחה שהוכנה בסוף יום מתיש, או אמבטיית שמנים מרגיעה בזמן שהיא הכי לא מצפה. אלה מחוות שמראות מחשבה מוקדמת, לא רק תגובה לבקשה.</p>
+    <p>ואי אפשר בלי להזכיר את התאריכים החשובים: יום הנישואין ויום ההולדת. אלה ימים שחשוב לזכור מבעוד מועד, ולתכנן להם משהו — ולא, חלילה, לשלוח אותה לקנות מתנה לעצמה. הזמן שמושקע בזכירה ובתכנון הוא כשלעצמו חלק מהמתנה.</p>
+
+    <div class="chapter-card">
+        <div class="num">10</div>
+        <div class="name">המלכתה בפועל — כבוד ויראת כבוד יומיומיים</div>
+    </div>
+    <div class="chapter-divider">📖</div>
+
+    <span class="chapter-label">פרק י</span>
+    <h2 id="section10">המלכתה בפועל — כבוד ויראת כבוד יומיומיים</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מה זה אומר בפועל להתייחס אליה כאל "ביתו של מלך".</li>
+            <li>מדוע יש להקדים את צרכיה, ולתת לה את הדבר המשובח יותר.</li>
+            <li>ביטול הרצון העצמי כדרך אל דבקות אמיתית.</li>
+        </ul>
+    </div>
+
+    <h3 id="s10a">יראת כבוד — "ביתו של מלך"</h3>
+    <p>בפרק ד' דיברנו על העבודה הפנימית של לדמיין אותה כמלכה. כעת נדבר על התרגום המעשי של אותה עבודה. יראת כבוד כלפי מלך אינה מסתכמת ברגש — היא מתבטאת בהתנהגות מוחשית: לא מדברים אליו בזלזול, לא מסרבים לבקשתו בקלות דעת, ולא מתעכבים כשהוא זקוק לעזרה. אותו דבר בדיוק נכון גם כלפי אשתו של אדם, שהיא "ביתו של מלך".</p>
+
+    <h3 id="s10b">להקדים את צרכיה</h3>
+    <p>יש להקדים את צרכיה של האישה לצרכיו של הבעל, בדרכים קטנות ומעשיות. אם יש רק חפץ אחד ששניהם צריכים, ייתן לה להשתמש בו ראשונה. אם קונה שני חפצים דומים, ייתן לה את המשובח שביניהם. חכמינו אף מלמדים לכבד את האישה בבגדים יפים, אפילו יותר ממה שיש לבעל עצמו, ואף ללוות כסף לשם כך. ומעבר לחפצים — יש לקיים את בקשותיה במהירות ובזריזות, ואם באמת אין אפשרות לתת לה משהו, אין לומר "לא" בתקיפות, אלא בסבר פנים יפות ובלב מבין.</p>
+    <p>יש להשתדל כמה שפחות לסרב לבקשותיה, ולתת לה גם אישור לפעולותיה — לדעת שבעלה מרוצה ממה שהיא עושה, בין אם מדובר בניהול חשבונות הבית או בקנייה מיוחדת. הרגשת האישור הזו, שנשמעת אולי כדבר קטן, בונה ביטחון עמוק.</p>
+
+    <h3 id="s10c">ביטול רצון</h3>
+    <p>ולבסוף, המדרגה הגבוהה ביותר בפרק הזה: <span class="emphasis">דבקות</span> אמיתית בין בני הזוג מושגת רק על ידי ביטול רצון. אם האדם מבטל את רצונותיו בפני רצון ה', מתעורר בביתו כוח שגורם גם לאשתו לבטל את עצמה בפניו מתוך אהבה, ולא מתוך כפייה. חכמינו כללו זאת בכלל גדול: "בטל רצונך מפני רצונו, כדי שיבטל רצון אחרים מפני רצונך". זהו עיקרון שפועל בשני הכיוונים — ויתור אינו חולשה, אלא הדרך שמובילה בסופו של דבר לקשר חזק ואמיתי הרבה יותר מכל עמידה על שלך.</p>
+
+    <div class="section-divider">חֵלֶק רְבִיעִי — הַתַּכְלִית</div>
+
+    <div class="chapter-card">
+        <div class="num">11</div>
+        <div class="name">קדושת הבית והשכינה — שלום בית כתכלית עליונה</div>
+    </div>
+    <div class="chapter-divider">✡</div>
+
+    <span class="chapter-label">פרק יא</span>
+    <h2 id="section11">קדושת הבית והשכינה — שלום בית כתכלית עליונה</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מדוע הבית שיש בו שלום נחשב "בית של שכינה", ומה קורה כשהשלום נעדר.</li>
+            <li>כיצד שלום בית הוא בעצם השער הישיר ביותר לאהבת ה'.</li>
+            <li>למה העונג הרוחני שבקשר טוב אין לו שביעה, בשונה מכל תענוג גשמי.</li>
+            <li>סיפור: הרב שנערך לפני שנכנס הביתה, "כדי להיכנס אל השכינה".</li>
+        </ul>
+    </div>
+
+    <h3 id="s11a">הבית כמקדש והשכינה השורה בו</h3>
+    <p>חזרנו כמה פעמים לאורך הספר לרעיון שהבית הישראלי הוא מקדש. עכשיו, בשער האחרון, אפשר לומר זאת בצורה החדה ביותר: השכינה הקדושה שורה בבית שיש בו שלום. חכמינו לימדו שאין השכינה שורה על מקום פגום — ולכן קודם נישואיו, כביכול, אין השכינה שורה על האדם כלל. אבל כשאדם נושא אישה, וכשהוא בונה איתה בית של שלום, הוא מתדבק בשכינה ממש.</p>
+    <p>מן הצד השני, יש כאן גם אזהרה חמורה: השכינה שבבית תלויה באווירה שבו, והיא עוזבת מיד ברגע שיש חס ושלום מריבה. חכמינו אף אמרו שחוסר שלום בין איש לאשתו דומה, במידה מסוימת, לשריפת חלק מבית המקדש. זו אינה מליצה — זו הצהרה על המשקל האמיתי של הדבר.</p>
+
+    <h3 id="s11b">שלום בית כשער לאהבת ה'</h3>
+    <p>ומכאן לנקודה המרכזית ביותר של הפרק: תכלית האדם היא לאהוב את ה' יתברך. אך איך מגיעים לאהבה כזו, מופשטת וגבוהה כל כך? התשובה, כפי שראינו כבר בפרק הראשון לגבי כבוד ואהבה, היא באמצעות מה שמוחשי ונגיש לנו. רגשות האהבה שאדם חווה כלפי אשתו הם, במידה רבה, "צוהר" שדרכו הוא יכול לחוש ולראות את טובו וחסדו המופלגים של הבורא. השם יתברך ברא את העולם כולו מתוך נדיבות ואהבה, כדי להיטיב לנו הטבה נצחית. וכשם שאדם הנכנס לגן פורח יכול לשאול "מניין הגיע כל היופי הזה", ולהגיע דרך השאלה הזו להכרת טובו של הבורא — כך גם כשהוא רואה את בת זוגו, יכול לחוש את אותה נדיבות ואהבה שהעניק לו הבורא בבחירתה עבורו.</p>
+    <p>שלום בית, אם כן, אינו רק "יחסים טובים בין בני אדם". יש בו ממד של קדושה עליונה, כבוד השכינה עצמה. הזוגיות היא "בית ספר" משוכלל לתיקון המידות: הזדמנות לצאת מהעולם האנוכי ולדאוג באמת לזולת — לאישה ולילדים. כל קושי, כל חוסר התאמה שנפגשים בו, אינו טעות במערכת, אלא סולם רוחני שתוכנן במיוחד כדי שנתעלה דרכו.</p>
+
+    <h3 id="s11c">עונג שאין לו שביעה</h3>
+    <p>יש הבדל יסודי בין תענוג גשמי לתענוג רוחני. תענוג גשמי מוגבל תמיד: "נפש שבעה תבוס נופת" — גם הדבש המתוק ביותר, בסופו של דבר, משביע ומאבד מטעמו. אך בתענוג רוחני אין שביעה כלל. ככל שאדם מכיר יותר בטובו של ה' יתברך, כך הוא מתענג יותר, ואין לזה גבול. זהו סוד היכולת של בני זוג לשמור על אותה התלהבות וחיבור עמוק שהיה להם בתחילת דרכם — לאורך כל שנות חייהם המשותפים, ולא רק בחודשי הנישואין הראשונים. כאשר הקשר ביניהם הוא קשר של נשמה לנשמה, המבוסס על הכרת הטוב ולא רק על תחושות רגעיות, הוא נושא בתוכו עונג שרק הולך ומתעצם עם הזמן.</p>
+
+    <div class="story-box" id="s11d">
+        <span class="story-title">"אני מתכונן להיכנס אל השכינה"</span>
+        <p>מספרים על הרב שלמה זלמן אויערבאך זצ"ל שנהג, לפני שנכנס לביתו, לעצור על מפתן הדלת ולסדר את בגדיו. כששאלו אותו לפשר המנהג המיוחד הזה, השיב בפשטות: "אני מתכונן להיכנס אל השכינה". הוא הבין שכל אווירה טובה שבבית — כל רגע של שלום ואהבה — היא תוספת ממש של קדושה ושכינה, ושהשכינה הזו שורה בבית בזכות האישה. לכן ראה בכניסה לביתו לא מעבר סתמי מחדר לחדר, אלא כניסה למקום קדוש, שדורש הכנה ונכונות פנימית.</p>
+    </div>
+
+    <div class="chapter-card">
+        <div class="num">12</div>
+        <div class="name">תיקון עוולת הדורות — כבוד האישה מול אתגרי התרבות</div>
+    </div>
+    <div class="chapter-divider">✡</div>
+
+    <span class="chapter-label">פרק יב</span>
+    <h2 id="section12">תיקון עוולת הדורות — כבוד האישה מול אתגרי התרבות, וסיכום</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>כיצד התרבות הכללית מזלזלת, בלבוש חדש, בנשיות האמיתית.</li>
+            <li>מהו התיקון האמיתי, ולמה הוא מתחיל בבית הפרטי.</li>
+            <li>סיכום מעשי: "פרויקט החיים שלנו" — מה עושים כל יום, החל מהיום.</li>
+        </ul>
+    </div>
+
+    <h3 id="s12a">אתגרי התרבות הכללית</h3>
+    <p>התרבות הכללית, לצערנו, נוטה לזלזל במהותה האמיתית של האישה. לעיתים היא מציגה אותה כאובייקט, ולעיתים היא דוחפת אותה, בשם "העצמה", לאמץ תכונות שנחשבות מסורתית "גבריות" — שתלטנות, יחצנות, מרוץ אחר כוח וכסף — כביכול רק כך תזכה לכבוד הראוי לה. יש בזה תחושה מוטעית שרק על ידי חיקוי דפוסים גבריים תזכה האישה להערכה, ותוצאתה היא שנשים רבות מרגישות "פחות" אם אינן מבטאות כישורים שאינם באמת שלהן.</p>
+    <p>וזה בדיוק העיוות שהתורה מגיעה לתקן. הזלזול באישה לא נעלם בעידן המודרני, הוא רק לבש צורה חדשה — "זלזול בנשיות". והבלבול הזה בזהות, אומרים חכמינו, מוביל לתסכולים, לחוסר ביטחון, ולעלייה במשברי הזוגיות. כשאדם, או חברה שלמה, לא מוצאים את עצמם, גם וודאותם נשחקת.</p>
+
+    <h3 id="s12b">תיקון עוולת הדורות</h3>
+    <p>התיקון האמיתי אינו בטשטוש השונות בין המינים, אלא דווקא בהכרה בערכה העצמי של הדרך הנשית — כפי שביארנו בפרק השני. חכמינו לימדו שאיש ואישה יחדיו יוצרים "אדם" שלם, ואין מקום להשוות מי חשוב ממי, בדיוק כפי שאין טעם להשוות בין המוח ללב. האישה נבראה מצלעו של האיש לאחר שכבר נופחה בו נשמת חיים אלוקית — עדות למהותה העליונה. ולכן, תיקון עוולת הדורות אינו מתחיל בהצהרות כלליות, אלא בבית הפרטי: בבעל שמכבד את אשתו בכנות, מתוך הלב, ומכיר תודה על כל הטוב שהיא מביאה. הכרת הטוב הזו, אמרו חכמינו, מביאה עמה ברכה עצומה: "כבדו את נשותיכם כדי שתתעשרו".</p>
+
+    <h3 id="s12c">פרויקט החיים שלנו</h3>
+    <p>הגענו לסוף המסע. שנים עשר פרקים, שכולם, בסופו של דבר, מתקפלים לתובנה אחת: כבוד לאישה אינו הרגל נלמד או טכניקה שמשננים, אלא יחס פנימי שנבנה, יום אחר יום, מתוך התבוננות אמיתית במי שהיא. אז לכל בעל שמחזיק כעת בספר הזה — אל תחכה לרגע שבו תצטרך אשתך "להעיר" לך, כמו באותו ערב שממנו התחיל הספר כולו. התחל היום:</p>
+
+    <div class="highlight-box">
+        <p><strong>התבונן במעלותיה</strong> — הקדש כמה דקות בכל יום לחשוב על מעלותיה הייחודיות ועל הדברים הטובים שהיא עושה.</p>
+        <p><strong>הכן מחמאות אמיתיות</strong> — חשוב על דברים ספציפיים שהיא מושלמת בהם, ולא על דברים המובנים מאליהם.</p>
+        <p><strong>הקשב בעומק</strong> — כשהיא מדברת, הקשב ללא הסחות דעת, ונסה להבין גם את מה שלא נאמר במפורש.</p>
+        <p><strong>פעל בזריזות</strong> — עזור לה ברצון ובמהירות, וזכור תמיד את כל הטוב שהיא גומלת עמך.</p>
+        <p><strong>הודה לבורא</strong> — לפחות פעם ביום, הודה לה' על מתנת הזיווג, ובקש שיזכה אותך לכבד ולאהוב אותה כראוי.</p>
+    </div>
+
+    <p>שלום בית אמיתי מוביל לאהבה ולדביקות, ומהווה, כפי שראינו, את השער הישיר ביותר לאהבת ה' ולהשראת השכינה. זהו "פרויקט של החיים שלנו" — לא משימה חד-פעמית, אלא עבודה מתמשכת שממשיכה כל יום מחדש. מי ייתן ונזכה כולנו להכיר בטובן של נשותינו, להעריכן ולשמחן, ובזכות זה תשרה השכינה בבתינו, ויתרבה כבוד שמים בעולם.</p>
+
+    <div class="sources">
+        <h3>📚 מקורות ומראי מקומות</h3>
+        <ol>
+            <li>בראשית יב, טז — "וּלְאַבְרָם הֵיטִיב בַּעֲבוּרָהּ".</li>
+            <li>בבלי, בבא מציעא נט ע"א — "לעולם יהא אדם זהיר בכבוד אשתו... שאין הברכה מצויה בתוך ביתו של אדם אלא בשביל אשתו", ודברי רבא לבני מחוזא: "אוקירו לנשייכו כי היכי דתתעתרו".</li>
+            <li>בבלי, יבמות סב ע"ב — "האוהב את אשתו כגופו והמכבדה יותר מגופו".</li>
+            <li>בבלי, יבמות סג ע"א — דברי רבי חייא: "דיינו שמגדלות בנינו ומצילות אותנו מן החטא".</li>
+            <li>רמב"ם, הלכות אישות פרק טו — "וכן צוו חכמים שיהיה אדם מכבד את אשתו יתר מגופו, ואוהבה כגופו".</li>
+            <li>רש"י ודברי הראשונים — "זילותא דאיתתא קשה מדגברא".</li>
+            <li>מדרשי חז"ל על בריאת האישה, ועל "בינה יתרה ניתנה באישה יותר מבאיש".</li>
+            <li>דברי המהר"ל בעניין שכר הנשים לעתיד לבוא.</li>
+            <li>שיעורי הרב יהודה טאוב, "קול תודה" — הרהורים אישיים, סיפורים והדרכות מעשיות לשלום בית, ובכללם סיפורי הרב שך, החפץ חיים, הרבנית קניבסקי, הרב משה פיינשטיין, ר' משה קלירס, הרב שלמה זלמן אויערבאך, ר' חייא, והבעל שאשתו לקתה בקלפטומניה.</li>
+        </ol>
+    </div>
+
+    <!-- ===== חתימה — חובה, מבנה קבוע ===== -->
+    <div class="footer">
+        <strong>נכתב ונערך על ידי:</strong><br>
+        <strong>הרב יהודה טאוב</strong><br>
+        קרית אתא<br>
+        📞 <strong>ליצירת קשר:</strong> 0527139520<br><br>
+
+        <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); border-radius: 10px; color: #1f2937;">
+            <h4>🎧 שיעורים נוספים של הרב</h4>
+            <p><strong>ניתן לשמוע עוד שיעורים נפלאים:</strong></p>
+            <p>📻 <strong>קול הלשון - קול תודה:</strong> 03-6171190</p>
+            <p>🌐 <strong>באתר:</strong> <a href="https://www.kol-toda.co.il/">www.kol-toda.co.il</a></p>
+        </div>
+    </div>
+
+</div>
+
+<a href="#top" class="scroll-top" id="scrollTop" aria-label="חזרה לראש העמוד">▲</a>
+
+<script>
+/* ===== גלילה חלקה + כפתור חזרה למעלה ===== */
+document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+        var t = document.querySelector(this.getAttribute('href'));
+        if (!t) return;
+        e.preventDefault();
+        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+window.addEventListener('scroll', function () {
+    document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+</script>
+
+<script>
+/* =============================================================================
+   קול תודה — מנוע הקראה למאמרים תורניים   |   tts.js   v2.0
+   -----------------------------------------------------------------------------
+   העתק את הקובץ הזה כמות שהוא לתוך תגית <script> בסוף ה-HTML.
+   אין לכתוב אותו מחדש, לקצר או "לשפר" תוך כדי יצירת מאמר — הוא נבדק כך.
+   Web Speech API בלבד: בלי API חיצוני, בלי מפתח, בלי רשת, בלי עלות.
+   ============================================================================= */
+(function () {
+    'use strict';
+
+    var bar = document.querySelector('.listen-bar');
+    if (!('speechSynthesis' in window)) {
+        if (bar) bar.innerHTML = '<span class="listen-status">הדפדפן שלך אינו תומך בהקראה קולית. נסה Chrome, Edge או Safari.</span>';
+        return;
+    }
+    var synth = window.speechSynthesis;
+
+    /* ---------- הגדרות ---------- */
+    var NS       = 'koltoda.tts.';                 // מרחב שמות ב-localStorage, משותף לכל המאמרים
+    var POS_KEY  = NS + 'pos.' + (document.title || location.pathname);
+    var MAX_CHUNK = 180;                           // תווים לכל אמירה — מתחת לסף הקטיעה של Chrome
+    // כל אלה הם ניווט או מטא-מידע, לא גוף המאמר. מי שמאזין לא רוצה לשמוע
+    // את מפתח העניינים, את רשימת המקורות או את "בפרק זה" לפני כל פרק.
+    var SKIP     = '.footer, .toc, .sources, .listen-bar, .book-nav, .in-this-chapter, .chapter-card, .chapter-grid, .no-tts';
+
+    /* ---------- מצב ---------- */
+    var chunks = [], elCount = 0, idx = 0, built = false, selfAdvancing = false;
+    var isOn = false, paused = false, autoPaused = false;
+    var token = 0, watchdog = null;
+    var rate = 1, voices = [], voice = null, userPickedVoice = false;
+    var clickToRead = true;          // נטען מ-localStorage ב-init
+
+    /* ---------- אלמנטים ---------- */
+    var $btn    = document.getElementById('listenBtn');
+    var $status = document.getElementById('listenStatus');
+    var $rate   = document.getElementById('rateRange');
+    var $rateVal= document.getElementById('rateValue');
+    var $voice  = document.getElementById('voiceSelect');
+    var $prog   = document.getElementById('listenProgress');
+    // התווית ההתחלתית נלקחת מה-HTML ולא מקובעת בקוד, כדי שתבניות שונות
+    // (למשל "האזן" בספר מול "האזן למאמר" במאמר) יחזרו לטקסט הנכון שלהן.
+    var BTN_LABEL = ($btn && $btn.textContent.trim()) || '🔊 האזן למאמר';
+
+    function store(k, v) { try { if (v === undefined) return localStorage.getItem(NS + k); localStorage.setItem(NS + k, v); } catch (e) { return null; } }
+
+    /* =========================================================================
+       1. עיבוד הטקסט להקראה
+       ========================================================================= */
+
+    var G = '["\\u05f4\\u201d\\u2033]';        // גרשיים על כל וריאציותיהם
+    var R = "['\\u05f3\\u2019]";               // גרש
+
+    // מילון ראשי תיבות. חל *רק* על הטקסט שנשלח למנוע הדיבור —
+    // הטקסט שעל המסך נשאר בדיוק כפי שנכתב.
+    // ה-([ובלכמשהד]{0,2}) הוא קריטי בעברית: ראשי תיבות כמעט תמיד מופיעים עם
+    // אות שימוש דבוקה — "בשו״ע", "ובמשנ״ב", "כשו״ת". בלי זה הכלל פשוט לא נורה
+    // ברוב המופעים האמיתיים. האות נשמרת ומוצמדת חזרה למילה המלאה.
+    function ab(pattern, replacement) {
+        return [new RegExp('(^|[^\\u05d0-\\u05ea])([ובלכמשהד]{0,2})' + pattern + '(?![\\u05d0-\\u05ea])', 'g'),
+                '$1$2' + replacement];
+    }
+    var ABBREV = [
+        ab('זצוק' + G + 'ל', 'זכר צדיק וקדוש לברכה'),
+        ab('זצ' + G + 'ל', 'זכר צדיק לברכה'),
+        ab('ז' + G + 'ל', 'זכרונו לברכה'),
+        ab('ע' + G + 'ה', 'עליו השלום'),
+        ab('שליט' + G + 'א', 'שליטא'),
+        ab('הקב' + G + 'ה', 'הקדוש ברוך הוא'),
+        ab('בס' + G + 'ד', 'בסייעתא דשמיא'),
+        ab('בעז' + G + 'ה', 'בעזרת השם'),
+        ab('ב' + G + 'ה', 'ברוך השם'),
+        ab('אע' + G + 'פ', 'אף על פי'),
+        ab('אע' + G + 'ג', 'אף על גב'),
+        ab('עפ' + G + 'י', 'על פי'),
+        ab('ע' + G + 'פ', 'על פי'),
+        ab('ע' + G + 'י', 'על ידי'),
+        ab('עפ' + G + 'ר', 'על פי רוב'),
+        ab('כמו' + G + 'כ', 'כמו כן'),
+        ab('א' + G + 'כ', 'אם כן'),
+        ab('מ' + G + 'מ', 'מכל מקום'),
+        ab('כ' + G + 'ש', 'כל שכן'),
+        ab('ק' + G + 'ו', 'קל וחומר'),
+        ab('י' + G + 'ל', 'יש לומר'),
+        ab('צ' + G + 'ל', 'צריך לומר'),
+        ab('צ' + G + 'ע', 'צריך עיון'),
+        ab('עיי' + G + 'ש', 'עיין שם'),
+        ab('וע' + G + 'ע', 'ועיין עוד'),
+        ab('ד' + G + 'ה', 'דיבור המתחיל'),
+        ab('ס' + G + 'ק', 'סעיף קטן'),
+        ab('שו' + G + 'ע', 'שולחן ערוך'),
+        ab('שו' + G + 'ת', 'שאלות ותשובות'),
+        ab('או' + G + 'ח', 'אורח חיים'),
+        ab('יו' + G + 'ד', 'יורה דעה'),
+        ab('אה' + G + 'ע', 'אבן העזר'),
+        ab('חו' + G + 'מ', 'חושן משפט'),
+        ab('משנ' + G + 'ב', 'משנה ברורה'),
+        ab('ע' + G + 'א', 'עמוד א'),
+        ab('ע' + G + 'ב', 'עמוד ב'),
+        ab('וכו' + R, 'וכולי'),
+        ab('וכד' + R, 'וכדומה'),
+        ab('וגו' + R, 'וגומר'),
+        ab('עמ' + R, 'עמוד'),
+        ab('סי' + R, 'סימן'),
+        ab('סע' + R, 'סעיף'),
+        ab('הל' + R, 'הלכות'),
+        ab('ר' + R, 'רבי')
+    ];
+
+    // מנועי TTS עבריים נתקעים על גרשיים בתוך מילה — לפעמים מאייתים אות-אות.
+    // הסרתם הופכת את המילה לקריאה רציפה (רמב"ם → רמבם) וזה נשמע נכון בהרבה.
+    var INWORD_G = /([א-ת])["״”″]([א-ת])/g;
+
+    // "ה'" — מנוע ההקראה מבטא את זה כאות בודדת ("הא"), ולא כשמו של הקב"ה.
+    // מחליפים ל"השם". על המסך זה נשאר "ה'" כמובן — ההחלפה היא רק במה שנשלח
+    // למנוע הדיבור.
+    // המלכודת: אותו "ה'" הוא גם מספר — "פרק ה'", "יום ה'", "סימן ה'" — ושם
+    // דווקא נכון לקרוא "ה". לכן ההקשרים המספריים מוחרגים.
+    var NUM_CTX = /(?:פרק|פרקים|יום|בימי|סימן|סעיף|עמוד|דף|אות|שנת|שנה|כרך|חלק|שער|מזמור|פסוק|הלכה|משנה|מספר|סי|עמ)\s*$/;
+    var HASHEM = /(^|[^א-ת])([ובלכמש]?)ה['׳’](?![א-ת])/g;
+
+    function hashem(t) {
+        return t.replace(HASHEM, function (m, pre, prefix, off, str) {
+            if (NUM_CTX.test(str.slice(0, off + pre.length))) return m;
+            return pre + prefix + 'השם';
+        }).replace(/יקוו?ק/g, 'השם');
+    }
+
+    function forSpeech(text) {
+        var t = text;
+        for (var i = 0; i < ABBREV.length; i++) t = t.replace(ABBREV[i][0], ABBREV[i][1]);
+        t = hashem(t);
+        t = t.replace(INWORD_G, '$1$2').replace(INWORD_G, '$1$2');   // פעמיים, לרצפים כמו תשע"ג-תשע"ד
+        t = t.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, ' ');       // אימוג'י (זוגות surrogate)
+        t = t.replace(/[←-⇿⌀-➿⬀-⯿️‍⃣]/g, ' '); // סמלים ודינגבטים
+        t = t.replace(/־/g, ' ');                               // מקף עברי → רווח
+        t = t.replace(/\s*[–—]\s*/g, ', ');                // מקף ארוך → פסיק (הפוגה טבעית)
+        t = t.replace(/([.,!?:;])(?=\S)/g, '$1 ');                   // רווח אחרי סימן פיסוק
+        return t.replace(/\s+/g, ' ').trim();
+    }
+
+    /* ---------- פיצול לאמירות קצרות ----------
+       זה הלב של התיקון: Chrome/Edge קוטעים אמירה שנמשכת יותר מ~15 שניות,
+       ולעיתים אף לא יורים onend — ההקראה פשוט מתה באמצע פסקה. פסקה תורנית
+       רגילה היא 400-800 תווים, הרבה מעל הסף. פיצול למשפטים של עד 180 תווים
+       מבטיח שאף אמירה לא מתקרבת לגבול.                                       */
+
+    function splitSentences(text) {
+        var out = [], re = /[^.!?…׃]*[.!?…׃]+\s*|[^.!?…׃]+$/g, m;
+        while ((m = re.exec(text)) !== null) {
+            if (m[0] === '') { re.lastIndex++; continue; }
+            out.push(m[0]);
+        }
+        return out.length ? out : [text];
+    }
+
+    function splitLong(s) {
+        var out = [], cur = '';
+        function pushWord(w) {
+            // מילה בודדת ארוכה מהמכסה (כתובת אינטרנט, מחרוזת בלי רווחים) —
+            // חיתוך קשיח, אחרת הייתה חוזרת אמירה ענקית והבאג היה חוזר מהדלת האחורית.
+            while (w.length > MAX_CHUNK) {
+                if (cur) { out.push(cur); cur = ''; }
+                out.push(w.slice(0, MAX_CHUNK));
+                w = w.slice(MAX_CHUNK);
+            }
+            if (cur && (cur + ' ' + w).length > MAX_CHUNK) { out.push(cur); cur = ''; }
+            cur += (cur ? ' ' : '') + w;
+        }
+        s.split(/([,;])/).forEach(function (b) {
+            if (b.length > MAX_CHUNK) b.split(' ').forEach(pushWord);
+            else {
+                if (cur && (cur + b).length > MAX_CHUNK) { out.push(cur); cur = ''; }
+                cur += b;
+            }
+        });
+        if (cur) out.push(cur);
+        return out;
+    }
+
+    function chunkText(text) {
+        var out = [], cur = '';
+        splitSentences(text).forEach(function (s) {
+            if (s.length > MAX_CHUNK) {
+                if (cur) { out.push(cur); cur = ''; }
+                splitLong(s).forEach(function (p) { out.push(p); });
+            } else if (cur && (cur + s).length > MAX_CHUNK) { out.push(cur); cur = s; }
+            else cur += s;
+        });
+        if (cur) out.push(cur);
+        return out.map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
+    }
+
+    /* =========================================================================
+       2. בניית תור ההקראה
+       ========================================================================= */
+
+    // בספר מתחלף מקריאים רק את העמוד המוצג. בגלילה רציפה — את כל המאמר.
+    function isBook() { return !!document.getElementById('book'); }
+    function scopeRoot() {
+        return document.querySelector('#book .page.active') || document.querySelector('.container') || document.body;
+    }
+    function invalidate() { built = false; }
+    window.ttsRebuild = function () {
+        invalidate();
+        // המשתמש הפך עמוד ידנית תוך כדי האזנה — עוברים להקריא את העמוד החדש.
+        if (selfAdvancing) return;
+        if (isOn && !paused) { build(); if (chunks.length) startFrom(0); else stopListen(); }
+    };
+
+    function build() {
+        if (built) return;
+        var nodes = scopeRoot().querySelectorAll('h1, h2, h3, h4, p, li');
+        chunks = []; elCount = 0; built = true;
+        Array.prototype.forEach.call(nodes, function (n) {
+            // תוכן העניינים, רשימת המקורות, סרגל ההאזנה והחתימה אינם חלק מהמאמר המדובר.
+            if (n.closest(SKIP)) return;
+            // רשימה מקוננת כבר נקראת כחלק מה-li שמעליה — לא לקרוא פעמיים.
+            if (n.tagName === 'LI' && n.parentElement && n.parentElement.closest('li')) return;
+            var raw = n.textContent.replace(/\s+/g, ' ').trim();
+            if (!raw) return;
+            var spoken = forSpeech(raw);
+            if (!spoken) return;
+            var e = elCount++;
+            chunkText(spoken).forEach(function (t) { chunks.push({ el: n, e: e, text: t }); });
+        });
+    }
+
+    function firstChunkOfEl(e) {
+        for (var i = 0; i < chunks.length; i++) if (chunks[i].e === e) return i;
+        return -1;
+    }
+
+    /* =========================================================================
+       3. ממשק
+       ========================================================================= */
+
+    function hint() {
+        return clickToRead
+            ? 'לחץ כדי להתחיל האזנה, או לחץ על כל פסקה כדי להתחיל להקריא ממנה'
+            : 'לחץ כדי להתחיל האזנה. לחיצה על הטקסט לא תפעיל הקראה.';
+    }
+
+    function say(msg) { if ($status) $status.textContent = msg; }
+
+    function setBtn(label, pressed) {
+        if (!$btn) return;
+        $btn.textContent = label;
+        $btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+    }
+
+    function progress() {
+        if (!$prog) return;
+        if (!isOn || !chunks.length) { $prog.textContent = ''; return; }
+        var cur = chunks[Math.min(idx, chunks.length - 1)];
+        $prog.textContent = 'פסקה ' + (cur.e + 1) + ' מתוך ' + elCount;
+    }
+
+    function highlight(el) {
+        var prev = document.querySelector('.reading-highlight');
+        if (prev === el) return;
+        if (prev) prev.classList.remove('reading-highlight');
+        if (!el) return;
+        el.classList.add('reading-highlight');
+        // גוללים רק אם הפסקה באמת מחוץ למסך. אחרת ההקראה "חוטפת" את הדף
+        // מתחת לידיים של מי שקורא קצת קדימה בעצמו.
+        var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+        var h = window.innerHeight || 800;
+        if (!r || r.top < 60 || r.bottom > h - 60) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function clearHighlight() {
+        var prev = document.querySelector('.reading-highlight');
+        if (prev) prev.classList.remove('reading-highlight');
+    }
+
+    function reset(keepBookmark) {
+        stopWatchdog();
+        isOn = false; paused = false; autoPaused = false; idx = 0;
+        setBtn(BTN_LABEL, false);
+        clearHighlight();
+        if (!keepBookmark) { try { localStorage.removeItem(POS_KEY); } catch (e) {} }
+        say(hint());
+        if ($prog) $prog.textContent = '';
+    }
+
+    // בספר מתחלף העמוד עצמו הוא הסימנייה (paginated.js שומר אותו), אין טעם
+    // לשמור אינדקס פסקה שמתאפס בכל הפיכת עמוד.
+    function savePos() { if (isBook()) return; try { localStorage.setItem(POS_KEY, String(idx)); } catch (e) {} }
+
+    /* =========================================================================
+       4. הקראה
+       ========================================================================= */
+
+    function speak() {
+        stopWatchdog();
+        if (idx >= chunks.length) {
+            // סוף העמוד בספר מתחלף — הופכים לעמוד הבא וממשיכים ברצף.
+            // עמודים בלי תוכן להקראה (מקורות, חתימה) מדולגים במקום לעצור עליהם.
+            if (isOn && typeof window.bookNext === 'function') {
+                selfAdvancing = true;
+                var found = false, tries = 0;
+                while (tries++ < 200 && window.bookNext()) {
+                    invalidate(); build();
+                    if (chunks.length) { found = true; break; }
+                }
+                selfAdvancing = false;
+                if (found) { idx = 0; speak(); return; }
+            }
+            reset(false); say('ההקראה הסתיימה. 🎉'); return;
+        }
+        var item = chunks[idx], my = token, advanced = false;
+        highlight(item.el);
+        progress();
+
+        var u = new SpeechSynthesisUtterance(item.text);
+        u.lang = 'he-IL';
+        if (voice) u.voice = voice;
+        u.rate = rate;
+
+        function advance() {
+            if (my !== token || advanced) return;
+            advanced = true;
+            stopWatchdog();
+            idx++; savePos();
+            if (!paused) speak();
+        }
+        u.onend = advance;
+        u.onerror = function (ev) {
+            if (my !== token) return;
+            // 'canceled'/'interrupted' = אנחנו עצרנו בכוונה (מעבר לשונית, נעילת מסך,
+            // לחיצה על פסקה אחרת). אסור להתקדם — זה בדיוק מה שגרם ל"קפיצה לעמוד האחרון":
+            // כל הפסקאות הנותרות נכשלות ברצף תוך שברירי שנייה בזמן שהמסך כבוי.
+            if (ev && (ev.error === 'canceled' || ev.error === 'interrupted')) return;
+            advance();
+        };
+
+        synth.speak(u);
+        startWatchdog(my);
+    }
+
+    /* ---------- שומר ראש ----------
+       גם עם פיצול לאמירות קצרות, Chrome מסוגל "למות" בשקט: לא מדבר, לא ממתין,
+       ו-onend לא נורה לעולם. הכפתור נשאר על "מקריא..." ואין קול. הבדיקה הזו
+       מזהה שתי שניות של שקט אמיתי ומקדמת הלאה במקום להיתקע.                  */
+    function startWatchdog(my) {
+        stopWatchdog();
+        var silent = 0;
+        watchdog = setInterval(function () {
+            if (my !== token) { stopWatchdog(); return; }
+            if (!isOn || paused) return;
+            if (synth.speaking || synth.pending || synth.paused) { silent = 0; return; }
+            if (++silent >= 2) { stopWatchdog(); idx++; savePos(); speak(); }
+        }, 1000);
+    }
+    function stopWatchdog() { if (watchdog) { clearInterval(watchdog); watchdog = null; } }
+
+    function startFrom(i) {
+        token++;
+        stopWatchdog();
+        synth.cancel();
+        build();
+        idx = Math.max(0, Math.min(i, chunks.length - 1));
+        isOn = true; paused = false; autoPaused = false;
+        setBtn('⏸ השהה', true);
+        say('מקריא...');
+        savePos();
+        speak();
+    }
+
+    /* =========================================================================
+       5. פקדים
+       ========================================================================= */
+
+    window.toggleListen = function () {
+        if (!isOn && !synth.speaking && !synth.paused) {
+            build();
+            var saved = parseInt(localStorage.getItem(POS_KEY) || '0', 10);
+            startFrom(saved > 0 && saved < chunks.length ? saved : 0);
+            return;
+        }
+        // בדיקת המצב האמיתי של המנוע (ולא רק הדגלים הפנימיים) היא מה שמונע
+        // כפתור "מת" אחרי מעבר לשונית וחזרה.
+        if (paused || synth.paused) {
+            paused = false; isOn = true;
+            setBtn('⏸ השהה', true);
+            say('מקריא...');
+            if (synth.paused) {
+                synth.resume();
+                // באג ידוע: resume() נכשל לפעמים בשקט אחרי השהיה ארוכה.
+                setTimeout(function () { if (isOn && !paused && !synth.speaking && !synth.pending) { token++; speak(); } }, 350);
+            } else {
+                // אין אמירה מושהית להחיות (למשל אחרי נעילת מסך שביטלה אותה).
+                // מדברים כאן ועכשיו, בתוך אירוע הלחיצה — ב-iOS הקראה שנדחית
+                // ל-setTimeout כבר לא נחשבת "מתוך מגע משתמש" ונחסמת בשקט.
+                token++; speak();
+            }
+        } else {
+            paused = true;
+            synth.pause();
+            setBtn('▶ המשך', false);
+            say('בהשהיה');
+        }
+    };
+
+    window.stopListen = function () { token++; stopWatchdog(); synth.cancel(); reset(false); };
+
+    window.skipListen = function (dir) {
+        build();
+        if (!chunks.length) return;
+        var cur = chunks[Math.min(idx, chunks.length - 1)];
+        var target = cur.e + dir;
+        // לחיצה ראשונה על "אחורה" מחזירה לתחילת הפסקה הנוכחית, כמו בכל נגן.
+        if (dir < 0 && idx > firstChunkOfEl(cur.e)) target = cur.e;
+        target = Math.max(0, Math.min(elCount - 1, target));
+        startFrom(firstChunkOfEl(target));
+    };
+
+    // דילוג לפרק הבא/הקודם — ב-h2 בלבד. בספר של מאות פסקאות, ⏮/⏭ לבד לא מספיקים.
+    window.skipChapter = function (dir) {
+        build();
+        if (!chunks.length) return;
+        var cur = chunks[Math.min(idx, chunks.length - 1)];
+        var best = -1;
+        for (var i = 0; i < chunks.length; i++) {
+            if (chunks[i].el.tagName !== 'H2') continue;
+            if (dir > 0 && chunks[i].e > cur.e) { best = i; break; }
+            if (dir < 0 && chunks[i].e < cur.e) best = i;   // האחרון שלפנינו
+        }
+        if (best < 0) { if (typeof window.bookJump === 'function') window.bookJump(dir); return; }
+        startFrom(best);
+    };
+
+    // שינוי המחוון יורה עשרות אירועי input בזמן גרירה. הערך מתעדכן מיד,
+    // אבל ההקראה מופעלת מחדש רק כשמשחררים (onchange) — אחרת זה גמגום רצוף.
+    window.setListenRate = function (val) {
+        rate = parseFloat(val);
+        store('rate', String(rate));
+        if ($rateVal) $rateVal.textContent = rate.toFixed(1) + '×';
+        if ($rate) $rate.setAttribute('aria-valuetext', 'מהירות ' + rate.toFixed(1));
+    };
+    window.applyListenRate = function (val) {
+        window.setListenRate(val);
+        if (isOn && !paused) { token++; synth.cancel(); speak(); }
+    };
+
+    window.setListenVoice = function (name) {
+        var found = voices.filter(function (v) { return v.name === name; })[0];
+        if (!found) return;
+        voice = found; userPickedVoice = true;
+        store('voice', name);
+        if (isOn && !paused) { token++; synth.cancel(); speak(); }
+    };
+
+    /* =========================================================================
+       6. קולות
+       ========================================================================= */
+
+    var FEMALE = ['female', 'hila', 'naayah', 'carmit', 'zira', 'noa', 'sharon', 'ivy', 'nicole'];
+    function isHe(v) { return v.lang && v.lang.toLowerCase().indexOf('he') === 0; }
+    function isFemale(v) {
+        var n = v.name.toLowerCase();
+        return FEMALE.some(function (h) { return n.indexOf(h) !== -1; });
+    }
+
+    function populate() {
+        if (!$voice) return;
+        $voice.innerHTML = '';
+        var he = voices.filter(isHe), other = voices.filter(function (v) { return !isHe(v); });
+        function group(label, list) {
+            if (!list.length) return;
+            var g = document.createElement('optgroup');
+            g.setAttribute('label', label);
+            list.forEach(function (v) {
+                var o = document.createElement('option');
+                o.value = v.name;
+                o.textContent = v.name.replace(/^Microsoft\s+/, '').replace(/\s*-\s*Hebrew.*$/i, '');
+                g.appendChild(o);
+            });
+            $voice.appendChild(g);
+        }
+        group('עברית', he);
+        group('שפות אחרות', other);   // נשמרות בכוונה — קול רב-לשוני לפעמים נשמע טוב יותר
+        if (voice) $voice.value = voice.name;
+    }
+
+    function loadVoices() {
+        var all = synth.getVoices();
+        if (!all.length) return;
+        var he = all.filter(isHe);
+        voices = he.concat(all.filter(function (v) { return !isHe(v); }));
+        // onvoiceschanged יורה יותר מפעם אחת (במיוחד ב-Edge, כשקולות הענן נטענים
+        // באיחור). בלי הדגל הזה כל ירייה כזו הייתה דורסת את בחירת המשתמש.
+        if (!userPickedVoice) {
+            var saved = store('voice');
+            voice = (saved && voices.filter(function (v) { return v.name === saved; })[0])
+                 || he.filter(isFemale)[0] || he[0] || all[0] || null;
+        }
+        populate();
+    }
+    synth.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    /* =========================================================================
+       7. לחיצה על פסקה = התחל להקריא מכאן
+       ========================================================================= */
+
+    function readableNodes() {
+        var nodes = document.querySelectorAll(
+            '.container h1, .container h2, .container h3, .container h4, .container p, .container li');
+        return Array.prototype.filter.call(nodes, function (el) { return !el.closest(SKIP); });
+    }
+
+    // מי שקורא בשקט לא רוצה שנגיעה מקרית תתחיל פתאום לדבר. המתג נשמר
+    // ב-localStorage המשותף, כך שכיבוי אחד תופס לכל המאמרים והספרים.
+    function applyClickMode() {
+        readableNodes().forEach(function (el) { el.classList.toggle('tts-clickable', clickToRead); });
+        var b = document.getElementById('clickReadBtn');
+        if (!b) return;
+        b.textContent = clickToRead ? '👆 לחיצה: פעילה' : '👆 לחיצה: כבויה';
+        b.setAttribute('aria-pressed', clickToRead ? 'true' : 'false');
+        b.title = clickToRead
+            ? 'לחיצה על פסקה מתחילה להקריא ממנה. לחץ כאן כדי לכבות.'
+            : 'לחיצה על פסקה לא תפעיל הקראה. לחץ כאן כדי להפעיל.';
+    }
+
+    window.toggleClickRead = function () {
+        clickToRead = !clickToRead;
+        store('clickRead', clickToRead ? '1' : '0');
+        applyClickMode();
+        if (!isOn) say(hint());
+    };
+
+    function attachClicks() {
+        readableNodes().forEach(function (el) {
+            el.addEventListener('click', function (e) {
+                if (!clickToRead) return;                                             // המתג כבוי
+                if (e.target.closest('a')) return;                                    // קישורים עובדים כרגיל
+                if (window.getSelection && String(window.getSelection()).length) return; // סימון להעתקה עובד כרגיל
+                build();
+                var i = -1;
+                for (var k = 0; k < chunks.length; k++) if (chunks[k].el === el) { i = k; break; }
+                if (i >= 0) startFrom(i);
+            });
+        });
+        applyClickMode();
+    }
+
+    /* =========================================================================
+       8. מעבר לשונית / נעילת מסך
+       ========================================================================= */
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            if (isOn && !paused) {
+                autoPaused = true; token++; stopWatchdog(); synth.cancel();
+            }
+        } else if (autoPaused) {
+            autoPaused = false; token++;
+            setBtn('⏸ השהה', true);
+            say('מקריא...');
+            speak();
+            // iOS חוסם הקראה שלא נולדה מתוך מגע של המשתמש. אם אחרי כשנייה עדיין
+            // אין קול — נעבור למצב מושהה גלוי, כדי שהקורא יקיש פעם אחת במקום
+            // לבהות בכפתור שכתוב עליו "מקריא..." בזמן שקט מוחלט.
+            setTimeout(function () {
+                if (isOn && !paused && !synth.speaking && !synth.pending && !synth.paused) {
+                    token++; stopWatchdog(); synth.cancel();
+                    paused = true;
+                    setBtn('▶ המשך', false);
+                    say('ההקראה הופסקה כשהמסך ננעל — הקש ▶ המשך');
+                }
+            }, 1000);
+        } else if (isOn && !paused && !synth.speaking && !synth.pending && !synth.paused) {
+            token++; speak();
+        }
+    });
+
+    // חזרה מ-bfcache: מאפסים לגמרי (כולל autoPaused — אחרת ה-visibilitychange
+    // שמגיע מיד אחרי היה מתחיל להקריא את המאמר מההתחלה מעצמו).
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) { token++; stopWatchdog(); synth.cancel(); reset(true); }
+    });
+    // pagehide ולא beforeunload — beforeunload מבטל את ה-bfcache ודווקא מחמיר
+    // את הבעיה של חזרה ללשונית.
+    window.addEventListener('pagehide', function () { token++; stopWatchdog(); synth.cancel(); });
+
+    /* =========================================================================
+       9. אתחול
+       ========================================================================= */
+
+    function init() {
+        clickToRead = store('clickRead') !== '0';   // ברירת מחדל: פעילה
+        attachClicks();
+        var savedRate = parseFloat(store('rate') || '1');
+        if (savedRate >= 0.5 && savedRate <= 2) rate = savedRate;
+        if ($rate) { $rate.value = rate; $rate.setAttribute('aria-valuetext', 'מהירות ' + rate.toFixed(1)); }
+        if ($rateVal) $rateVal.textContent = rate.toFixed(1) + '×';
+        var saved = parseInt(localStorage.getItem(POS_KEY) || '0', 10);
+        if (saved > 0) say('יש סימנייה שמורה — לחיצה על "האזן" תמשיך מהמקום שבו הפסקת');
+        else say(hint());
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+</script>
+
+</body>
+</html>

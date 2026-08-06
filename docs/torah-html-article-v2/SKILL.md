@@ -1,6 +1,6 @@
 ---
 name: torah-html-article-v2
-version: 2.6.0
+version: 2.6.1
 description: >
   Full-featured (v2) generator of Hebrew Torah content as a single self-contained HTML file —
   articles and books (shiurim, parasha, halacha, moadim, mussar) — in the house style of
@@ -232,6 +232,11 @@ node scripts/render-cover.mjs "כריכה_שם_הספר.html" --dpi 300 --pdf
   שני נפרד בגלילה רציפה. אל תנסה להדפיס את המתחלף כמות שהוא.
 
 ## היסטוריית גרסאות
+
+- **2.6.1** — תוקן: `.listen-btn-group` (קבוצת כפתורי ההאזנה) לא נשברה לשורה
+  שנייה במסכי מובייל צרים (עד 480px, בתוך ה-`@media (max-width: 768px)`
+  הקיים), וגרמה לגלילה אופקית של כל העמוד. נתגלה תוך כדי כתיבת ספר בפועל
+  ואומת גם על `tests/demo.html` הלא-משתנה.
 
 - **2.6.0** — תוקן: בספר המתחלף גובה הפקדים היה מקובע ל-150px, בעוד שסרגל
   ההאזנה גדל ל-164px עם שם קול ארוך ("הילה Online (Natural)") — ולכן כיסה

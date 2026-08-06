@@ -284,6 +284,7 @@ em { color: var(--blue); font-style: italic; }
     .two-columns { grid-template-columns: 1fr; }
     .verse-box, .highlight-box, .quote-box, .story-box, .qa-box { padding: 20px; }
     .listen-bar { padding: 15px; gap: 10px; }
+    .listen-btn-group { flex-wrap: wrap; row-gap: 8px; }
     .listen-status { flex: 1 1 100%; }
     .listen-voice select { max-width: 140px; }
     .scroll-top { bottom: 18px; left: 18px; width: 44px; height: 44px; }

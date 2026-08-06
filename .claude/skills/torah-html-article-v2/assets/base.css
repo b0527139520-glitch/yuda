@@ -244,8 +244,21 @@ em { color: var(--blue); font-style: italic; }
     box-shadow: 0 0 0 3px var(--pink) inset; transition: background .3s;
 }
 
+/* ---------- נגן ההקלטה (MP3 מוכן מראש) ---------- */
+.audio-player {
+    margin: 25px 0; padding: 16px 22px;
+    background: var(--g-verse); border-radius: 12px;
+    border-right: 6px solid var(--purple);
+    box-shadow: 0 3px 10px rgba(0,0,0,.1);
+}
+.audio-player-title {
+    font-weight: 700; color: var(--purple); margin-bottom: 10px; font-size: 1.05em;
+}
+.audio-player audio { width: 100%; display: block; }
+
 /* ---------- נייד ---------- */
 @media (max-width: 768px) {
+    .audio-player { padding: 14px 16px; }
     body { padding: 15px 10px; }
     .container { padding: 30px 22px; border-radius: 12px; }
     .main-title { font-size: 2em; }
@@ -295,6 +308,7 @@ em { color: var(--blue); font-style: italic; }
     .listen-stop-btn:hover, .listen-skip-btn:hover { background: #3a3050; }
     .listen-voice select { background: #2a2438; color: var(--ink); }
     .tts-clickable:hover { background: rgba(251,191,36,.12); }
+    .audio-player-title { color: #e9d5ff; }
 }
 
 /* ---------- הדפסה A4 ---------- */
@@ -306,7 +320,7 @@ em { color: var(--blue); font-style: italic; }
                  box-shadow: none !important; border-radius: 0 !important; background: #fff !important; }
     /* כרטיס הפרק והמפריד קיימים כדי לדמות "דף חדש" על המסך.
        בנייר יש מעבר עמוד אמיתי, ולכן הם רק היו מבזבזים עמוד שלם. */
-    .scroll-top, .listen-bar, .chapter-card, .chapter-divider, .chapter-grid { display: none !important; }
+    .scroll-top, .listen-bar, .audio-player, .chapter-card, .chapter-divider, .chapter-grid { display: none !important; }
     .chapter-label { background: none !important; color: #4a0080 !important; padding: 0 !important; }
     .in-this-chapter { page-break-inside: avoid; break-inside: avoid; }
     p, li { text-align: justify; }

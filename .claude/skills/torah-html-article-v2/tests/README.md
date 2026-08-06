@@ -4,7 +4,7 @@
 שכבר נשברו פעם אחת.
 
 ```bash
-npm install linkedom && node build-demo.mjs && node test-tts.mjs && node test-dom.mjs && node test-mobile.mjs && node test-paginated.mjs
+npm install linkedom && node build-demo.mjs && node test-tts.mjs && node test-dom.mjs && node test-mobile.mjs && node test-paginated.mjs && node test-audio.mjs
 ```
 
 | קובץ | מה נבדק |
@@ -13,9 +13,10 @@ npm install linkedom && node build-demo.mjs && node test-tts.mjs && node test-do
 | `test-tts.mjs` | הרחבת ראשי תיבות, סינון אימוג'י, פיצול לאמירות ≤180 תווים, מקרי קצה. |
 | `test-dom.mjs` | קצה-לקצה על DOM אמיתי: מה בדיוק מוקרא ובאיזה סדר. מוודא שתוכן העניינים, המקורות והחתימה מדולגים. |
 | `test-mobile.mjs` | תרחיש נעילת מסך — שההקראה לא רצה קדימה דרך כל המאמר, וש-iOS נופל למצב "המשך" גלוי. |
+| `test-audio.mjs` | הפקת ההקלטה: חלוקה לפרקים, דילוגים, הרחבת ראשי תיבות, והטמעת הנגן בלי כפילות. רץ ב---dry-run, בלי רשת. |
 | `test-paginated.mjs` | ספר מתחלף: ניווט, נקודות, מונה, קישורי מפתח עניינים, והקראה שמדפדפת לבד. יוצר `demo-book.html`. |
 
 `demo.html` ו-`demo-book.html` נוצרים על ידי הבדיקות. פתח אותם בדפדפן כדי לבדוק
 ידנית את מה שאי אפשר לבדוק אוטומטית: קול אמיתי, מצב כהה, תצוגת הדפסה, החלקת אצבע.
 
-`node_modules` לא נשמר כאן בכוונה — הרץ `npm install linkedom` לפני הבדיקה.
+`node_modules` לא נשמר כאן בכוונה — הרץ `npm install linkedom` **בתיקיית הסקיל** (לא כאן) לפני הבדיקה, כך גם `scripts/make-audio.mjs` מוצא אותו.

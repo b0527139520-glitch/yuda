@@ -1,23 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-html_to_pdf.py — הופך את כל קובצי ה-HTML שבתיקייה לקבצי PDF.
+html_to_pdf.py — הופך את כל קובצי ה-HTML שבתיקייה, ובכל תת-תיקייה שלה
+(לעומק בלתי מוגבל), לקבצי PDF.
 
 איך זה עובד:
-    שם את הסקריפט הזה בתוך התיקייה עם קובצי ה-HTML (למשל, לצד הספרים
-    שבתיקיית "ספרים"), ומריצים:
+    שם את הסקריפט הזה בתוך התיקייה הראשית (למשל, לצד הספרים שבתיקיית
+    "ספרים"), ומריצים:
 
         python html_to_pdf.py
 
-    לכל "ספר.html" ייווצר "ספר.pdf" באותה תיקייה, עם אותו שם בדיוק.
+    לכל "ספר.html", בכל תיקייה ותת-תיקייה מתחת לנקודת ההתחלה, ייווצר
+    "ספר.pdf" **לצידו באותה תיקייה בדיוק**, עם אותו שם.
 
     אפשר גם לתת נתיב לתיקייה אחרת:
         python html_to_pdf.py "הנתיב/לתיקייה"
 
+    ואפשר לוותר על הסריקה הרקורסיבית ולעבד רק את התיקייה הנתונה עצמה:
+        python html_to_pdf.py --no-recursive
+
 בלי שום התקנה: הסקריפט משתמש בדפדפן Chrome / Edge / Chromium שכבר מותקן
 במחשב, במצב headless, ומפעיל את פקודת ההדפסה המובנית שלו ל-PDF
 (--print-to-pdf). זו אותה טכניקה שבה משתמש render-cover.mjs שבסקיל
-torah-html-article-v2, רק בפייתון וכללי לכל קובץ HTML בתיקייה, לא רק
+torah-html-article-v2, רק בפייתון וכללי לכל קובץ HTML בעץ התיקיות, לא רק
 לכריכות.
 
 מכיוון שהדפדפן מדפיס את העמוד ולא מצלם אותו, כל כללי @media print
@@ -34,6 +39,10 @@ import sys
 import tempfile
 import urllib.parse
 from pathlib import Path
+
+# תיקיות שאין טעם לרדת אליהן בסריקה הרקורסיבית — לא אמור להיות בהן קובצי
+# ספר, ובחלקן (node_modules, .git) יש אלפי קבצים מיותרים שרק יאטו את הסריקה.
+SKIP_DIRS = {".git", "node_modules", "__pycache__", ".venv", "venv"}
 
 # נתיבי דפדפנים נפוצים בכל מערכת הפעלה, לפי סדר עדיפות.
 # אפשר גם לדרוס עם --browser או עם משתנה הסביבה HTML_TO_PDF_BROWSER.
@@ -72,6 +81,23 @@ def find_browser(explicit=None):
         "     python html_to_pdf.py --browser \"הנתיב\\ל\\chrome.exe\"\n"
         "   או קבע את משתנה הסביבה HTML_TO_PDF_BROWSER."
     )
+
+
+def find_html_files(root: Path, recursive: bool):
+    """
+    כל קובצי ה-*.html מתחת ל-root, ממוינים לפי נתיב. ברקורסיבי — עומק
+    בלתי מוגבל, עם דילוג על תיקיות מ-SKIP_DIRS (בכל רמה, לא רק בשורש).
+    """
+    if not recursive:
+        return sorted(root.glob("*.html"))
+
+    found = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS and not d.startswith(".")]
+        for name in filenames:
+            if name.lower().endswith(".html"):
+                found.append(Path(dirpath) / name)
+    return sorted(found)
 
 
 def html_to_pdf(browser, html_path: Path, pdf_path: Path, timeout: int) -> None:
@@ -123,34 +149,42 @@ def main():
     )
     parser.add_argument("--browser", help="נתיב מפורש לדפדפן Chrome/Edge/Chromium.")
     parser.add_argument("--timeout", type=int, default=90, help="זמן קצוב לכל קובץ, בשניות (ברירת מחדל: 90).")
+    parser.add_argument(
+        "--no-recursive",
+        action="store_true",
+        help="לעבד רק את התיקייה הנתונה עצמה, בלי לרדת לתת-תיקיות.",
+    )
     args = parser.parse_args()
 
     folder = Path(args.folder).resolve()
     if not folder.is_dir():
         sys.exit(f'❌ התיקייה לא קיימת: "{folder}"')
 
-    html_files = sorted(folder.glob("*.html"))
+    recursive = not args.no_recursive
+    html_files = find_html_files(folder, recursive)
     if not html_files:
-        print(f"לא נמצאו קובצי HTML בתיקייה: {folder}")
+        where = "בתיקייה ובתת-תיקיותיה" if recursive else "בתיקייה"
+        print(f"לא נמצאו קובצי HTML {where}: {folder}")
         return
 
     browser = find_browser(args.browser)
     print(f"דפדפן: {browser}")
-    print(f"תיקייה: {folder}")
+    print(f"תיקייה: {folder}" + ("  (כולל תת-תיקיות)" if recursive else ""))
     print(f"נמצאו {len(html_files)} קובצי HTML.\n")
 
     ok, failed = 0, []
     for html_path in html_files:
+        rel = html_path.relative_to(folder)
         pdf_path = html_path.with_suffix(".pdf")
-        print(f"⏳ {html_path.name}")
+        print(f"⏳ {rel}")
         try:
             html_to_pdf(browser, html_path, pdf_path, args.timeout)
             size_kb = pdf_path.stat().st_size / 1024
-            print(f"✅ {pdf_path.name}  ({size_kb:.0f}KB)")
+            print(f"✅ {rel.with_suffix('.pdf')}  ({size_kb:.0f}KB)")
             ok += 1
         except Exception as e:
-            print(f"❌ {html_path.name}: {e}")
-            failed.append(html_path.name)
+            print(f"❌ {rel}: {e}")
+            failed.append(str(rel))
 
     print(f"\nהושלם: {ok}/{len(html_files)} הצליחו.")
     if failed:

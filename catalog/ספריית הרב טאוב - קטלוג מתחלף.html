@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ספריית הרב יהודה טאוב — קטלוג מתחלף</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@500;700;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --ink:#2a2118;
+  --ink-soft:#6b5d4f;
+  --gold:#b8860b;
+  --gold-light:#d4af37;
+  --paper:#fdfbf6;
+  --card:#ffffff;
+  --line:#e8e0d3;
+  --shadow:rgba(90,70,40,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Heebo',system-ui,sans-serif;
+  color:var(--ink);
+  direction:rtl;
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(212,175,55,.10), transparent 60%),
+    radial-gradient(1000px 500px at 0% 10%, rgba(124,58,237,.06), transparent 55%),
+    linear-gradient(180deg,#f7f2e8 0%, #fdfbf6 30%);
+  min-height:100vh;
+  line-height:1.6;
+}
+.hidden{display:none !important;}
+
+/* ===== HERO ===== */
+.hero{
+  position:relative;text-align:center;padding:3.4rem 1.5rem 2.4rem;
+  background:
+    radial-gradient(700px 340px at 50% -40%, rgba(212,175,55,.22), transparent 70%),
+    linear-gradient(160deg,#2a2118 0%, #3a2e20 55%, #4a3a26 100%);
+  color:#f7efe0;overflow:hidden;border-bottom:3px solid var(--gold);
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(90deg, rgba(212,175,55,.05) 0 2px, transparent 2px 30px);
+  opacity:.5;pointer-events:none;
+}
+.hero-crown{font-size:2.2rem;margin-bottom:.5rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.4));}
+.hero h1{
+  font-family:'Frank Ruhl Libre',serif;font-weight:900;font-size:clamp(1.7rem,5vw,3rem);
+  letter-spacing:.5px;
+  background:linear-gradient(180deg,#fff6e0,#e6c35c 70%,#caa12f);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.5rem;position:relative;
+}
+.hero-sub{
+  font-size:clamp(.9rem,2vw,1.08rem);color:#e8d9b8;font-weight:300;letter-spacing:.3px;
+  max-width:660px;margin:0 auto;
+}
+.hero-stats{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1.6rem;position:relative;}
+.hstat{
+  background:rgba(255,255,255,.07);border:1px solid rgba(212,175,55,.35);border-radius:14px;
+  padding:.55rem 1.2rem;backdrop-filter:blur(6px);min-width:96px;
+}
+.hstat b{display:block;font-size:1.45rem;font-weight:800;color:var(--gold-light);font-family:'Frank Ruhl Libre',serif;}
+.hstat span{font-size:.78rem;color:#cdbd9a;letter-spacing:.5px;}
+
+/* ===== SEARCH ===== */
+.search-wrap{position:relative;max-width:600px;margin:1.8rem auto 0;}
+.search-box{
+  width:100%;padding:.95rem 3rem .95rem 1.4rem;border-radius:999px;
+  border:1.5px solid rgba(212,175,55,.45);background:rgba(255,255,255,.95);color:var(--ink);
+  font-size:1.02rem;font-family:inherit;outline:none;box-shadow:0 8px 24px rgba(0,0,0,.18);
+  transition:border-color .2s, box-shadow .2s;
+}
+.search-box:focus{border-color:var(--gold);box-shadow:0 8px 30px rgba(184,134,11,.3);}
+.search-box::placeholder{color:#a8987f;}
+.search-icon{position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none;opacity:.7;}
+
+/* ===== GUIDE ===== */
+.quick-guide{
+  max-width:760px;margin:0 auto;padding:1.3rem 1.6rem;
+  background:linear-gradient(160deg,#fff8e8,#fdfbf6);
+  border:1.5px solid rgba(184,134,11,.35);border-radius:16px;
+  box-shadow:0 4px 16px rgba(90,70,40,.08);text-align:center;position:relative;top:-1.2rem;
+}
+.quick-guide h2{font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;font-weight:800;color:var(--gold);margin-bottom:.5rem;}
+.quick-guide p{font-size:.9rem;color:var(--ink-soft);line-height:1.7;margin:.3rem 0;}
+.quick-guide strong{color:var(--ink);}
+.quick-guide a{color:var(--gold);text-decoration:none;}
+.quick-guide a:hover{text-decoration:underline;}
+@media (max-width:640px){.quick-guide{top:-.6rem;padding:1.1rem 1.2rem;}}
+
+/* ===== CONTENT / CATEGORY GRID ===== */
+.content{max-width:1240px;margin:0 auto;padding:1.4rem 1.3rem 4rem;}
+.cats-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.2rem;
+}
+.cat-card{
+  --c:#b8860b;
+  position:relative;display:flex;flex-direction:column;gap:.6rem;
+  background:var(--card);border:1px solid var(--line);border-radius:18px;
+  padding:1.4rem 1.3rem 1.2rem;cursor:pointer;text-align:right;
+  box-shadow:0 3px 10px var(--shadow);
+  transition:transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s, border-color .22s;
+}
+.cat-card:hover, .cat-card:focus-visible{
+  transform:translateY(-5px);box-shadow:0 16px 34px var(--shadow);
+  border-color:color-mix(in srgb,var(--c) 45%, transparent);outline:none;
+}
+.cat-card-top{display:flex;align-items:center;justify-content:space-between;gap:.6rem;}
+.cat-card-emoji{
+  font-size:1.7rem;width:52px;height:52px;flex-shrink:0;display:grid;place-items:center;
+  border-radius:14px;background:color-mix(in srgb,var(--c) 12%, #fff);
+  border:1.5px solid color-mix(in srgb,var(--c) 30%, transparent);
+}
+.cat-card-folder{
+  font-size:.75rem;color:var(--c);text-decoration:none;font-weight:600;
+  padding:.35rem .7rem;border-radius:10px;
+  border:1.5px solid color-mix(in srgb,var(--c) 30%, transparent);white-space:nowrap;
+  transition:all .15s;
+}
+.cat-card-folder:hover{background:var(--c);color:#fff;border-color:var(--c);}
+.cat-card-name{font-family:'Frank Ruhl Libre',serif;font-size:1.28rem;font-weight:700;line-height:1.25;}
+.cat-card-count{font-size:.82rem;color:var(--ink-soft);font-weight:500;}
+.cat-card-cta{
+  margin-top:.3rem;align-self:flex-start;font-size:.82rem;font-weight:700;color:var(--c);
+  display:flex;align-items:center;gap:.3rem;
+}
+.cat-card-matches{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.4rem;}
+.match-chip{
+  font-size:.72rem;font-weight:600;color:var(--c);background:color-mix(in srgb,var(--c) 12%, #fff);
+  border:1px solid color-mix(in srgb,var(--c) 25%, transparent);
+  padding:.2rem .55rem;border-radius:999px;cursor:pointer;
+}
+.match-chip:hover{background:var(--c);color:#fff;}
+.match-more{font-size:.72rem;color:var(--ink-soft);align-self:center;}
+
+.cat-card.hide{display:none;}
+.no-results{text-align:center;padding:3rem 1rem;color:var(--ink-soft);font-size:1.05rem;display:none;}
+.no-results.show{display:block;}
+
+/* ===== FOOTER ===== */
+.foot{text-align:center;padding:2.2rem 1rem;color:var(--ink-soft);font-size:.82rem;border-top:1px solid var(--line);background:rgba(255,255,255,.4);}
+.foot-deco{color:var(--gold);font-size:1.2rem;margin-bottom:.4rem;}
+
+/* ===== READER ===== */
+.reader{
+  min-height:100vh;display:flex;flex-direction:column;
+  background:
+    radial-gradient(1200px 600px at 100% -10%, rgba(212,175,55,.10), transparent 60%),
+    linear-gradient(180deg,#f7f2e8 0%, #fdfbf6 30%);
+}
+.reader-top{
+  position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+  padding:.85rem 1.2rem;background:rgba(253,251,246,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);box-shadow:0 4px 14px rgba(90,70,40,.06);
+}
+.back-btn{
+  font-family:inherit;font-size:.85rem;font-weight:700;color:var(--ink);
+  background:#fff;border:1.5px solid var(--line);border-radius:999px;
+  padding:.5rem 1rem;cursor:pointer;white-space:nowrap;transition:all .15s;
+}
+.back-btn:hover{border-color:var(--gold);color:var(--gold);}
+.reader-title{
+  display:flex;align-items:center;gap:.5rem;font-family:'Frank Ruhl Libre',serif;
+  font-weight:700;font-size:1.1rem;flex:1;justify-content:center;text-align:center;
+}
+.reader-folder{
+  font-size:.78rem;color:var(--c,var(--gold));text-decoration:none;font-weight:600;
+  padding:.4rem .8rem;border-radius:10px;border:1.5px solid var(--line);white-space:nowrap;
+  transition:all .15s;
+}
+.reader-folder:hover{background:var(--c,var(--gold));color:#fff;border-color:var(--c,var(--gold));}
+
+.stage-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:1.6rem 1rem;}
+.book-stage{
+  position:relative;width:100%;max-width:920px;min-height:480px;
+  background:var(--card);border-radius:20px;border:1px solid var(--line);
+  box-shadow:0 20px 50px var(--shadow);overflow:hidden;
+}
+.book-stage::before{
+  content:'';position:absolute;top:0;bottom:0;right:50%;width:1px;
+  background:linear-gradient(180deg,transparent, rgba(90,70,40,.12) 15%, rgba(90,70,40,.12) 85%, transparent);
+  pointer-events:none;z-index:1;
+}
+@media (max-width:760px){.book-stage::before{display:none;}}
+
+.page{
+  position:absolute;inset:0;opacity:0;transform:translateX(-28px);pointer-events:none;
+  transition:opacity .35s ease, transform .35s ease;
+}
+.page.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+@media (prefers-reduced-motion:reduce){.page{transition:opacity .01s linear;transform:none;}}
+
+.page-inner{display:flex;height:100%;min-height:480px;}
+@media (max-width:760px){.page-inner{flex-direction:column;height:auto;}}
+
+.page-cover-half{
+  flex:0 0 42%;position:relative;
+  background:linear-gradient(160deg,var(--c,#b8860b), color-mix(in srgb,var(--c,#b8860b) 65%, #000));
+  display:flex;align-items:center;justify-content:center;padding:1.6rem;
+}
+.page-cover-half img{
+  max-width:100%;max-height:340px;width:auto;border-radius:6px;
+  box-shadow:0 14px 34px rgba(0,0,0,.35);object-fit:cover;
+}
+@media (max-width:760px){.page-cover-half{padding:1.4rem;}.page-cover-half img{max-height:240px;}}
+
+.page-info{flex:1;padding:2rem 2.2rem;display:flex;flex-direction:column;overflow-y:auto;}
+@media (max-width:760px){.page-info{padding:1.4rem 1.3rem 2rem;}}
+.page-kicker{font-size:.75rem;color:var(--ink-soft);font-weight:600;letter-spacing:.3px;margin-bottom:.5rem;}
+.page-title{font-family:'Frank Ruhl Libre',serif;font-size:1.55rem;font-weight:800;line-height:1.3;margin-bottom:.35rem;}
+.page-author{font-size:.85rem;color:var(--c,var(--gold));font-weight:600;margin-bottom:1rem;}
+.page-desc{font-size:1rem;color:var(--ink-soft);line-height:1.75;flex:1;margin-bottom:1.2rem;}
+.page-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.2rem;}
+.meta-chip{
+  font-size:.78rem;color:var(--ink-soft);background:color-mix(in srgb,var(--c,#b8860b) 10%, #fff);
+  border:1px solid color-mix(in srgb,var(--c,#b8860b) 25%, transparent);
+  padding:.25rem .65rem;border-radius:999px;
+}
+.page-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:auto;}
+.buy-btn, .open-btn{
+  display:inline-flex;align-items:center;gap:.35rem;font-weight:700;font-size:.85rem;
+  padding:.6rem 1.1rem;border-radius:999px;text-decoration:none;transition:transform .15s, box-shadow .15s;
+}
+.buy-btn{
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#fff;
+  box-shadow:0 3px 10px rgba(184,134,11,.35);
+}
+.buy-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(184,134,11,.45);}
+.open-btn{background:#fff;color:var(--c,var(--ink));border:1.5px solid var(--c,var(--line));}
+.open-btn:hover{background:var(--c,var(--ink));color:#fff;transform:translateY(-1px);}
+
+/* cover/divider page */
+.cover-page-inner{
+  height:100%;min-height:480px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:2.5rem 1.6rem;
+  background:radial-gradient(600px 300px at 50% 0%, color-mix(in srgb,var(--c,#b8860b) 10%, transparent), transparent);
+}
+.cover-emoji{
+  font-size:3rem;width:96px;height:96px;display:grid;place-items:center;border-radius:26px;
+  background:color-mix(in srgb,var(--c,#b8860b) 14%, #fff);
+  border:2px solid color-mix(in srgb,var(--c,#b8860b) 35%, transparent);margin-bottom:1.1rem;
+}
+.cover-title{font-family:'Frank Ruhl Libre',serif;font-size:2rem;font-weight:800;margin-bottom:.5rem;}
+.cover-count{font-size:.95rem;color:var(--ink-soft);margin-bottom:1rem;}
+.cover-hint{font-size:.9rem;color:var(--ink-soft);max-width:420px;margin-bottom:1.6rem;line-height:1.7;}
+.cover-actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;}
+.cover-folder{
+  font-size:.85rem;font-weight:600;color:var(--c,var(--gold));text-decoration:none;
+  padding:.6rem 1.1rem;border-radius:999px;border:1.5px solid color-mix(in srgb,var(--c,#b8860b) 35%, transparent);
+  transition:all .15s;
+}
+.cover-folder:hover{background:var(--c,var(--gold));color:#fff;}
+.cover-start{
+  font-family:inherit;font-size:.85rem;font-weight:700;color:#fff;cursor:pointer;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));border:none;
+  padding:.65rem 1.3rem;border-radius:999px;box-shadow:0 3px 10px rgba(184,134,11,.35);
+  transition:transform .15s;
+}
+.cover-start:hover{transform:translateY(-1px);}
+
+/* ===== READER CONTROLS ===== */
+.reader-controls{
+  position:sticky;bottom:0;z-index:30;display:flex;align-items:center;gap:.9rem;
+  padding:.9rem 1.2rem calc(.9rem + env(safe-area-inset-bottom));
+  background:rgba(253,251,246,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);
+}
+.nav-btn{
+  font-family:inherit;font-size:.9rem;font-weight:700;color:var(--ink);cursor:pointer;
+  background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:.6rem 1.15rem;
+  white-space:nowrap;transition:all .15s;flex-shrink:0;
+}
+.nav-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
+.nav-btn:disabled{opacity:.35;cursor:default;}
+.progress-wrap{flex:1;display:flex;flex-direction:column;gap:.35rem;min-width:0;}
+.progress-bar{height:5px;border-radius:999px;background:var(--line);overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:999px;transition:width .3s ease;}
+.page-counter{font-size:.76rem;color:var(--ink-soft);text-align:center;font-weight:600;}
+.toc-btn{
+  font-size:1rem;background:#fff;border:1.5px solid var(--line);border-radius:999px;
+  width:42px;height:42px;flex-shrink:0;cursor:pointer;transition:all .15s;
+}
+.toc-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+.toc-panel{
+  position:fixed;inset-inline-end:1rem;bottom:5.2rem;z-index:50;
+  width:min(320px, calc(100vw - 2rem));max-height:60vh;overflow-y:auto;
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);padding:.6rem;
+}
+.toc-item{
+  display:flex;align-items:center;gap:.6rem;width:100%;text-align:right;
+  background:none;border:none;font-family:inherit;font-size:.85rem;color:var(--ink);
+  padding:.55rem .6rem;border-radius:10px;cursor:pointer;
+}
+.toc-item:hover{background:var(--paper);}
+.toc-item.active{background:color-mix(in srgb,var(--gold) 14%, #fff);color:var(--gold);font-weight:700;}
+.toc-num{
+  flex-shrink:0;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;
+  background:var(--line);font-size:.72rem;font-weight:700;
+}
+
+@media (max-width:640px){
+  .hero{padding:2.6rem 1.1rem 2rem;}
+  .cats-grid{grid-template-columns:repeat(2,1fr);gap:.8rem;}
+  .cat-card-folder{display:none;}
+  .reader-title{font-size:.95rem;}
+  .reader-folder{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="homeView">
+<header class="hero">
+<div class="hero-crown">📚</div>
+<h1>ספריית הרב יהודה טאוב</h1>
+<p class="hero-sub">אוסף דיגיטלי של ספרים, מצגות ושיעורים — בחרו נושא, והוא ייפתח כקטלוג מתחלף, עמוד אחר עמוד, כמו ספר דיגיטלי</p>
+<div class="hero-stats">
+<div class="hstat"><b id="statBooks">–</b><span>ספרים ופריטים</span></div>
+<div class="hstat"><b id="statCats">–</b><span>נושאים</span></div>
+</div>
+<div class="search-wrap">
+<input class="search-box" id="search" oninput="doSearch(this.value)" placeholder="חיפוש לפי שם ספר או נושא…" type="text"/>
+<span class="search-icon">🔍</span>
+</div>
+</header>
+<section class="quick-guide">
+<h2>מדריך קצר</h2>
+<p>בחרו <strong>נושא</strong> כדי לפתוח את הקטלוג שלו כספר מתחלף. דפדפו בין הספרים בעזרת החצים, החלקת אצבע או המקלדת.</p>
+<p>לחצו על <strong>«פתח»</strong> כדי לקרוא ספר, ועל <strong>«להזמנת הספר»</strong> כדי להזמין אותו.</p>
+<p>להזמנות בכמויות גדולות ניתן ליצור קשר בטלפון: <a dir="ltr" href="tel:0556785647"><strong>055-678-5647</strong></a><br/>
+או בדוא"ל: <a dir="ltr" href="mailto:8436092@gmail.com"><strong>8436092@gmail.com</strong></a></p>
+</section>
+<main class="content">
+<div class="cats-grid" id="catsGrid"></div>
+<p class="no-results" id="noResults">לא נמצאו תוצאות</p>
+</main>
+<footer class="foot">
+<div class="foot-deco">۞</div>
+ספריית הרב יהודה טאוב · קטלוג מתחלף · כל הקישורים מובילים ישירות ל-Google Drive
+</footer>
+</div>
+
+<div id="readerView" class="reader hidden">
+<div class="reader-top">
+<button class="back-btn" onclick="closeReader()">🔙 חזרה לנושאים</button>
+<div class="reader-title"><span id="readerEmoji"></span><span id="readerName"></span></div>
+<a id="readerFolderLink" class="reader-folder" target="_blank" rel="noopener">📁 לתיקייה</a>
+</div>
+<div class="stage-wrap">
+<div class="book-stage" id="bookStage"></div>
+</div>
+<div class="reader-controls" style="--c:var(--cat-c)">
+<button class="nav-btn" id="prevBtn" onclick="prevPage()">◀ הקודם</button>
+<div class="progress-wrap">
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="page-counter" id="pageCounter">1 / 1</div>
+</div>
+<button class="nav-btn" id="nextBtn" onclick="nextPage()">הבא ▶</button>
+<button class="toc-btn" id="tocBtn" onclick="toggleToc()" aria-label="תוכן העניינים">☰</button>
+</div>
+<div class="toc-panel hidden" id="tocPanel"></div>
+</div>
+
+<script id="catalog-data" type="application/json">[{"id": "eretz_israel", "name": "ארץ ישראל", "emoji": "🌿", "color": "#10B981", "folder_link": "https://drive.google.com/drive/folders/1MZlgzARoWdAfLBoKYShjen-tGkHGTVF1", "books": [{"title_text": "ונטעתם", "desc_text": "אוסף מקורות, הלכות, תפילות והנהגות הקשורים למצוות נטיעת עצים בארץ ישראל.", "cover": "https://drive.google.com/thumbnail?id=1VFYzK1W2YTzISj0GyPHXcKhjshMb0oGt&sz=w500", "href": "https://drive.google.com/file/d/1hl8qLm4LOgZAZaSlHx-FsE2pbiYB1mmh/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/ונטעתם-מקורות-הלכות-תפילות-והנהגות-ל/", "ftype": "📄 ספר", "fsize": "5.6MB"}, {"title_text": "טובה הארץ", "desc_text": "עוסק באיסור לשון הרע כלפי ארץ ישראל, בהשראת דברי החפץ חיים.", "cover": "https://drive.google.com/thumbnail?id=1NZJzwcBAT50U4TNrbsW02APNuWwYfp1E&sz=w500", "href": "https://drive.google.com/file/d/1VI84RdgwFmjf5fYCMOtVF9J_JH9oUII7/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/טובה-הארץ-הלכות-דיבת-הארץ/", "ftype": "📄 ספר", "fsize": "5.5MB"}, {"title_text": "מגילת אסתר המתרחשת", "desc_text": "עיון במגילת אסתר כמתרחשת מחדש בכל דור — התאמה ופרשנות של המגילה לימינו.", "cover": "https://drive.google.com/thumbnail?id=1NPW3lIgbiKkt2ti__qlwott5GQVNVVD3&sz=w500", "href": "https://drive.google.com/file/d/1DKZT3jl3Iw1uCoV3XdoHDR16vNmuf7d5/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/מגילת-אסתר-המתרחת-בימינו/", "ftype": "📄 ספר", "fsize": "2.0MB"}, {"title_text": "מצות חיבת הארץ", "desc_text": "עוסק במצוות ובמנהגי חיבת ארץ ישראל, עם סיפורים והנהגות מגדולי ישראל.", "cover": "https://drive.google.com/thumbnail?id=1oWJFsUvi1J7o95FAN-ovzNZ-2U9URvGB&sz=w500", "href": "https://drive.google.com/file/d/1PMsXVtB5MFA22ZIht1nf0OPwwbFQYR_M/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/מצוות-חיבת-הארץ-עם-סיפורים-והנהגות-מגד/", "ftype": "📄 ספר", "fsize": "2.4MB"}, {"title_text": "בית ראובן — המדריך לקניית בית בארץ ישראל", "desc_text": "מדריך מעשי לרכישת דירה או בית בארץ ישראל, מתוך שמחה והודיה.", "cover": "https://drive.google.com/thumbnail?id=1scr1rbOwkUSaaypTHpEkdiDepgN7nhKz&sz=w500", "href": "https://drive.google.com/file/d/13YkCLVtfGnJ3Ya74r6NN6xZRhQ3wP_Yq/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/בית-ראובן-המדריך-לקנית-בית-בארץ-ישראל/", "ftype": "📄 ספר", "fsize": "4.9MB"}, {"title_text": "נחלת יעקב – גדולי ישראל בונים את ארץ ישראל", "desc_text": "מביא סיפורים על גדולי תורה מכל העדות שתרמו לבניית ארץ ישראל, כנגד הנרטיב שהחלוצים החילונים בלבד בנו אותה.", "cover": "https://drive.google.com/thumbnail?id=1I2mOJvU2R0Gmn83_ll9vHVIBRS08T97H&sz=w500", "href": "https://drive.google.com/file/d/1Dn9G6duJa2UccMvwXVUQHHM_YCXpQWjU/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/נחלת-יעקב-גדולי-ישראל-בונים-את-ארץ-ישר/", "ftype": "📄 ספר", "fsize": "48.9MB"}, {"title_text": "לכו נרננה", "desc_text": "ליקוטים פנינים ושביבים נפלאים בנושא אתחלתא דגאולה במשנת גדולי ישראל, התשובה והגאולה במשנת הגר\"א וממשיכי דרכו. מתובלים בעובדות והנהגות ואמרות קודש המלהיבים את הלבבות ומחיים את ענין הגאולה וההודיה להשי\"ת.", "cover": "https://drive.google.com/thumbnail?id=1EnG4cxOkcNa9Z6wcXrXVtgKNzHg9QZFY&sz=w500", "href": "https://drive.google.com/file/d/1jV0cYN0Q-c4c_YjmbJ6rWs-USUY_ambH/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/לכו-נרננה-תורת-הגאולה-של-דורנו/", "ftype": "📄 ספר", "fsize": "3.3MB"}, {"title_text": "ארץ הכיסופים", "desc_text": "סדרה מרתקת על כיסופי גדולי ישראל במאה שנה האחרונות לארצנו הקדושה.", "cover": "https://drive.google.com/thumbnail?id=1AgfIe8Rc_0naUxHL-CX0BC-yiHhOd14y&sz=w500", "href": "https://stately-eclair-6dd1e5.netlify.app/", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "סיפורה של אדמת קודש", "desc_text": "כפר עטה (קרית אתא).", "cover": "https://drive.google.com/thumbnail?id=1PsY8XS06AzstF6jokBhkefESCm3a1v8Y&sz=w500", "href": "https://sites.google.com/view/yudataub/ספרי-הרב-יהודה-טאוב/שונות/סיפורה-של-אדמת-קודש-כפר-עטה-קרית-אתא", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}]}, {"id": "hodaya", "name": "הודיה והכרת הטוב", "emoji": "🙏", "color": "#F59E0B", "folder_link": "https://drive.google.com/drive/folders/1yMrmyXROQM3UTeQM0pDMb6PnJz5GZVxU", "books": [{"title_text": "שיעורי קול תודה", "desc_text": "אוסף עלוני 'קול תודה' בנושא הכרת הטוב, מאורגן לפי חודשי השנה.", "cover": "https://drive.google.com/thumbnail?id=10DoT6kEcs4tsw-pSKMPjTWR1sTRC-lqu&sz=w500", "href": "https://drive.google.com/file/d/1s38hRG41dIf1vJzUwRhE-YrBYgbQGw5y/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/מקבץ-עלוני-קול-תודה-כולל-רשימת-השיעורי/", "ftype": "📝 מסמך", "fsize": "25.2MB"}, {"title_text": "תוף מרים", "desc_text": "חוברת המספרת על דמותה של מרים הנביאה כמנהיגת נשים וכסמל לשירה והודיה.", "cover": "https://drive.google.com/thumbnail?id=171QdwltuE1IpI3GTwPxK9g-V7TYl3pyH&sz=w500", "href": "https://drive.google.com/file/d/1iwTkF-mWNhPwWkDHtcCybjq3SDlUXTOL/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/תוף-מרים/", "ftype": "📄 ספר", "fsize": "3.2MB"}, {"title_text": "שיעורי קול תודה משפטים – קדושים", "desc_text": "שיעורים על פרשות משפטים-קדושים בסדרת 'קול תודה'.", "cover": "https://drive.google.com/thumbnail?id=1rnriQLAuEz7cVtVVnsWsktYUEDSBszpy&sz=w500", "href": "https://drive.google.com/file/d/1-cKgaj2vz-Fsb8j42ZkkEmI0ZA5D-yUo/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/שיעורי-קול-תודה-משפטים-קדושים/", "ftype": "📄 ספר", "fsize": "2.9MB"}, {"title_text": "נשמת כל חי המבואר", "desc_text": "ביאור לתפילת 'נשמת כל חי', המסביר את מקורותיה ומשמעותה כביטוי להכרת תודה.", "cover": "https://drive.google.com/thumbnail?id=1-A4dTf_nBoDQaN_KSjL_qgUvADRGPv51&sz=w500", "href": "https://drive.google.com/file/d/1V0up0jnr_Q_KbSm8WXQlzgmrnw1cGmQF/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/נשמת-כל-חי-המבואר/", "ftype": "📄 ספר", "fsize": "1.6MB"}, {"title_text": "צדיקים מודים להשם", "desc_text": "אוסף סיפורים על צדיקים מדורות שונים וכיצד הביעו הודיה לה'.", "cover": "https://drive.google.com/thumbnail?id=1HPX1z86yhqUYrh35WjrbZqaaP3ZwHz05&sz=w500", "href": "https://drive.google.com/file/d/16UZicmmjLABQ6FMBQgDsw-vjE_r3h04g/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/צדיקים-מודים-להשם-סיפורים-נפלאים-על-צד/", "ftype": "📄 ספר", "fsize": "7.5MB"}, {"title_text": "פנקס ההודיה", "desc_text": "פנקס אישי לרישום חסדי ה'.", "cover": "https://drive.google.com/thumbnail?id=1vI0l_nIFFo9iSelAw7rl43O2JKN0yLzo&sz=w500", "href": "https://drive.google.com/file/d/1Dl3yqs1m02-vnQb_yDN9h0BW81QQKSgM/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/פנקס-ההודיה/", "ftype": "📄 ספר", "fsize": "26.1MB"}, {"title_text": "שערי הודיה", "desc_text": "ספר בנושא מידת ההודיה.", "cover": "https://drive.google.com/thumbnail?id=1xS4piGzyQrzhZ7CY6YY3zp9XDYFDpuHH&sz=w500", "href": "https://drive.google.com/file/d/1EOULvQvyx9Z6CMscK3I0PUb4v-s1jWYY/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/שערי-הודיה/", "ftype": "📄 ספר", "fsize": "5.1MB"}, {"title_text": "טוב להודות על מזמור לתודה חלק א", "desc_text": "עזר לאמירת 'מזמור לתודה' בכוונה, מסודר לאמירה יומית לאורך ארבעים יום.", "cover": "https://drive.google.com/thumbnail?id=13sgPubvF3G_2OXCd2xBoMd2hQKphbZcX&sz=w500", "href": "https://drive.google.com/file/d/1AumCMeD4pzQEQxeyIOe0w6LThCBRHNIn/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/טוב-להודות-על-מזמור-לתודה-חלק-א/", "ftype": "📄 ספר", "fsize": "4.4MB"}, {"title_text": "טוב להודות על מזמור לתודה חלק ב", "desc_text": "המשך לחלק א, באותו מבנה של אמירת 'מזמור לתודה' במשך ארבעים יום.", "cover": "https://drive.google.com/thumbnail?id=1gTx161YGOp_ZSEvbWp4bIgRBFPjTIvJc&sz=w500", "href": "https://drive.google.com/file/d/1_BnVxiOE-WkdM8cLUSv60c5fw1jhWXXl/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/טוב-להודות-על-מזמור-לתודה-חלק-ב/", "ftype": "📄 ספר", "fsize": "4.0MB"}, {"title_text": "טוב להודות – מהרב אביגדור מילר", "desc_text": "עוסק בחשיבות הכרת הטוב לה' כיסוד עבודת האדם, על פי תורתו של הרב אביגדור מילר.", "cover": "https://drive.google.com/thumbnail?id=1vgtqUXejMSfBJV9TvtTwBga7RQxtp5bx&sz=w500", "href": "https://docs.google.com/document/d/18ZBd_HgWL6sSyYsXt3jL5S-A40xmNfEu/edit?usp=sharing&ouid=109877959675478301091&rtpof=true&sd=true", "buy_href": "https://bookpod.co.il/product/טוב-להודות-מהרב-אביגדור-מילר/", "ftype": "📝 מסמך", "fsize": "305KB"}, {"title_text": "ואמונתך בלילות", "desc_text": "הודיה ואמונה גם ברגעי החושך — לראות את יד ה' גם כשהדרך אינה ברורה.", "cover": "https://drive.google.com/thumbnail?id=12TfzVEvnPp-cc-t-KF3sIGgjvaZDG4aj&sz=w500", "href": "https://drive.google.com/file/d/1cA6u7B5sV_3_1URetUiDaf5N1tq4m2tR/view?usp=drivesdk", "buy_href": "", "ftype": "📄 ספר", "fsize": "923KB"}, {"title_text": "זכר עשה לנפלאותיו", "desc_text": "על מצוות זכירת חסדי ה', פרסום הנס, וסיפורי פורים מקהילות ישראל.", "cover": "https://drive.google.com/thumbnail?id=1C5ifD65_6dpg_ePKupkH0zoWIxRPzBKo&sz=w500", "href": "https://incandescent-yeot-97d193.netlify.app/", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}]}, {"id": "chinuch_shana", "name": "חינוך בשנה הראשונה", "emoji": "👶", "color": "#3B82F6", "folder_link": "https://drive.google.com/drive/folders/19GTmWzcc3JBeYJ7NUWPmaSsVwbeGVZ-2", "books": [{"title_text": "המדריך המעשי לחינוך הגיל הרך – חוברת שניה", "desc_text": "מדריך מקצועי לגננות, מחנכות והורים על התפתחות ילדים בגילאי 0-3, מבוסס על תיאוריות התפתחות מוכרות.", "cover": "https://drive.google.com/thumbnail?id=1IMCj4d7mCzaRkPapN-InfY_rZwvpeqrn&sz=w500", "href": "https://drive.google.com/file/d/1wiCMk5x32RZCCT8WA7NDtkd_tuqK4s4b/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/המדריך-המעשי-לחינוך-הגיל-הרך-חוברת-שני/", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "המדריך לחינוך תינוק השנה הראשונה", "desc_text": "מדריך להורים על יצירת קשר רגשי עם תינוק בשנת חייו הראשונה, המשלב פסיכולוגיה התפתחותית עם גישה חמה.", "cover": "https://drive.google.com/thumbnail?id=1V40KNUpDopljh0S57ge05mABMFqnMyse&sz=w500", "href": "https://drive.google.com/drive/folders/1ID2v4Joct2GUbo6XWMWXZu2KeW5wFOOq?usp=sharing", "buy_href": "https://bookpod.co.il/product/המדריך-לחינוך-תינוק-השנה-הראשונה/", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "ואמונתך בלילות", "desc_text": "מחשבות של אמונה וחיזוק לעבודת ה' שבלילות, כאשר בננו היקר מזכה אותנו ל\"ותקם בעוד לילה\".", "cover": "https://drive.google.com/thumbnail?id=1LB_wtXkxhv5oNowuYTZc5ToxPy0ipPi9&sz=w500", "href": "https://sites.google.com/view/jewish-home/%D7%A1%D7%A4%D7%A8%D7%99-%D7%90%D7%9E%D7%95%D7%A0%D7%94-%D7%95%D7%94%D7%95%D7%93%D7%99%D7%94/%D7%95%D7%90%D7%9E%D7%95%D7%A0%D7%AA%D7%9A-%D7%91%D7%9C%D7%99%D7%9C%D7%95%D7%AA-%D7%9E%D7%97%D7%A9%D7%91%D7%95%D7%AA-%D7%A9%D7%9C-%D7%90%D7%9E%D7%95%D7%A0%D7%94-%D7%95%D7%97%D7%99%D7%96%D7%95%D7%A7-%D7%9C%D7%A2%D7%91%D7%95%D7%93%D7%AA-%D7%94-%D7%A9%D7%91%D7%9C%D7%99%D7%9C%D7%95%D7%AA-%D7%9B%D7%90%D7%A9%D7%A8-%D7%91%D7%A0%D7%A0%D7%95-%D7%94%D7%99%D7%A7%D7%A8-%D7%9E%D7%96%D7%9B%D7%94", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}]}, {"id": "maagal_chaim", "name": "מעגל החיים — שמחות", "emoji": "🎊", "color": "#EC4899", "folder_link": "https://drive.google.com/drive/folders/1G1NERF6DRe-S4X6XQ8hnrSO8eW2vcyTN", "books": [{"title_text": "אוצר ההודיה לבת מצווה", "desc_text": "מעניק משמעות חינוכית ורוחנית ליום בת המצווה, ומדמה אותו ל'ברית אהבה' בין הנערה לקב\"ה.", "cover": "https://drive.google.com/thumbnail?id=1CsdJ3-HPL-y7g3MrbkGqgeqm2SXj-ky-&sz=w500", "href": "https://drive.google.com/file/d/1VG1J2LX6Nl16T_sH0_SHFdjrW7GuHe_q/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/אוצר-ההודיה-לבת-המצווה/", "ftype": "📄 ספר", "fsize": "7.4MB"}, {"title_text": "ברכון לברית מילה", "desc_text": "ברכון מהודר לסעודת ברית מילה — ברכת המזון ופיוטים לשמחת המצווה.", "cover": "https://drive.google.com/thumbnail?id=1CxXHHj1_IveOsEAOJSQLe96mm7Ioxc9N&sz=w500", "href": "https://drive.google.com/file/d/1hDTb90intqUAQYuTHjxyMg0U5f84zJuR/view?usp=drivesdk", "buy_href": "", "ftype": "📄 ספר", "fsize": "3.6MB"}, {"title_text": "הקול החמישי — לשבע ברכות", "desc_text": "ביאור על שבע הברכות הנאמרות בחתונה.", "cover": "https://drive.google.com/thumbnail?id=1VHe3L2S5pOl-z0CwGCeBfiJBGlv34MuR&sz=w500", "href": "https://drive.google.com/file/d/1_TgemBsfzLtZ5wyY9rkI3eGfbYZgkFj1/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/הקול-החמישי-באור-לשבע-ברכות/", "ftype": "📄 ספר", "fsize": "6.2MB"}, {"title_text": "כי אשרוני בנות", "desc_text": "עוסק במנהגי הודיה בהולדת בת — הודיה לפני ואחרי הלידה, סעודת הודיה ומנהגי זבד הבת.", "cover": "https://drive.google.com/thumbnail?id=1q7CRZv4PJaRu_3ikyCGPKWsXmdhEUqx5&sz=w500", "href": "https://drive.google.com/file/d/1dORsHgznXqUZCKChWAX1Hjru8c1GAqR0/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/כי-אשרוני-בנות-השמחה-וההודיה-בהולדת-בת/", "ftype": "📄 ספר", "fsize": "11.7MB"}, {"title_text": "הקול החמישי – לשמחת חתן וכלה", "desc_text": "עוסק במצוות שמחת חתן וכלה.", "cover": "https://drive.google.com/thumbnail?id=1kTvje-rk0RhMWYl-1ES0KXI1TiNtF9ne&sz=w500", "href": "https://drive.google.com/file/d/1wuQcNSJBGBPx4c9be0BhmeiZu0X-GPf1/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/הקול-החמישי-לשמחת-חתן-וכלה/", "ftype": "📄 ספר", "fsize": "7.8MB"}, {"title_text": "ברוך אתה בבואך – לקט תפילות על היולדת", "desc_text": "לקט תפילות מלא ליולדת.", "cover": "https://drive.google.com/thumbnail?id=1UuELUcBGEkq_jSZT7e9VAX4CTYNotieu&sz=w500", "href": "https://drive.google.com/file/d/1tkVP_RqemqVfZ0dMlyui1dBHEFfCJ7H4/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/ברוך-אתה-בבואך-לקט-תפילות-על-היולדת/", "ftype": "📄 ספר", "fsize": "6.4MB"}, {"title_text": "ברוך אתה בבואך – לקט תפילות על היולדת מוקטן", "desc_text": "לקט תפילות ליולדת, בגרסה מקוצרת.", "cover": "https://drive.google.com/thumbnail?id=1AEH503R1j2VXZ2FfaBn3VIJ0p4hXTXil&sz=w500", "href": "https://drive.google.com/file/d/19diQK773f6_inI7fiXSyg0BEpCrU17MC/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/ברוך-אתה-בבואך-לקט-תפילות-על-היולדת-מו/", "ftype": "📄 ספר", "fsize": "8.4MB"}, {"title_text": "כיצד מרקדין לפני החתן", "desc_text": "דן במצוות שמחת חתן וכלה בעת ריקוד לפניהם.", "cover": "https://drive.google.com/thumbnail?id=1W0jWcAP13btNuj_uD80wv9ulr9EpsbYM&sz=w500", "href": "https://drive.google.com/file/d/1G_X34JL-p7hy7YLFPDJ4Hypp55mzkMy4/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/כיצד-מרקדין-לפני-החתן-באור-נפלא-במצווה/", "ftype": "📄 ספר", "fsize": "3.6MB"}, {"title_text": "סוד השבע ברכות", "desc_text": "עיון בביאור שבע ברכות החתונה — בשאלות ותשובות.", "cover": "https://drive.google.com/thumbnail?id=1KRdwbTRI1sMjOVdwCDL1r277QW3Tog14&sz=w500", "href": "https://sites.google.com/view/yudataub/ספרי-הרב-יהודה-טאוב/מעגל-החיים/סוד-השבע-ברכות-עיון-בביאור-שבע-ברכות-החתונה-בשאלות-ותשובות", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}]}, {"id": "maagal_shana", "name": "מעגל השנה", "emoji": "📅", "color": "#6366F1", "folder_link": "https://drive.google.com/drive/folders/1JJ7vKTmFqcii6geD8nr5u0ysJ3QcOO5-", "books": [{"title_text": "ההודיה במעגל השנה", "desc_text": "אסופת מאמרי חיזוק בנושא הודיה לה', שפורסמו במשך כמה שנים בעלוני 'קול תודה'.", "cover": "https://drive.google.com/thumbnail?id=1Y5E9Chy50tfKZX_HaEVgumVSE6KEv7un&sz=w500", "href": "https://drive.google.com/file/d/1CRAOipV9-RODvu3KCFNENLttvJjoG95V/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/ההודיה-במעגל-השנה-עלוני-קול-תודה-לפי-ח/", "ftype": "📄 ספר", "fsize": "7.1MB"}, {"title_text": "נר חנוכה כדי להודות – עם סיפורי סבתא רחל", "desc_text": "עוסק ביסוד מצוות הדלקת נרות חנוכה ומשמעותה, משולב עם סיפורים.", "cover": "https://drive.google.com/thumbnail?id=14LNzBtJhFZUYJkMJtSM1KBWH7_WKlVWz&sz=w500", "href": "", "buy_href": "https://bookpod.co.il/product/נר-חנוכה-כדי-להודות-עם-סיפורי-סבתא-רחל/", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "גליונות קול תודה לחנוכה", "desc_text": "אוסף עלוני 'קול תודה' לחנוכה על פני כמה שנים, עם שאלות ותשובות על טעמי המצווה.", "cover": "https://drive.google.com/thumbnail?id=1OLzxpdALq_l9qYdjhWSsF7R3Km0_scRK&sz=w500", "href": "https://drive.google.com/file/d/1fEpQfueIQxV6-CWA_BX_4SjEb_n0gbxr/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/גליונות-קול-תודה-לחנוכה/", "ftype": "📄 ספר", "fsize": "34.9MB"}, {"title_text": "שיעורי קול תודה לחנוכה", "desc_text": "שיעורי חנוכה נוספים בסדרת 'קול תודה'.", "cover": "https://drive.google.com/thumbnail?id=16IVb8v1NN1PIONGb86E9EYhysmjixET6&sz=w500", "href": "https://drive.google.com/file/d/1yyiSArM_GPm7jq1h-GF_Igv4DbHwKXtZ/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/שיעורי-קול-תודה-לחנוכה/", "ftype": "📄 ספר", "fsize": "17.1MB"}, {"title_text": "הבית כמקדש בחנוכה", "desc_text": "כֵּיצַד מְפִיחַ חַג הַחֲנוּכָּה בְּבֵיתְךָ קְדֻשַּׁת מִקְדָּשׁ שֶׁל אוֹר נִצְחִי.", "cover": "https://drive.google.com/thumbnail?id=1gRC8G9Kr3cTzLaxqL_DwJgqQF7UYWRap&sz=w500", "href": "https://drive.google.com/file/d/1ixmecf1bTcv9Dq3-8pEIPmgjey2ybG1z/view?usp=sharing", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "ט\"ו בשבט — יום טוב של ארץ ישראל", "desc_text": "מעניק עומק רוחני לחג ט\"ו בשבט מעבר למנהג אכילת הפירות, ומחבר בין פירות הארץ לאהבת ה'.", "cover": "https://drive.google.com/thumbnail?id=1Bj3ECCa64S9HqqP_fpp9Yo0bBCQ3hM-9&sz=w500", "href": "https://drive.google.com/file/d/1k1O0-QhLcIyHnNL7v3cf2Ow4Q0qDwVyW/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/טו-בשבט-יום-טוב-של-ארץ-ישראל/", "ftype": "📄 ספר", "fsize": "47.9MB"}, {"title_text": "פירות הילולים", "desc_text": "חוברת צבעונית על החסדים המתגלים בפירות לחג ט\"ו בשבט.", "cover": "https://drive.google.com/thumbnail?id=1OL-KvwOMj-iEOkHi2KogU3C_GH-XhWBm&sz=w500", "href": "https://drive.google.com/file/d/1tl3c-LWqfCHNxDP7i_dPlSt7asqtsxLA/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/פירות-הילולים-לטו-בשבט-על-החסדים-שמתג/", "ftype": "📄 ספר", "fsize": "7.6MB"}, {"title_text": "פירות של אהבה — הנבואה מתגשמת", "desc_text": "חוברת מחשבתית-מוסרית סביב נושאי אהבה, הכרת טוב ומידות טובות.", "cover": "https://drive.google.com/thumbnail?id=1u-l8jSbenxBkv5ZK1ufTu-rzo9CYfs-K&sz=w500", "href": "https://drive.google.com/file/d/1sZIdFgEm8XtOpFDStn2B0mxP525ULFV5/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/פירות-של-אהבה/", "ftype": "📄 ספר", "fsize": "30.4MB"}, {"title_text": "מגילת אסתר המתרחשת בדורנו", "desc_text": "עיון במגילת אסתר כמתרחשת מחדש בכל דור — התאמה ופרשנות של המגילה לימינו.", "cover": "https://drive.google.com/thumbnail?id=1NPW3lIgbiKkt2ti__qlwott5GQVNVVD3&sz=w500", "href": "https://drive.google.com/file/d/1fDcYvFXK-HZ6Bn7vPx7kl2KNFBRC7jCa/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/מגילת-אסתר-המתרחת-בימינו/", "ftype": "📄 ספר", "fsize": "2.0MB"}, {"title_text": "סודות אוזן המן", "desc_text": "עוסק במנהג אכילת אוזני המן בפורים ובסודות שמאחוריו.", "cover": "https://drive.google.com/thumbnail?id=19RkzTTpD0HYNJAZTYsnqAqoa_42EoJHh&sz=w500", "href": "https://drive.google.com/file/d/18S9eiaX_ZAlic-ScClhMw7Q4AF8fgedk/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/סודו-של-אוזן-המן/", "ftype": "📄 ספר", "fsize": "4.4MB"}, {"title_text": "פור המן", "desc_text": "קונטרס על עומקי חג הפורים, כולל הקשר בין פורים ליום הכיפורים.", "cover": "https://drive.google.com/thumbnail?id=1aWN6TOP_cY84Kivdf9Qb_hnwlS0qp92-&sz=w500", "href": "https://drive.google.com/file/d/1eFUkmfE0FE2OK9ybLaC-_BkBkK2FMhWz/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/פור-המן/", "ftype": "📄 ספר", "fsize": "2.0MB"}, {"title_text": "שיעורי פסח – קול תודה", "desc_text": "קובץ שיעורים לחג הפסח שעוסק בזיכרון יציאת מצרים, שבת הגדול, בדיקת חמץ וליל הסדר, מתוך זווית של הודיה לה'.", "cover": "https://drive.google.com/thumbnail?id=1-pl3Od5rN4lyLnS0ACnMVM6l4bZ5F67s&sz=w500", "href": "", "buy_href": "https://bookpod.co.il/product/שיעורי-פסח-קול-תודה/", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "שטר התנאים לשבועות", "desc_text": "עוסק במשמעות הרוחנית של חג השבועות כ'חתונה' בין עם ישראל לקב\"ה, דרך משל הכתובה ושטר התנאים.", "cover": "https://drive.google.com/thumbnail?id=1dwXCeMDkXk6LLOwUHGYtSGdzcmeeszMQ&sz=w500", "href": "https://docs.google.com/document/d/1j4lD_El-n4B6VwOORtn71mhPZjUcN7eOlRK0mKIpf7E/edit?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/שטר-התנאים-לשבועות/", "ftype": "📝 מסמך", "fsize": ""}, {"title_text": "סודו של ט\"ו באב", "desc_text": "עוסק במשמעות הרוחנית של ט\"ו באב וסיבת השמחה המיוחדת של יום זה.", "cover": "https://drive.google.com/thumbnail?id=1L9nBDJK3WnFDVfoihMjZWXtITAFjZqnx&sz=w500", "href": "https://drive.google.com/file/d/1PMmNA-cIgwlYcbULdtHTaGhDm7I6jACN/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/סודו-של-טו-באב/", "ftype": "📄 ספר", "fsize": "4.0MB"}, {"title_text": "עשרת ימי תשובה", "desc_text": "הדרך הביתה — עיון במהות התשובה ובימי הרחמים והרצון.", "cover": "https://drive.google.com/thumbnail?id=1-3uJGJZXXOHWO3rh6WQQVGCRMlSeTpA4&sz=w500", "href": "https://sites.google.com/view/yudataub/מעגל-השנה/עשרת-ימי-תשובה-הדרך-הביתה-עיון-במהות-התשובה-ובימי-הרחמים-והרצון", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}]}, {"id": "biografia", "name": "ספרי ביוגרפיה", "emoji": "📖", "color": "#D97706", "folder_link": "https://drive.google.com/drive/folders/1uSy4F-Xx3rSbI9LKw-XunaXBlj3Q8K8d", "books": [{"title_text": "קורות חייו של מאיר שפריר", "desc_text": "ביוגרפיה המתארת פרקים בחייו של מאיר שפריר, כולל עלייה ארצה, עבודת אדמה והקמת מוסדות תורה.", "cover": "https://drive.google.com/thumbnail?id=11J5CtEUCunrTME1w2x6MXvkamASYh0Lq&sz=w500", "href": "https://drive.google.com/file/d/17ATMM_6nxFNMKcPVl9jp7aUh-lWAGPDT/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/קורות-חייו-של-מאיר-שפריר/", "ftype": "📝 מסמך", "fsize": "61KB"}, {"title_text": "סיפור הקמתה של כפר אתא", "desc_text": "ספר בן 30 פרקים המתאר את סיפור הקמת היישוב כפר אתא.", "cover": "https://drive.google.com/thumbnail?id=1Bxqxr1IS3ancC1cJqmMr2ACbB9UO8-gS&sz=w500", "href": "https://drive.google.com/file/d/1gsWvf48aN5c_5OBg5A6wnJTKdubJMdV5/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/סיפור-הקמתה-של-כפר-אתא/", "ftype": "📄 ספר", "fsize": "33.8MB"}, {"title_text": "תולדות חייו של ר' משה טאוב זצ\"ל מכפר עטה", "desc_text": "ביוגרפיה על ר' משה טאוב מכפר עטה.", "cover": "https://drive.google.com/thumbnail?id=1N0KSqZXVCWYF0cS-pzZTSZKwuQlfr3Pq&sz=w500", "href": "https://drive.google.com/file/d/1ZI0tLygvKVnB4aAqs9PctTDCf51W64Ue/view?usp=sharing", "buy_href": "https://bookpod.co.il/product/תולדות-חייו-של-ר-משה-טאוב-זצל-מכפר-עטה/", "ftype": "📄 ספר", "fsize": "4.0MB"}]}, {"id": "parashat_shavua", "name": "פרשת השבוע", "emoji": "📜", "color": "#7C3AED", "folder_link": "https://drive.google.com/drive/folders/1tVfLg7gH51pDmy5UsW5Jc3V59M6Ri-UD", "books": [{"title_text": "תרגום יונתן — חומש בראשית", "desc_text": "חידושים ופנינים מתוך תרגום יונתן בן עוזיאל על המקרא, מאת הרב מאיר שפריר.", "cover": "https://drive.google.com/thumbnail?id=1F5HUAPK4VkeWbagUxvb48A0WbsQj7_FJ&sz=w500", "href": "https://drive.google.com/file/d/19tgKyACV2-h-xtBABTB8m5bxkgfkZvYh/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/פניני-תרגום-יונתן/", "ftype": "📄 ספר", "fsize": "23.3MB"}]}, {"id": "shalom_bait", "name": "שלום בית", "emoji": "🏠", "color": "#EF4444", "folder_link": "https://drive.google.com/drive/folders/1BFY7Ks15UbFnDf-f1JQ5on_zMwd7P6YV", "books": [{"title_text": "הבית היהודי בתורת רשב\"י", "desc_text": "מביא דברי תורת הזוהר על ערך שלום הבית, בשפה פשוטה ומומלצת לחתנים וכלות.", "cover": "https://drive.google.com/thumbnail?id=1dQDCSxA8W3woxGF0NWLhnhaHuV_qwGKO&sz=w500", "href": "https://drive.google.com/file/d/1EMuIMPve1XsSf-3VyIERDGobRvWHLYl7/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/הבית-היהודי-בתורת-רשבי/", "ftype": "📄 ספר", "fsize": "791KB"}, {"title_text": "זוהר הבית", "desc_text": "ליקוט קטעים מהזוהר הקדוש העוסקים בבית היהודי.", "cover": "https://drive.google.com/thumbnail?id=1zbi3LeFQayYUx6tFVO7nU0vx_4Hkci1U&sz=w500", "href": "https://drive.google.com/file/d/0B9ePH5TFKeqgYk1Ta19ISDAzMlF6NWZSbWo2UTVDNzY3TjN3/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/מאמרי-הזוהר-הקודש-על-הבית-היהודי/", "ftype": "📄 ספר", "fsize": "555KB"}, {"title_text": "מפתח הפרנסה", "desc_text": "עוסק בדרכי פרנסה והצלחה כלכלית מנקודת מבט אמונית, בהשראת דמותו של אברהם אבינו.", "cover": "https://drive.google.com/thumbnail?id=1-r3Mn4UQjXik0mN9M7yABPHsXFfGGs6x&sz=w500", "href": "https://drive.google.com/file/d/0B9ePH5TFKeqgNWZwRERKVUJhSC1QZ2dNRzdfbloxeGlmcG1Z/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/מפתח-הפרנסה-הדרך-להיות-עשיר-הנלמדת-מאב/", "ftype": "📄 ספר", "fsize": "17.7MB"}, {"title_text": "קונטרס סיבת הנישואין", "desc_text": "עוסק בשאלת המטרה העמוקה של הנישואין, מעבר לתיקון מידות והולדת ילדים.", "cover": "https://drive.google.com/thumbnail?id=1KDuT1bzygCZwdy6axWQWzp5BTGR9AP5I&sz=w500", "href": "https://drive.google.com/file/d/0B9ePH5TFKeqgTzZiUm52dVJXdHNDdGtZeXJMSGNOS3hPWU1n/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/סיבת-הנישואין/", "ftype": "📄 ספר", "fsize": "225KB"}, {"title_text": "אטונומיה של אהבה", "desc_text": "ספר בנושא זוגיות, המתאר מסע להבנת האישה מתוך פרספקטיבה רוחנית-אמונית, כדי לבנות בית הרמוני.", "cover": "https://drive.google.com/thumbnail?id=1Fp5yPXsrLKiiDTbiEDf8dPiuAm9mOQAf&sz=w500", "href": "https://drive.google.com/file/d/1IhRrYlDhDzlKlsw5r_efEMiExSf5fYv2/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/אטונומיה-של-אהבה/", "ftype": "📄 ספר", "fsize": "181.9MB"}, {"title_text": "כשאני מכין כוס קפה לאשתי", "desc_text": "מבט מרגש על מעשי החסד הקטנים שבונים שלום בית גדול.", "cover": "https://drive.google.com/thumbnail?id=1utOeitYcU-eKwGjR8wVG6VBC_Qr0x2-5&sz=w500", "href": "https://drive.google.com/file/d/1V3IOJOHICIpJ3pbTQ8XPI2zwyHIA9ysa/view?usp=drivesdk", "buy_href": "", "ftype": "📄 ספר", "fsize": "128KB"}, {"title_text": "התגלית — מטרת האדם בעולמו", "desc_text": "גילוי מרענן על תכלית האדם ושליחותו בעולם.", "cover": "https://drive.google.com/thumbnail?id=1gB6XAjrmxdHTJ-H1KGVASAUJWAnWfZT_&sz=w500", "href": "https://drive.google.com/file/d/1nZVfz7k1C67e-i_JsVnmtHY1FxDRD47S/view?usp=drivesdk", "buy_href": "", "ftype": "📄 ספר", "fsize": "1.1MB"}, {"title_text": "ספר אומנות המחמאה", "desc_text": "אמנות המחמאה הנכונה — ככלי לבניית קשר חם ושלום בית.", "cover": "https://drive.google.com/thumbnail?id=1V2nL6Ab_6rd0jpqA7D7YHLWp0hRf2g-0&sz=w500", "href": "https://drive.google.com/file/d/1GiVnfW-xnVm-gfNmsAkFDApLn6jkIJF1/view?usp=drivesdk", "buy_href": "", "ftype": "📄 ספר", "fsize": "3.9MB"}, {"title_text": "שלום מביא שלום", "desc_text": "כיצד השלום בבית מקרין ומביא שלום לעולם כולו.", "cover": "https://drive.google.com/thumbnail?id=1EcdpzajNTtMxUWX1qcTd2S1hJxTwmTzq&sz=w500", "href": "https://drive.google.com/file/d/0B9ePH5TFKeqgQko4Nnc2MUQ5UjdEb19WX2I2TE1jYlBBZWtR/view?usp=drivesdk", "buy_href": "", "ftype": "📄 ספר", "fsize": "256KB"}, {"title_text": "שלום בית בתורה בהלכה ובאגדה", "desc_text": "אוסף מקיף על שלום בית מן התורה, ההלכה והאגדה.", "cover": "https://drive.google.com/thumbnail?id=1RuRK7f1cKaSAMK1xIM_Vmo_sHwURer1S&sz=w500", "href": "https://drive.google.com/file/d/0B9ePH5TFKeqgUmY0TFVHdHBHMUdva2VGWENXSlVQRTN5NTFJ/view?usp=drivesdk", "buy_href": "", "ftype": "📄 ספר", "fsize": "564KB"}, {"title_text": "אירוסין, נישואין והקמת הבית — לאור מעמד הר סיני ובניין המשכן", "desc_text": "עוסק במעמדי האירוסין והנישואין והקמת הבית היהודי, לאור ההשוואה למעמד הר סיני ובניין המשכן.", "cover": "https://drive.google.com/thumbnail?id=1-zGwvlUHQMECcWLLOq15kqLK4gJn1laE&sz=w500", "href": "https://sites.google.com/view/jewish-home/%D7%A1%D7%A4%D7%A8%D7%99-%D7%94%D7%91%D7%99%D7%AA-%D7%9B%D7%9E%D7%A7%D7%93%D7%A9/%D7%90%D7%99%D7%A8%D7%95%D7%A1%D7%99%D7%9F-%D7%A0%D7%99%D7%A9%D7%95%D7%90%D7%99%D7%9F-%D7%95%D7%94%D7%A7%D7%9E%D7%AA-%D7%94%D7%91%D7%99%D7%AA-%D7%9C%D7%90%D7%95%D7%A8-%D7%9E%D7%A2%D7%9E%D7%93-%D7%94%D7%A8-%D7%A1%D7%99%D7%A0%D7%99-%D7%95%D7%91%D7%A0%D7%99%D7%99%D7%9F-%D7%94%D7%9E%D7%A9%D7%9B%D7%9F", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "קדושת הבית היהודי הנלמדת מן המשכן ומבית המקדש", "desc_text": "עוסק בקדושת הבית היהודי, הנלמדת מקדושת המשכן ובית המקדש.", "cover": "https://drive.google.com/thumbnail?id=1hEYdRuukTOm6iwPE9BjAFbDCBF55ZNMy&sz=w500", "href": "https://sites.google.com/view/jewish-home/%D7%A1%D7%A4%D7%A8%D7%99-%D7%94%D7%91%D7%99%D7%AA-%D7%9B%D7%9E%D7%A7%D7%93%D7%A9/%D7%A7%D7%93%D7%95%D7%A9%D7%AA-%D7%94%D7%91%D7%99%D7%AA-%D7%94%D7%99%D7%94%D7%95%D7%93%D7%99-%D7%94%D7%A0%D7%9C%D7%9E%D7%93%D7%AA-%D7%9E%D7%9F-%D7%94%D7%9E%D7%A9%D7%9B%D7%9F-%D7%95%D7%9E%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A7%D7%93%D7%A9?authuser=0", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "ספר הזוהר על שלום בית", "desc_text": "מאמרי רשב\"י ז\"ל במעלת הבית היהודי — ליקוט מדברי הזוהר הקדוש.", "cover": "https://drive.google.com/thumbnail?id=1mSQVlvJC4jvpcHVpMpzCE5G0211vEYwN&sz=w500", "href": "https://effulgent-pavlova-10a100.netlify.app/", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "הבית כמקדש בחנוכה", "desc_text": "כֵּיצַד מְפִיחַ חַג הַחֲנוּכָּה בְּבֵיתְךָ קְדֻשַּׁת מִקְדָּשׁ שֶׁל אוֹר נִצְחִי.", "cover": "https://drive.google.com/thumbnail?id=1gRC8G9Kr3cTzLaxqL_DwJgqQF7UYWRap&sz=w500", "href": "https://drive.google.com/file/d/1ixmecf1bTcv9Dq3-8pEIPmgjey2ybG1z/view?usp=sharing", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "התגלית", "desc_text": "מה תפקיד האדם בעולמו? לשם מה יהודי מתחתן?", "cover": "https://drive.google.com/thumbnail?id=1nrNw8SMcf9f04_SJ1OSzHw5t-l7WXNVI&sz=w500", "href": "https://eloquent-druid-fb179b.netlify.app/", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "קונטרס נחלת ה' בנים", "desc_text": "הזכות הגדולה שיש בגידול הילדים.", "cover": "https://drive.google.com/thumbnail?id=1OLLYl1jq0Puj3P9-VblCxpjR4iYe2bYv&sz=w500", "href": "https://sites.google.com/view/jewish-home/%D7%A1%D7%A4%D7%A8%D7%99-%D7%94%D7%91%D7%99%D7%AA-%D7%94%D7%99%D7%94%D7%95%D7%93%D7%99/%D7%A7%D7%95%D7%A0%D7%98%D7%A8%D7%A1-%D7%A0%D7%97%D7%9C%D7%AA-%D7%94-%D7%91%D7%A0%D7%99%D7%9D-%D7%94%D7%96%D7%9B%D7%95%D7%AA-%D7%94%D7%92%D7%93%D7%95%D7%9C%D7%94-%D7%A9%D7%99%D7%A9-%D7%91%D7%92%D7%99%D7%93%D7%95%D7%9C-%D7%94%D7%99%D7%9C%D7%93%D7%99%D7%9D", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}, {"title_text": "קנקן מלא יין – להפוך את היום למלא במצוות ללא עבודה", "desc_text": "הספר שיהפוך את היום שלך.", "cover": "https://drive.google.com/thumbnail?id=1L85FuHpWGBbL5MyOyQPnNCoEvyxBf2sT&sz=w500", "href": "https://sites.google.com/view/yudataub/%D7%A1%D7%A4%D7%A8%D7%99-%D7%94%D7%A8%D7%91-%D7%99%D7%94%D7%95%D7%93%D7%94-%D7%98%D7%90%D7%95%D7%91/%D7%97%D7%A1%D7%93/%D7%9C%D7%94%D7%A4%D7%95%D7%9A-%D7%90%D7%AA-%D7%94%D7%99%D7%95%D7%9D-%D7%9C%D7%9E%D7%9C%D7%90-%D7%9E%D7%A6%D7%95%D7%95%D7%AA-%D7%9C%D7%9C%D7%90-%D7%9E%D7%90%D7%9E%D7%A5?authuser=0", "buy_href": "", "ftype": "📄 ספר", "fsize": ""}]}, {"id": "simcha", "name": "שמחה וחיוך", "emoji": "😊", "color": "#F97316", "folder_link": "https://drive.google.com/drive/folders/19_lZPZEcZO47HNH9ZxC4R9KHfAfGUS-0", "books": [{"title_text": "סוד החיוך — הספר השלם", "desc_text": "מרחיב על משמעות החיוך כמעשה של ריפוי, אהבה ואמונה, ומקשר בין דברי חז\"ל למחקר מודרני על הבעות פנים.", "cover": "https://drive.google.com/thumbnail?id=1duLprJi71y5XNg1A0-HEhWdCaRLXhRnH&sz=w500", "href": "https://drive.google.com/file/d/1ZlydVV5qmhq3SZkqKihT7TcZw0uSWjyR/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/סוד-החיוך/", "ftype": "📄 ספר", "fsize": "21.4MB"}, {"title_text": "ספר החיוך — מעלת החיוך", "desc_text": "עוסק במעלת החיוך על פי חז\"ל, ובונה מסע מהתאוריה ועד לכלים מעשיים לשיפור מצב הרוח והבית.", "cover": "https://drive.google.com/thumbnail?id=1Xp3WmjARcjDuxJYeaMFC0CVbxrd68YSx&sz=w500", "href": "https://drive.google.com/file/d/1uh8Lc3489RI5_kQPCyiNUdDaB_nEMOSh/view?usp=drivesdk", "buy_href": "https://bookpod.co.il/product/סוד-המאור-וכוחו-של-החיוך-במשנת-חזל-ובח/", "ftype": "📄 ספר", "fsize": "5.5MB"}]}, {"id": "ahavat_hashem", "name": "אהבת השם", "emoji": "💜", "color": "#8B5CF6", "folder_link": "https://drive.google.com/drive/folders/1Jmb7YFcbuaTz1cfsvn7uMX0ClaR4HnFh", "books": [{"title_text": "אהבתי אתכם", "desc_text": "על אהבת ה' לעם ישראל — מסע אל הקשר הנצחי שבין הבורא לבניו.", "cover": "https://drive.google.com/thumbnail?id=12TfzVEvnPp-cc-t-KF3sIGgjvaZDG4aj&sz=w500", "href": "https://drive.google.com/file/d/0B9ePH5TFKeqgTG1oelBWUFY2b21vMjhxbGZpVnozY2VSMmhR/view?usp=drivesdk&resourcekey=0-v5enHMbfzLNDABs0ja5JLQ", "buy_href": "", "ftype": "📄 ספר", "fsize": "135KB"}]}]</script>
+<script>
+const CATALOG = JSON.parse(document.getElementById('catalog-data').textContent);
+const catsGrid = document.getElementById('catsGrid');
+const noResults = document.getElementById('noResults');
+
+const totalBooks = CATALOG.reduce((sum,c)=>sum+c.books.length,0);
+document.getElementById('statBooks').textContent = totalBooks;
+document.getElementById('statCats').textContent = CATALOG.length;
+
+function el(tag, cls, text){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(text!==undefined) e.textContent = text;
+  return e;
+}
+
+/* ===== HOME: category cards ===== */
+function buildCategoryCard(cat){
+  const card = el('div','cat-card');
+  card.style.setProperty('--c', cat.color || '#b8860b');
+  card.dataset.catId = cat.id;
+  card.tabIndex = 0;
+  card.setAttribute('role','button');
+
+  const top = el('div','cat-card-top');
+  top.appendChild(el('div','cat-card-emoji', cat.emoji));
+  if(cat.folder_link){
+    const folderLink = el('a','cat-card-folder');
+    folderLink.href = cat.folder_link;
+    folderLink.target = '_blank';
+    folderLink.rel = 'noopener';
+    folderLink.textContent = '📁 לתיקייה';
+    folderLink.onclick = (e)=>e.stopPropagation();
+    top.appendChild(folderLink);
+  }
+  card.appendChild(top);
+
+  card.appendChild(el('div','cat-card-name', cat.name));
+  card.appendChild(el('div','cat-card-count', cat.books.length + ' ספרים'));
+
+  const cta = el('div','cat-card-cta','פתחו את הקטלוג ←');
+  card.appendChild(cta);
+
+  const matches = el('div','cat-card-matches');
+  matches.id = 'matches-' + cat.id;
+  card.appendChild(matches);
+
+  const activate = ()=>openCategory(cat.id, 0);
+  card.addEventListener('click', activate);
+  card.addEventListener('keydown', e=>{
+    if(e.key==='Enter' || e.key===' '){ e.preventDefault(); activate(); }
+  });
+  return card;
+}
+
+CATALOG.forEach(cat=>catsGrid.appendChild(buildCategoryCard(cat)));
+
+/* ===== SEARCH ===== */
+function doSearch(qRaw){
+  const q = qRaw.trim().toLowerCase();
+  const cards = Array.from(catsGrid.children);
+  if(!q){
+    cards.forEach(c=>{ c.classList.remove('hide'); document.getElementById('matches-'+c.dataset.catId).innerHTML=''; });
+    noResults.classList.remove('show');
+    return;
+  }
+  let anyVisible = false;
+  CATALOG.forEach(cat=>{
+    const card = cards.find(c=>c.dataset.catId===cat.id);
+    const nameMatch = cat.name.toLowerCase().includes(q);
+    const bookMatches = cat.books
+      .map((b,i)=>({b,i}))
+      .filter(({b})=> (b.title_text||'').toLowerCase().includes(q) || (b.desc_text||'').toLowerCase().includes(q));
+    const has = nameMatch || bookMatches.length>0;
+    card.classList.toggle('hide', !has);
+    if(has) anyVisible = true;
+
+    const matchesEl = document.getElementById('matches-'+cat.id);
+    matchesEl.innerHTML = '';
+    if(bookMatches.length>0 && !nameMatch){
+      bookMatches.slice(0,5).forEach(({b,i})=>{
+        const chip = el('button','match-chip', b.title_text);
+        chip.type='button';
+        chip.onclick = (e)=>{ e.stopPropagation(); openCategory(cat.id, i+1); };
+        matchesEl.appendChild(chip);
+      });
+      if(bookMatches.length>5){
+        matchesEl.appendChild(el('span','match-more', '+' + (bookMatches.length-5) + ' נוספים'));
+      }
+    }
+  });
+  noResults.classList.toggle('show', !anyVisible);
+}
+
+/* ===== READER ===== */
+const homeView = document.getElementById('homeView');
+const readerView = document.getElementById('readerView');
+const bookStage = document.getElementById('bookStage');
+const readerEmoji = document.getElementById('readerEmoji');
+const readerName = document.getElementById('readerName');
+const readerFolderLink = document.getElementById('readerFolderLink');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const pageCounter = document.getElementById('pageCounter');
+const tocPanel = document.getElementById('tocPanel');
+
+let currentCat = null;
+let currentIndex = 0; // 0 = category cover page, 1..N = books
+
+function buildCoverPage(cat){
+  const page = el('article','page cat-cover-page');
+  const inner = el('div','cover-page-inner');
+  inner.appendChild(el('div','cover-emoji', cat.emoji));
+  inner.appendChild(el('h2','cover-title', cat.name));
+  inner.appendChild(el('div','cover-count', cat.books.length + ' ספרים בנושא זה'));
+  inner.appendChild(el('p','cover-hint','דפדפו בין הספרים בעזרת החצים שלמטה, החלקת אצבע, או מקשי המקלדת. לחצו על "התחילו לדפדף" כדי לפתוח את הספר הראשון.'));
+  const actions = el('div','cover-actions');
+  if(cat.folder_link){
+    const folderLink = el('a','cover-folder','📁 כל התיקייה בדרייב');
+    folderLink.href = cat.folder_link; folderLink.target='_blank'; folderLink.rel='noopener';
+    actions.appendChild(folderLink);
+  }
+  const startBtn = el('button','cover-start','התחילו לדפדף ←');
+  startBtn.type='button';
+  startBtn.onclick = ()=>goToPage(1);
+  actions.appendChild(startBtn);
+  inner.appendChild(actions);
+  page.appendChild(inner);
+  return page;
+}
+
+function buildBookPage(cat, book, idx){
+  const page = el('article','page book-page');
+  const inner = el('div','page-inner');
+
+  const coverHalf = el('div','page-cover-half');
+  if(book.cover){
+    const img = el('img');
+    img.loading = 'lazy';
+    img.alt = book.title_text || book.title || '';
+    img.src = book.cover;
+    img.onerror = function(){ this.onerror=null; this.style.display='none'; };
+    coverHalf.appendChild(img);
+  }
+  inner.appendChild(coverHalf);
+
+  const info = el('div','page-info');
+  info.appendChild(el('div','page-kicker','ספר ' + idx + ' מתוך ' + cat.books.length + ' · ' + cat.name));
+  info.appendChild(el('h3','page-title', book.title_text || book.title));
+  info.appendChild(el('div','page-author','מאת הרב יהודה טאוב'));
+  if(book.desc_text) info.appendChild(el('p','page-desc', book.desc_text));
+
+  const meta = el('div','page-meta');
+  if(book.ftype) meta.appendChild(el('span','meta-chip', book.ftype));
+  if(book.fsize) meta.appendChild(el('span','meta-chip', book.fsize));
+  info.appendChild(meta);
+
+  const actions = el('div','page-actions');
+  if(book.buy_href){
+    const buy = el('a','buy-btn','🛒 להזמנת הספר');
+    buy.href = book.buy_href; buy.target='_blank'; buy.rel='noopener';
+    actions.appendChild(buy);
+  }
+  if(book.href){
+    const open = el('a','open-btn','📖 פתח');
+    open.href = book.href; open.target='_blank'; open.rel='noopener';
+    actions.appendChild(open);
+  }
+  info.appendChild(actions);
+  inner.appendChild(info);
+
+  page.appendChild(inner);
+  return page;
+}
+
+function openCategory(catId, startIndex){
+  currentCat = CATALOG.find(c=>c.id===catId);
+  if(!currentCat) return;
+
+  bookStage.innerHTML = '';
+  bookStage.style.setProperty('--c', currentCat.color || '#b8860b');
+  bookStage.appendChild(buildCoverPage(currentCat));
+  currentCat.books.forEach((b,i)=>bookStage.appendChild(buildBookPage(currentCat, b, i+1)));
+
+  readerEmoji.textContent = currentCat.emoji;
+  readerName.textContent = currentCat.name;
+  if(currentCat.folder_link){
+    readerFolderLink.href = currentCat.folder_link;
+    readerFolderLink.classList.remove('hidden');
+  } else {
+    readerFolderLink.classList.add('hidden');
+  }
+  document.querySelector('.reader-controls').style.setProperty('--cat-c', currentCat.color || '#b8860b');
+
+  buildToc();
+  homeView.classList.add('hidden');
+  readerView.classList.remove('hidden');
+  tocPanel.classList.add('hidden');
+  goToPage(startIndex || 0);
+  window.scrollTo({top:0});
+}
+
+function closeReader(){
+  readerView.classList.add('hidden');
+  homeView.classList.remove('hidden');
+  currentCat = null;
+}
+
+function goToPage(idx){
+  if(!currentCat) return;
+  const max = currentCat.books.length;
+  idx = Math.max(0, Math.min(idx, max));
+  currentIndex = idx;
+
+  const pages = Array.from(bookStage.children);
+  pages.forEach((p,i)=>{
+    p.classList.toggle('active', i===idx);
+    if(i!==idx){
+      p.style.transform = 'translateX(' + (i<idx ? '28px' : '-28px') + ')';
+    } else {
+      p.style.transform = '';
+    }
+  });
+
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===max;
+  progressFill.style.width = (max===0 ? 100 : (idx/max*100)) + '%';
+  pageCounter.textContent = (idx+1) + ' / ' + (max+1);
+
+  Array.from(tocPanel.children).forEach((item,i)=>item.classList.toggle('active', i===idx));
+}
+
+function prevPage(){ goToPage(currentIndex-1); }
+function nextPage(){ goToPage(currentIndex+1); }
+
+function buildToc(){
+  tocPanel.innerHTML = '';
+  const coverItem = el('button','toc-item');
+  coverItem.type='button';
+  coverItem.appendChild(el('span','toc-num','🏠'));
+  coverItem.appendChild(el('span',null,'שער הנושא'));
+  coverItem.onclick = ()=>{ goToPage(0); tocPanel.classList.add('hidden'); };
+  tocPanel.appendChild(coverItem);
+
+  currentCat.books.forEach((b,i)=>{
+    const item = el('button','toc-item');
+    item.type='button';
+    item.appendChild(el('span','toc-num', String(i+1)));
+    item.appendChild(el('span',null, b.title_text || b.title));
+    item.onclick = ()=>{ goToPage(i+1); tocPanel.classList.add('hidden'); };
+    tocPanel.appendChild(item);
+  });
+}
+
+function toggleToc(){ tocPanel.classList.toggle('hidden'); }
+
+document.addEventListener('keydown', e=>{
+  if(readerView.classList.contains('hidden')) return;
+  if(e.key==='ArrowLeft') nextPage();
+  else if(e.key==='ArrowRight') prevPage();
+  else if(e.key==='Home') goToPage(0);
+  else if(e.key==='End') goToPage(currentCat.books.length);
+  else if(e.key==='Escape') closeReader();
+});
+
+let touchStartX = null;
+bookStage.addEventListener('touchstart', e=>{ touchStartX = e.touches[0].clientX; }, {passive:true});
+bookStage.addEventListener('touchend', e=>{
+  if(touchStartX===null) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(dx) > 40){ dx < 0 ? nextPage() : prevPage(); }
+  touchStartX = null;
+}, {passive:true});
+</script>
+</body>
+</html>

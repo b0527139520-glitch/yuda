@@ -220,18 +220,29 @@ body{
   border:1px solid color-mix(in srgb,var(--c,#b8860b) 25%, transparent);
   padding:.25rem .65rem;border-radius:999px;
 }
-.page-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:auto;}
+.page-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.4rem;}
 .buy-btn, .open-btn{
-  display:inline-flex;align-items:center;gap:.35rem;font-weight:700;font-size:.85rem;
-  padding:.6rem 1.1rem;border-radius:999px;text-decoration:none;transition:transform .15s, box-shadow .15s;
+  display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  text-decoration:none;transition:transform .15s, box-shadow .15s;
 }
-.buy-btn{
+/* "פתח" is the primary action — the whole point of the library is reading the book */
+.open-btn{
+  order:-1;flex:1 1 auto;min-width:170px;min-height:52px;
+  font-weight:800;font-size:1rem;padding:.85rem 1.4rem;border-radius:14px;
   background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#fff;
-  box-shadow:0 3px 10px rgba(184,134,11,.35);
+  box-shadow:0 4px 14px rgba(184,134,11,.4);
 }
-.buy-btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(184,134,11,.45);}
-.open-btn{background:#fff;color:var(--c,var(--ink));border:1.5px solid var(--c,var(--line));}
-.open-btn:hover{background:var(--c,var(--ink));color:#fff;transform:translateY(-1px);}
+.open-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(184,134,11,.5);}
+.buy-btn{
+  min-height:44px;font-weight:700;font-size:.85rem;padding:.6rem 1.1rem;border-radius:14px;
+  background:#fff;color:var(--c,var(--ink));border:1.5px solid var(--c,var(--line));
+}
+.buy-btn:hover{background:var(--c,var(--ink));color:#fff;transform:translateY(-1px);}
+@media (max-width:760px){
+  .page-actions{flex-direction:column;}
+  .open-btn{width:100%;font-size:1.05rem;}
+  .buy-btn{width:100%;}
+}
 
 /* cover/divider page */
 .cover-page-inner{
@@ -532,7 +543,7 @@ function buildBookPage(cat, book, idx){
     actions.appendChild(buy);
   }
   if(book.href){
-    const open = el('a','open-btn','📖 פתח');
+    const open = el('a','open-btn','📖 פתח לקריאה');
     open.href = book.href; open.target='_blank'; open.rel='noopener';
     actions.appendChild(open);
   }

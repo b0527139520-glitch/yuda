@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>אֲרוֹן הַבְּרִית וְהַכְּרוּבִים 👼</title>
+<style>
+:root{
+  --c1:#4b0082; --c2:#6a0dad; --c3:#8e44ad;
+  --accent:#ffd700; --accent2:#ffb700;
+  --box:#fdf6ff; --boxBorder:#d9b3ff;
+  --hl:#fff8d6; --hlBorder:#f0c419;
+  --insp:#e8f1ff; --inspBorder:#5b8def;
+  --ok:#28a745; --okBg:#d4edda;
+  --bad:#dc3545; --badBg:#f8d7da;
+  --txt:#2d1b3d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Segoe UI","Arial Hebrew",Arial,sans-serif;
+  background:linear-gradient(135deg,var(--c1) 0%,var(--c2) 50%,var(--c3) 100%);
+  background-attachment:fixed;
+  min-height:100vh; padding:15px; color:var(--txt);
+  font-size:1.2em; line-height:2; direction:rtl; text-align:right;
+}
+#gameContainer{
+  max-width:820px; margin:0 auto; background:#fff;
+  border-radius:22px; padding:28px 26px;
+  box-shadow:0 14px 45px rgba(0,0,0,.32);
+}
+h1{
+  font-size:2.1em; text-align:center; line-height:1.5;
+  background:linear-gradient(135deg,var(--c1),var(--c3));
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; margin-bottom:6px;
+}
+h2{font-size:1.55em;color:var(--c1);line-height:1.6;margin-bottom:12px}
+.subtitle{text-align:center;color:#7a5c93;font-size:.95em;margin-bottom:18px;line-height:1.7}
+.progress-wrap{background:#eee;border-radius:50px;height:16px;overflow:hidden;margin:16px 0 22px}
+.progress-bar{
+  height:100%;width:0%;border-radius:50px;transition:width .5s ease;
+  background:linear-gradient(90deg,var(--accent2),var(--accent));
+}
+.card{
+  background:var(--box); border:2px solid var(--boxBorder);
+  border-radius:15px; padding:20px; margin:16px 0;
+  box-shadow:0 4px 14px rgba(0,0,0,.07);
+}
+.highlight{background:var(--hl);border-right:6px solid var(--hlBorder);border-radius:12px;padding:14px 18px;margin:16px 0;font-weight:700}
+.inspiration{background:var(--insp);border-right:6px solid var(--inspBorder);border-radius:12px;padding:14px 18px;margin:16px 0;font-style:italic}
+.btn{
+  display:inline-block; border:none; cursor:pointer; color:#fff;
+  background:linear-gradient(135deg,var(--c2),var(--c3));
+  border-radius:50px; padding:14px 38px; font-size:1.15em; font-weight:700;
+  font-family:inherit; transition:transform .2s,box-shadow .2s;
+  box-shadow:0 5px 16px rgba(0,0,0,.22);
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 9px 22px rgba(0,0,0,.3)}
+.btn.gold{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#4a3200}
+.center{text-align:center}
+.name-input-box input{
+  width:70%; padding:13px; font-size:1.2em; font-family:inherit;
+  border:2px solid var(--boxBorder); border-radius:12px;
+  text-align:center; direction:rtl; margin-bottom:16px;
+}
+.answer-btn{
+  display:block; width:100%; text-align:right; margin:11px 0;
+  padding:15px 20px; font-size:1.05em; font-family:inherit; line-height:1.8;
+  background:#fff; border:2px solid var(--boxBorder); border-radius:14px;
+  cursor:pointer; transition:all .2s; color:var(--txt);
+}
+.answer-btn:hover:not(:disabled){background:var(--box);transform:translateX(-5px);border-color:var(--c3)}
+.answer-btn:disabled{cursor:default;opacity:.95}
+.answer-btn.correct{background:var(--okBg);border-color:var(--ok);font-weight:700}
+.answer-btn.wrong{background:var(--badBg);border-color:var(--bad)}
+.feedback{border-radius:14px;padding:18px;margin-top:18px;animation:pop .4s ease}
+.feedback.ok{background:var(--okBg);border:2px solid var(--ok)}
+.feedback.bad{background:var(--badBg);border:2px solid var(--bad)}
+@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.q-num{color:#8a6aa8;font-size:.9em;margin-bottom:6px}
+.certificate{
+  border:5px double var(--accent2); border-radius:20px; padding:26px;
+  background:linear-gradient(160deg,#fffdf3,#fff8e1); text-align:center;
+}
+.cert-name{font-size:1.9em;font-weight:800;color:var(--c1);margin:12px 0}
+.cert-score{font-size:1.5em;color:var(--ok);font-weight:800;margin:10px 0}
+.link-box{background:var(--box);border:2px dashed var(--c3);border-radius:14px;padding:16px;margin:18px 0;text-align:center}
+.link-box a{color:var(--c1);font-weight:800}
+.contact{text-align:center;color:#6b5580;font-size:.92em;margin-top:18px;line-height:1.9}
+.think-q{background:#fff;border-right:5px solid var(--c3);border-radius:10px;padding:10px 14px;margin:9px 0}
+.hidden{display:none}
+.stats-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.stat-pill{background:var(--box);border:2px solid var(--boxBorder);border-radius:50px;padding:6px 16px;font-size:.9em;font-weight:700;color:var(--c1);display:flex;align-items:center;gap:6px}
+.stat-pill.streak-on{background:linear-gradient(135deg,#fff3d6,#ffe4a3);border-color:var(--accent2);animation:pulse 1.2s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.avatar-badge{font-size:1.6em;line-height:1}
+.streak-note{background:linear-gradient(135deg,#fff3d6,#ffe4a3);border:2px solid var(--accent2);border-radius:12px;padding:10px 16px;margin-top:12px;text-align:center;font-weight:700;color:#7a5200;animation:pop .4s ease}
+.funfact-box{background:linear-gradient(160deg,#eefaf0,#e0f5e5);border:2px dashed #34a85a;border-radius:14px;padding:16px;margin:16px 0}
+.funfact-box .funfact-title{color:#1e7a3e;font-weight:800;margin-bottom:6px}
+@media (max-width:600px){
+  body{font-size:1.3em;padding:8px}
+  #gameContainer{padding:18px 14px;border-radius:16px}
+  h1{font-size:1.8em}
+  h2{font-size:1.3em}
+  .name-input-box input{width:92%;font-size:1.1em}
+  .btn{padding:12px 30px;font-size:1.1em;width:100%}
+  .answer-btn{font-size:1em;padding:13px 15px}
+}
+</style>
+</head>
+<body>
+<div id="gameContainer"></div>
+
+<script>
+/* ============================================================
+   מנוע משחקי למידה — קול תודה | הרב יהודה טאוב
+   אין לערוך את המנוע. התוכן מוזרק דרך GAME בלבד.
+   ============================================================ */
+var GAME = {
+  "title": "אֲרוֹן הַבְּרִית וְהַכְּרוּבִים 👼",
+  "subtitle": "מִשְׂחָק לִמּוּדִי לְכִתָּה ג׳ • אַרְבָּעָה שִׁעוּרִים • שְׁתֵּים־עֶשְׂרֵה שְׁאֵלוֹת",
+  "grade": "ג",
+  "theme": "royal-purple",
+  "intro": "שָׁלוֹם לְךָ, יֶלֶד יָקָר! 👼<br>הַיּוֹם נִצְטָרֵף אֶל בְּצַלְאֵל וַחֲכָמֵי הַלֵּב, וְנִבְנֶה יַחַד אֶת הָאָרוֹן הַקָּדוֹשׁ בְּיוֹתֵר בָּעוֹלָם.<br>נְגַלֶּה אֵיךְ מִבֵּין שְׁנֵי כְּרוּבִים קְטַנִּים שֶׁל זָהָב יָצָא קוֹלוֹ שֶׁל הַשֵּׁם אֶל מֹשֶׁה רַבֵּנוּ. ✨",
+  "certificateVerse": "״וְנוֹעַדְתִּי לְךָ שָׁם וְדִבַּרְתִּי אִתְּךָ מֵעַל הַכַּפֹּרֶת מִבֵּין שְׁנֵי הַכְּרֻבִים״ 👼",
+  "thinkQuestions": [
+    "מָה אֲנִי שׁוֹמֵר בְּתוֹךְ הַלֵּב שֶׁלִּי, כְּמוֹ שֶׁהָאָרוֹן שָׁמַר אֶת הַלּוּחוֹת?",
+    "אֵיךְ אֲנִי מַרְגִּישׁ כְּשֶׁאֲנִי פּוֹנֶה אֶל מִישֶׁהוּ בְּלֵב שָׁלֵם, כְּמוֹ הַכְּרוּבִים הַפּוֹנִים זֶה אֶל זֶה?",
+    "מָתַי הִרְגַּשְׁתִּי שֶׁהַשֵּׁם מְדַבֵּר אֵלַי מִתּוֹךְ מָקוֹם שָׁקֵט וְקָטָן?"
+  ],
+  "lessons": [
+    {
+      "emoji": "📦",
+      "title": "שִׁעוּר א׳ — הָאָרוֹן הַנִּפְלָא",
+      "content": [
+        "הַשֵּׁם צִוָּה אֶת מֹשֶׁה לִבְנוֹת אֲרוֹן מֵעֲצֵי שִׁטִּים קָשִׁים.",
+        "מִדַּת הָאָרוֹן הָיְתָה אַמָּתַיִם וָחֵצִי אֹרֶךְ, וְאַמָּה וָחֵצִי רֹחַב.",
+        "מֹשֶׁה צֻוָּה לְצַפּוֹת אֶת הָאָרוֹן זָהָב טָהוֹר מִבַּיִת וּמִחוּץ.",
+        "הַפֶּלֶא הַזֶּה עוֹרֵר תְּמִיהָה: לָמָּה לְצַפּוֹת עֵץ פָּשׁוּט בְּזָהָב יָקָר כָּזֶה?",
+        "בְּתוֹךְ הָאָרוֹן צֻוָּה מֹשֶׁה לְהַנִּיחַ אֶת לוּחוֹת הָעֵדוּת הַקְּדוֹשִׁים.",
+        "עַל הָאָרוֹן נַעֲשְׂתָה כַּפֹּרֶת זָהָב טָהוֹר, מִכְסֶה מְיֻחָד וְנִפְלָא.",
+        "לְאַרְבַּע פִּנּוֹת הָאָרוֹן נַעֲשׂוּ טַבָּעוֹת זָהָב לְמַעַן יִשְׂאוּ אוֹתוֹ בַּדֶּרֶךְ.",
+        "כָּל פְּרָט קָטָן בָּאָרוֹן נַעֲשָׂה בְּדִיּוּק רַב, כִּי הָיָה זֶה הַכְּלִי הַקָּדוֹשׁ בְּיוֹתֵר."
+      ],
+      "highlight": "אֲרוֹן פָּשׁוּט מֵעֵץ הָפַךְ לַכְּלִי הַקָּדוֹשׁ בְּיוֹתֵר בָּעוֹלָם, כִּי הוּא נוֹעַד לָשֵׂאת בְּתוֹכוֹ אֶת דְּבַר הַשֵּׁם.",
+      "inspiration": "הַיּוֹם, נַסֵּה לִשְׁמֹר בְּתוֹךְ לִבְּךָ מַשֶּׁהוּ יָקָר שֶׁלָּמַדְתָּ מִן הַתּוֹרָה, כְּמוֹ שֶׁהָאָרוֹן שָׁמַר אֶת הַלּוּחוֹת.",
+      "funFact": "חֲכָמֵינוּ מְלַמְּדִים שֶׁהָאָרוֹן נָשָׂא אֶת נוֹשְׂאָיו, וְלֹא הֵם נָשְׂאוּ אוֹתוֹ — כָּל כָּךְ קַל וְקָדוֹשׁ הָיָה.",
+      "questions": [
+        {
+          "q": "מֵאֵיזֶה חֹמֶר צֻוָּה מֹשֶׁה לִבְנוֹת אֶת הָאָרוֹן?",
+          "answers": [
+            "מֵעֲצֵי שִׁטִּים קָשִׁים שֶׁל הַמִּדְבָּר הַגָּדוֹל",
+            "מֵאֶבֶן חָלָק וְכָבֵד שֶׁנֶּחְצְבָה מִן הָהָר הַגָּבוֹהַּ",
+            "מִנְּחֹשֶׁת מְלֻטֶּשֶׁת וּמַבְרִיקָה שֶׁהֵבִיאוּ מִמִּצְרַיִם הָרְחוֹקָה מְאֹד",
+            "מֵעוֹר עִזִּים עָבֶה וְחָזָק שֶׁעֻבַּד הֵיטֵב מְאֹד"
+          ],
+          "correct": 0,
+          "explain": "הַשֵּׁם צִוָּה לִבְנוֹת אֶת הָאָרוֹן מֵעֲצֵי שִׁטִּים, עֵץ קָשֶׁה וְחָזָק שֶׁל הַמִּדְבָּר.",
+          "depth": "מָה מְלַמֵּד אוֹתָנוּ עַל אַהֲבַת ה׳ שֶׁגַּם חֹמֶר פָּשׁוּט יָכוֹל לְהִתְקַדֵּשׁ?"
+        },
+        {
+          "q": "בַּמָּה צֻפָּה הָאָרוֹן, מִבַּיִת וּמִחוּץ כְּאֶחָד?",
+          "answers": [
+            "בְּזָהָב טָהוֹר, מִבִּפְנִים וּמִבַּחוּץ, כְּמוֹ שֶׁצִּוָּה הַשֵּׁם בְּדִיּוּק רַב מְאֹד",
+            "בְּכֶסֶף מַבְרִיק שֶׁהֵבִיאוּ סוֹחֲרִים מִמִּצְרַיִם הָעֲשִׁירָה מְאֹד",
+            "בְּצֶבַע כָּחֹל כֵּהֶה וְעָמֹק שֶׁנִּצְבַּע בְּיָד אֻמָּן",
+            "בְּעוֹר עֵז שָׁחֹר וּמְלֻטָּשׁ שֶׁהֵבִיאוּ מִן הָעֵדֶר"
+          ],
+          "correct": 0,
+          "explain": "הָאָרוֹן צֻפָּה זָהָב טָהוֹר מִבִּפְנִים וּמִבַּחוּץ, כִּי הָיָה הַכְּלִי הַיָּקָר בְּיוֹתֵר.",
+          "depth": "לָמָּה לְדַעְתְּךָ צֻפָּה הָאָרוֹן בְּזָהָב גַּם מִבִּפְנִים, מָקוֹם שֶׁאִישׁ לֹא רוֹאֶה?"
+        },
+        {
+          "q": "מָה הֻנַּח בְּתוֹךְ הָאָרוֹן, לְפִי צִוּוּי הַשֵּׁם?",
+          "answers": [
+            "לוּחוֹת הָעֵדוּת הַקְּדוֹשִׁים שֶׁקִּבֵּל מֹשֶׁה בְּסִינַי",
+            "בִּגְדֵי מֹשֶׁה רַבֵּנוּ הַפְּשׁוּטִים בְּיוֹתֵר מִכֻּלָּם מַמָּשׁ",
+            "מַן שֶׁיָּרַד מֵהַשָּׁמַיִם בְּכָל בֹּקֶר וָבֹקֶר מַמָּשׁ",
+            "מַטֵּה אַהֲרֹן שֶׁפָּרַח לְבַדּוֹ בַּלַּיְלָה הָאֶחָד מַמָּשׁ"
+          ],
+          "correct": 0,
+          "explain": "בְּתוֹךְ הָאָרוֹן הֻנְּחוּ לוּחוֹת הָעֵדוּת, הַדָּבָר הַיָּקָר בְּיוֹתֵר שֶׁקִּבֵּל עַם יִשְׂרָאֵל.",
+          "depth": "אֵיזֶה דָּבָר יָקָר וְקָדוֹשׁ הָיִיתָ רוֹצֶה לִשְׁמֹר בְּתוֹךְ ״אָרוֹן״ שֶׁל הַלֵּב שֶׁלְּךָ?"
+        }
+      ]
+    },
+    {
+      "emoji": "🤨",
+      "title": "שִׁעוּר ב׳ — לָמָּה דַּוְקָא כְּרוּבִים?",
+      "content": [
+        "עַל הַכַּפֹּרֶת צֻוָּה מֹשֶׁה לַעֲשׂוֹת שְׁנֵי כְּרוּבִים מִזָּהָב טָהוֹר.",
+        "הַכְּרוּבִים נַעֲשׂוּ מִקְשָׁה אַחַת עִם הַכַּפֹּרֶת, בְּלִי חִבּוּר נִפְרָד.",
+        "כַּנְפֵי הַכְּרוּבִים נִפְרְשׂוּ לְמַעְלָה, וְסוֹכְכוֹת עַל הַכַּפֹּרֶת בְּעֶדְנָה.",
+        "פְּנֵי הַכְּרוּבִים הָיוּ פּוֹנִים זֶה אֶל זֶה, כְּמוֹ בְּשִׂיחָה שְׁקֵטָה.",
+        "הַצִּוּוּי הַזֶּה עוֹרֵר קֹשִׁי גָּדוֹל: הֲרֵי הַתּוֹרָה אוֹסֶרֶת לַעֲשׂוֹת כָּל פֶּסֶל אוֹ תְּמוּנָה.",
+        "אֵיךְ יִתָּכֵן שֶׁדַּוְקָא בְּתוֹךְ הַמָּקוֹם הַקָּדוֹשׁ בְּיוֹתֵר יֵשׁ שְׁתֵּי דְּמֻיּוֹת זָהָב?",
+        "הָעָם תָּהָה אִם אֵין כָּאן סְתִירָה לָאִסּוּר הַחָמוּר עֲלֵי עֲבוֹדָה זָרָה.",
+        "הַשְּׁאֵלָה הַזֹּאת נִשְׁאֲרָה פְּתוּחָה, עַד שֶׁהִתְגַּלָּה תַּפְקִידָם הָאֲמִתִּי שֶׁל הַכְּרוּבִים."
+      ],
+      "highlight": "דַּוְקָא בְּמָקוֹם הַקָּדוֹשׁ בְּיוֹתֵר צִוָּה הַשֵּׁם לַעֲשׂוֹת שְׁתֵּי דְּמֻיּוֹת זָהָב — וְזֶה הָיָה תָּמוּהּ עַד שֶׁגִּלּוּ אֶת סוֹדָן.",
+      "inspiration": "כְּשֶׁמַּשֶּׁהוּ בַּתּוֹרָה נִרְאֶה קָשֶׁה לְהָבִין, נַסֵּה לְחַכּוֹת בְּסַבְלָנוּת — הַתְּשׁוּבָה מַגִּיעָה בִּזְמַנָּהּ.",
+      "funFact": "הַמִּלָּה ״כְּרוּב״ מוֹפִיעָה כְּבָר קֹדֶם לָכֵן בַּתּוֹרָה, לְיַד גַּן עֵדֶן, כְּשׁוֹמְרִים עַל הַדֶּרֶךְ אֶל עֵץ הַחַיִּים.",
+      "questions": [
+        {
+          "q": "מִמָּה נַעֲשׂוּ הַכְּרוּבִים שֶׁעַל הַכַּפֹּרֶת?",
+          "answers": [
+            "מִזָּהָב טָהוֹר, כְּמִקְשָׁה אַחַת עִם הַכַּפֹּרֶת כֻּלָּהּ",
+            "מֵעֵץ שִׁטִּים שֶׁצֻּפָּה בְּזָהָב דַּק מְאֹד",
+            "מֵאֶבֶן שֹׁהַם יְקָרָה שֶׁהֵבִיאוּ נְשִׂיאֵי הָעָם כֻּלּוֹ מַמָּשׁ",
+            "מִכֶּסֶף מְלֻטָּשׁ שֶׁנֶּאֱסַף מִכָּל הַמַּחֲנֶה כֻּלּוֹ לְגַמְרֵי מַמָּשׁ"
+          ],
+          "correct": 0,
+          "explain": "הַכְּרוּבִים נַעֲשׂוּ מִזָּהָב טָהוֹר, יַחַד עִם הַכַּפֹּרֶת, כְּמִקְשָׁה אַחַת שְׁלֵמָה.",
+          "depth": "מָה מְלַמֵּד אוֹתָנוּ עַל אַהֲבַת ה׳ שֶׁהַכְּרוּבִים חֻבְּרוּ יַחַד לְגוּף אֶחָד?"
+        },
+        {
+          "q": "אֵיזוֹ שְׁאֵלָה עוֹרֵר הַצִּוּוּי לַעֲשׂוֹת כְּרוּבִים, לְפִי הַשִּׁעוּר?",
+          "answers": [
+            "אֵיךְ עוֹשִׂים דְּמֻיּוֹת זָהָב דַּוְקָא בְּמָקוֹם שֶׁאָסוּר לְפֶסֶל וּתְמוּנָה מַמָּשׁ",
+            "כַּמָּה זָהָב בְּדִיּוּק דָּרוּשׁ לְכָל כְּרוּב וּכְרוּב",
+            "מִי בְּדִיּוּק צָרִיךְ לָשֵׂאת אֶת הַכְּרוּבִים בַּדֶּרֶךְ הָאֲרֻכָּה",
+            "מָתַי בְּדִיּוּק נִגְמְרָה מְלֶאכֶת הַכְּרוּבִים בַּמִּדְבָּר הַגָּדוֹל"
+          ],
+          "correct": 0,
+          "explain": "הָעָם תָּהָה אֵיךְ מֻתָּר לַעֲשׂוֹת דְּמֻיּוֹת זָהָב דַּוְקָא בְּמָקוֹם הַקָּדוֹשׁ בְּיוֹתֵר.",
+          "depth": "מָה הָיִיתָ שׁוֹאֵל אִלּוּ שָׁמַעְתָּ צִוּוּי שֶׁנִּרְאֶה לְךָ תָּמוּהַּ בַּתְּחִלָּה?"
+        },
+        {
+          "q": "לְאָן פָּנוּ פְּנֵי שְׁנֵי הַכְּרוּבִים שֶׁעַל הַכַּפֹּרֶת?",
+          "answers": [
+            "זֶה אֶל זֶה, כְּמוֹ בְּשִׂיחָה שְׁקֵטָה",
+            "כְּלַפֵּי מַעְלָה, אֶל עֲבֶר הַשָּׁמַיִם הָרְחוֹקִים מְאֹד",
+            "הַחוּצָה, אֶל עֶבֶר פֶּתַח הָאֹהֶל הַגָּדוֹל מְאֹד",
+            "זֶה מִזֶּה, אֶל שְׁנֵי כִּוּוּנִים שׁוֹנִים לְגַמְרֵי"
+          ],
+          "correct": 0,
+          "explain": "פְּנֵי הַכְּרוּבִים פָּנוּ זֶה אֶל זֶה, בְּמַבָּט שֶׁל קִרְבָה וְשִׂיחָה שְׁקֵטָה.",
+          "depth": "אֵיךְ מַרְגִּישִׁים כְּשֶׁפּוֹנִים אֶל מִישֶׁהוּ בְּמַבָּט שָׁלֵם וְקָרוֹב, בְּלִי הֶסַּח דַּעַת?"
+        }
+      ]
+    },
+    {
+      "emoji": "🕊️",
+      "title": "שִׁעוּר ג׳ — קוֹל מִבֵּין הַכְּרוּבִים",
+      "content": [
+        "הַתְּשׁוּבָה לְקֹשִׁי הַכְּרוּבִים הִתְגַּלְּתָה בְּפָסוּק אֶחָד מַפְתִּיעַ.",
+        "הַשֵּׁם אָמַר לְמֹשֶׁה: וְנוֹעַדְתִּי לְךָ שָׁם, מֵעַל הַכַּפֹּרֶת.",
+        "הַכְּרוּבִים לֹא נַעֲשׂוּ לְשֵׁם עֲבוֹדָה זָרָה, אֶלָּא לְשֵׁם פְּגִישָׁה.",
+        "הַשֵּׁם הִבְטִיחַ לְדַבֵּר אֶל מֹשֶׁה מִמָּקוֹם מְדֻיָּק: מִבֵּין שְׁנֵי הַכְּרֻבִים.",
+        "כָּךְ הִתְגַּלָּה שֶׁהַכְּרוּבִים הָיוּ כְּמוֹ שַׁעַר קָטָן לְקוֹל הַשֵּׁם.",
+        "הַפָּנִים הַפּוֹנוֹת זֶה אֶל זֶה רָמְזוּ עַל אַהֲבָה וְקִרְבָה, לֹא עַל עֲבוֹדָה זָרָה.",
+        "דַּוְקָא מִמָּקוֹם קָטָן וְשָׁקֵט, בֵּין שְׁנֵי כְּרוּבֵי זָהָב, יָצָא הַקּוֹל הַגָּדוֹל בְּיוֹתֵר.",
+        "כָּךְ הֵבִינוּ בְּנֵי יִשְׂרָאֵל שֶׁהַכְּרוּבִים הָיוּ סִימָן לְאַהֲבַת הַשֵּׁם, וְלֹא לְפֶסֶל."
+      ],
+      "highlight": "הַכְּרוּבִים לֹא נוֹעֲדוּ לְפֶסֶל, אֶלָּא לְמָקוֹם שֶׁמִּמֶּנּוּ יָצָא קוֹל הַשֵּׁם אֶל מֹשֶׁה, מִתּוֹךְ אַהֲבָה וְקִרְבָה.",
+      "inspiration": "כְּשֶׁמַּשֶּׁהוּ נִרְאֶה לְךָ תָּמוּהַּ בַּתּוֹרָה, זְכֹר שֶׁלִּפְעָמִים דַּוְקָא הַדָּבָר הַתָּמוּהַּ מַסְתִּיר בְּתוֹכוֹ קִרְבַת הַשֵּׁם.",
+      "funFact": "יֵשׁ מְפָרְשִׁים שֶׁלִּמְּדוּ שֶׁפְּנֵי הַכְּרוּבִים הָיוּ פְּנֵי יְלָדִים, סֵמֶל לְטֹהַר וּלְתֹם.",
+      "questions": [
+        {
+          "q": "מָה הִבְטִיחַ הַשֵּׁם לְמֹשֶׁה בַּפָּסוּק ״וְנוֹעַדְתִּי לְךָ שָׁם״?",
+          "answers": [
+            "לְדַבֵּר אִתּוֹ מִבֵּין שְׁנֵי הַכְּרֻבִים מֵעַל הַכַּפֹּרֶת",
+            "לְהַרְאוֹת לוֹ אֶת פְּנֵי הַשֵּׁם בִּמְפֹרָשׁ",
+            "לָתֵת לוֹ לוּחוֹת חֲדָשִׁים בְּכָל שָׁנָה מֵחָדָשׁ מַמָּשׁ",
+            "לִשְׁלֹחַ אֵלָיו מַלְאָךְ שֶׁיְּדַבֵּר בִּמְקוֹמוֹ תָּמִיד מַמָּשׁ לְגַמְרֵי"
+          ],
+          "correct": 0,
+          "explain": "הַשֵּׁם הִבְטִיחַ לְמֹשֶׁה שֶׁיְּדַבֵּר אֵלָיו מִמָּקוֹם מְדֻיָּק, מִבֵּין שְׁנֵי הַכְּרוּבִים.",
+          "depth": "מָה מְלַמֵּד אוֹתָנוּ עַל אַהֲבַת ה׳ שֶׁהוּא קָבַע מָקוֹם קָבוּעַ לְפִגְשֵׁנוּ בּוֹ?"
+        },
+        {
+          "q": "מָה גִּלְּתָה הַתּוֹרָה עַל תַּפְקִידָם הָאֲמִתִּי שֶׁל הַכְּרוּבִים?",
+          "answers": [
+            "שֶׁהֵם שַׁעַר קָטָן לְקוֹל הַשֵּׁם, וְלֹא פֶּסֶל אוֹ עֲבוֹדָה זָרָה",
+            "שֶׁהֵם הָיוּ רַק קִשּׁוּט יָפֶה לַכַּפֹּרֶת הַזְּהַבְהֶבֶת מְאֹד",
+            "שֶׁהֵם הָגְנוּ עַל הָאָרוֹן מִפְּנֵי גַּנָּבִים בַּלַּיְלָה הֶחָשׁוּךְ",
+            "שֶׁהֵם סִמְּלוּ אֶת שְׁנֵים עָשָׂר שִׁבְטֵי יִשְׂרָאֵל כֻּלָּם"
+          ],
+          "correct": 0,
+          "explain": "הַכְּרוּבִים הָיוּ מָקוֹם לְקוֹל הַשֵּׁם, וְלֹא עֲבוֹדָה זָרָה, כִּי הֵם בָּאוּ מִצִּוּוּי הַשֵּׁם עַצְמוֹ.",
+          "depth": "אֵיךְ מַרְגִּישִׁים כְּשֶׁמְּגַלִּים שֶׁדָּבָר תָּמוּהַּ הוּא בֶּאֱמֶת סִימָן לְאַהֲבָה?"
+        },
+        {
+          "q": "מָה רָמְזוּ פְּנֵי הַכְּרוּבִים הַפּוֹנוֹת זֶה אֶל זֶה, לְפִי הַשִּׁעוּר?",
+          "answers": [
+            "אַהֲבָה וְקִרְבָה גְּדוֹלָה, וְלֹא עֲבוֹדָה זָרָה",
+            "כַּעַס גָּדוֹל בֵּין שְׁנֵי כֹּחוֹת שׁוֹנִים מְאֹד",
+            "תַּחֲרוּת עַל מִי גָּדוֹל וְחָשׁוּב יוֹתֵר מִכֻּלָּם",
+            "פְּרֵדָה עֲצוּבָה בֵּין שְׁנֵי אַחִים קְרוֹבִים מְאֹד"
+          ],
+          "correct": 0,
+          "explain": "הַפָּנִים הַפּוֹנוֹת זֶה אֶל זֶה רָמְזוּ עַל אַהֲבָה וְקִרְבָה, לֹא עַל עֲבוֹדָה זָרָה.",
+          "depth": "עִם מִי אַתָּה רוֹצֶה לִפְנוֹת פָּנִים אֶל פָּנִים בְּאַהֲבָה, כְּמוֹ הַכְּרוּבִים?"
+        }
+      ]
+    },
+    {
+      "emoji": "💛",
+      "title": "שִׁעוּר ד׳ — הָאָרוֹן שֶׁלִּי",
+      "content": [
+        "הַבַּדִּים שֶׁנָּשְׂאוּ אֶת הָאָרוֹן צֻוּוּ לְהִשָּׁאֵר בְּטַבְּעוֹתָיו לְעוֹלָם.",
+        "הַתּוֹרָה צִוְּתָה: לֹא יָסוּרוּ הַבַּדִּים מִמֶּנּוּ, אֲפִלּוּ כְּשֶׁהָאָרוֹן עוֹמֵד בְּמָקוֹם קָבוּעַ.",
+        "כָּךְ הָאָרוֹן הָיָה תָּמִיד מוּכָן לָצֵאת לַדֶּרֶךְ, גַּם בְּלִי הַתְרָאָה.",
+        "גַּם אֲנַחְנוּ יְכוֹלִים לִשְׁמֹר בְּתוֹךְ לִבֵּנוּ ״לוּחוֹת עֵדוּת״ מִשֶּׁלָּנוּ.",
+        "הַלּוּחוֹת שֶׁלָּנוּ הֵם הַדְּבָרִים הַטּוֹבִים שֶׁלָּמַדְנוּ מִן הַתּוֹרָה בְּכָל יוֹם.",
+        "כְּמוֹ הַכְּרוּבִים הַפּוֹנִים זֶה אֶל זֶה, גַּם אֲנַחְנוּ יְכוֹלִים לִפְנוֹת בְּאַהֲבָה אֶל הַזּוּלַת.",
+        "כְּשֶׁאָדָם פּוֹנֶה בְּלֵב שָׁלֵם אֶל חֲבֵרוֹ, הוּא כְּמוֹ פּוֹתֵחַ שַׁעַר קָטָן לְקוֹל הַשֵּׁם.",
+        "כָּךְ מַמְשִׁיךְ כָּל אֶחָד מֵאִתָּנוּ אֶת סוֹד הָאָרוֹן וְהַכְּרוּבִים, גַּם הַיּוֹם."
+      ],
+      "highlight": "כְּמוֹ שֶׁהַבַּדִּים לֹא סָרוּ מֵהָאָרוֹן לְעוֹלָם, כָּךְ הַלּוּחוֹת שֶׁבְּלִבֵּנוּ צְרִיכִים לְהִשָּׁאֵר אִתָּנוּ תָּמִיד, מוּכָנִים לְכָל מָקוֹם.",
+      "inspiration": "הַיּוֹם, נַסֵּה לִפְנוֹת בְּלֵב שָׁלֵם אֶל מִישֶׁהוּ קָרוֹב, כְּמוֹ הַכְּרוּבִים הַפּוֹנִים זֶה אֶל זֶה.",
+      "funFact": "יֵשׁ מְפָרְשִׁים שֶׁלִּמְּדוּ שֶׁכְּשֶׁעַם יִשְׂרָאֵל הָיָה בְּמַצָּב טוֹב, פְּנֵי הַכְּרוּבִים הָיוּ קְרוֹבוֹת זוֹ לְזוֹ עוֹד יוֹתֵר.",
+      "questions": [
+        {
+          "q": "מָה צִוְּתָה הַתּוֹרָה עַל הַבַּדִּים שֶׁנָּשְׂאוּ אֶת הָאָרוֹן?",
+          "answers": [
+            "שֶׁלֹּא יָסוּרוּ מִמֶּנּוּ לְעוֹלָם, גַּם כְּשֶׁהוּא עוֹמֵד",
+            "שֶׁיָּסִירוּ אוֹתָם רַק בְּיוֹם שַׁבָּת קֹדֶשׁ",
+            "שֶׁיַּחֲלִיפוּ אוֹתָם כָּל שֶׁבַע שָׁנִים בְּדִיּוּק לְגַמְרֵי מַמָּשׁ",
+            "שֶׁיִּצְבְּעוּ אוֹתָם בְּצֶבַע כָּחֹל כֵּהֶה מְאֹד"
+          ],
+          "correct": 0,
+          "explain": "הַתּוֹרָה צִוְּתָה שֶׁהַבַּדִּים יִשָּׁאֲרוּ בְּטַבְּעוֹת הָאָרוֹן תָּמִיד, מוּכָנִים לְכָל מַסָּע.",
+          "depth": "מָה אֲנִי צָרִיךְ לִשְׁמֹר תָּמִיד ״מוּכָן״ בְּתוֹךְ הַלֵּב שֶׁלִּי, כְּמוֹ הַבַּדִּים?"
+        },
+        {
+          "q": "מָה הֵם ה״לוּחוֹת עֵדוּת״ שֶׁאֲנַחְנוּ יְכוֹלִים לִשְׁמֹר בְּלִבֵּנוּ, לְפִי הַשִּׁעוּר?",
+          "answers": [
+            "הַדְּבָרִים הַטּוֹבִים וְהַיָּפִים שֶׁלָּמַדְנוּ מִן הַתּוֹרָה הַקְּדוֹשָׁה בְּכָל יוֹם וָיוֹם",
+            "רְשִׁימָה שֶׁל כָּל הַמַּתָּנוֹת שֶׁקִּבַּלְנוּ אֶשְׁתָּקַד מֵחֲבֵרִים",
+            "זִכְרוֹן שֶׁל הַיּוֹם הַכִּי כֵּיפִי בַּחֻפְשָׁה הָאַחֲרוֹנָה",
+            "רְשִׁימָה שֶׁל כָּל הַמִּשְׂחָקִים הָאֲהוּבִים עָלֵינוּ בְּיוֹתֵר"
+          ],
+          "correct": 0,
+          "explain": "הַשִּׁעוּר מְלַמֵּד שֶׁהַ״לוּחוֹת״ שֶׁלָּנוּ הֵם הַדְּבָרִים הַטּוֹבִים שֶׁאָנוּ לוֹמְדִים מִן הַתּוֹרָה.",
+          "depth": "אֵיזֶה דָּבָר טוֹב לָמַדְתָּ הַשָּׁבוּעַ שֶׁתִּרְצֶה לִשְׁמֹר בְּלִבְּךָ תָּמִיד?"
+        },
+        {
+          "q": "מָה קוֹרֶה כְּשֶׁאָדָם פּוֹנֶה בְּלֵב שָׁלֵם אֶל חֲבֵרוֹ, לְפִי הַשִּׁעוּר?",
+          "answers": [
+            "הוּא כְּמוֹ פּוֹתֵחַ שַׁעַר לְקוֹל הַשֵּׁם",
+            "הוּא מְקַבֵּל מִיָּד מַתָּנָה גְּדוֹלָה בַּחֲזָרָה מַמָּשׁ",
+            "הוּא נַעֲשֶׂה חָזָק יוֹתֵר מִכָּל הַחֲבֵרִים שֶׁלּוֹ",
+            "הוּא לֹא צָרִיךְ יוֹתֵר לְדַבֵּר אִתּוֹ כְּלָל"
+          ],
+          "correct": 0,
+          "explain": "כְּמוֹ הַכְּרוּבִים שֶׁפָּנוּ זֶה אֶל זֶה וּפָתְחוּ שַׁעַר לְקוֹל הַשֵּׁם, כָּךְ גַּם אָדָם הַפּוֹנֶה בְּאַהֲבָה.",
+          "depth": "אֵיךְ תּוּכַל הַיּוֹם לִפְנוֹת בְּלֵב שָׁלֵם אֶל מִישֶׁהוּ שֶׁקָּרוֹב אֵלֶיךָ?"
+        }
+      ]
+    }
+  ],
+  "themes": {
+    "royal-purple": {
+      "--c1": "#4b0082",
+      "--c2": "#6a0dad",
+      "--c3": "#8e44ad",
+      "--accent": "#ffd700",
+      "--accent2": "#ffb700",
+      "--box": "#fdf6ff",
+      "--boxBorder": "#d9b3ff",
+      "--txt": "#2d1b3d"
+    }
+  }
+};
+
+var GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby-wgLUmHzqneFw1r4S_pdkcc398yoLMlJfu3CJUvbcZTMI8QZMkGB_42Evl7L0BJxF/exec';
+var RAFFLE_URL = 'https://forms.gle/A66uubei4XSX6SG2A';
+var CONTACT = 'הָרַב יְהוּדָה טָאוּב מִקִּרְיַת אָתָא, 📞 0527139520';
+
+var userName = 'תַּלְמִיד יָקָר';
+var lessonIndex = 0, qIndex = 0, lessonScore = 0, totalScore = 0;
+var currentOptions = [], answered = false;
+var audioContext = null;
+var streak = 0, bestStreak = 0;
+var AVATAR_TIERS = [
+  { min: 0,  emoji: '🌱' },
+  { min: 3,  emoji: '⭐' },
+  { min: 6,  emoji: '🌟' },
+  { min: 9,  emoji: '👑' },
+  { min: 12, emoji: '💎' }
+];
+
+var root = document.getElementById('gameContainer');
+
+/* ---------- כלי עזר ---------- */
+function escapeHtml(str){
+  var d = document.createElement('div');
+  d.textContent = str == null ? '' : String(str);
+  return d.innerHTML;
+}
+function shuffleArray(a){
+  var arr = a.slice();
+  for (var i = arr.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+function totalQuestions(){
+  var n = 0;
+  for (var i = 0; i < GAME.lessons.length; i++) n += GAME.lessons[i].questions.length;
+  return n;
+}
+function questionsDone(){
+  var n = 0;
+  for (var i = 0; i < lessonIndex; i++) n += GAME.lessons[i].questions.length;
+  return n + qIndex;
+}
+function progressHtml(){
+  var pct = Math.round((questionsDone() / totalQuestions()) * 100);
+  return '<div class="progress-wrap"><div class="progress-bar" style="width:' + pct + '%"></div></div>';
+}
+function avatarForScore(score){
+  var e = AVATAR_TIERS[0].emoji;
+  for (var i = 0; i < AVATAR_TIERS.length; i++){
+    if (score >= AVATAR_TIERS[i].min) e = AVATAR_TIERS[i].emoji;
+  }
+  return e;
+}
+function statsBarHtml(){
+  var streakCls = streak >= 2 ? ' streak-on' : '';
+  return '<div class="stats-bar">' +
+    '<span class="stat-pill"><span class="avatar-badge">' + avatarForScore(totalScore) + '</span> ' + totalScore + ' נְקֻדּוֹת</span>' +
+    '<span class="stat-pill' + streakCls + '">🔥 רֶצֶף: ' + streak + '</span>' +
+    '</div>';
+}
+function applyTheme(){
+  var t = (GAME.themes || {})[GAME.theme];
+  if (!t) return;
+  for (var k in t){ if (Object.prototype.hasOwnProperty.call(t, k)) document.documentElement.style.setProperty(k, t[k]); }
+}
+
+/* ---------- שמע ---------- */
+function ensureAudio(){
+  if (audioContext === null){
+    try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { audioContext = false; }
+  }
+  return audioContext;
+}
+function playTones(freqs, dur){
+  var ctx = ensureAudio();
+  if (!ctx) return;
+  freqs.forEach(function(f, i){
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = f; o.type = 'sine';
+    var start = ctx.currentTime + i * dur;
+    g.gain.setValueAtTime(0.0001, start);
+    g.gain.exponentialRampToValueAtTime(0.22, start + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+    o.start(start); o.stop(start + dur);
+  });
+}
+function soundCorrect(){ playTones([523.25, 659.25, 783.99], 0.16); }
+function soundWrong(){ playTones([392.00, 329.63], 0.20); }
+function soundWin(){ playTones([523.25, 659.25, 783.99, 1046.50, 783.99, 659.25], 0.19); }
+
+/* ---------- מסך פתיחה ---------- */
+function screenWelcome(){
+  root.innerHTML =
+    '<h1>' + GAME.title + '</h1>' +
+    '<p class="subtitle">' + (GAME.subtitle || '') + '</p>' +
+    '<div class="card">' + GAME.intro + '</div>' +
+    '<div class="card name-input-box center">' +
+      '<p style="margin-bottom:12px">אֵיךְ קוֹרְאִים לְךָ? 😊</p>' +
+      '<input id="nameInput" type="text" maxlength="24" placeholder="הַקְלֵד אֶת שִׁמְךָ כָּאן">' +
+      '<br><button class="btn" id="startBtn">בּוֹא נַתְחִיל! 🚀</button>' +
+    '</div>';
+  var input = document.getElementById('nameInput');
+  document.getElementById('startBtn').addEventListener('click', startGame);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') startGame(); });
+  input.focus();
+}
+function startGame(){
+  var v = (document.getElementById('nameInput').value || '').trim();
+  userName = v ? escapeHtml(v) : 'תַּלְמִיד יָקָר';
+  ensureAudio();
+  lessonIndex = 0; qIndex = 0; lessonScore = 0; totalScore = 0; streak = 0; bestStreak = 0;
+  screenLesson();
+}
+
+/* ---------- מסך שיעור ---------- */
+function screenLesson(){
+  var L = GAME.lessons[lessonIndex];
+  var body = '';
+  for (var i = 0; i < L.content.length; i++) body += '<p style="margin-bottom:12px">' + L.content[i] + '</p>';
+  root.innerHTML =
+    progressHtml() +
+    '<h2>' + (L.emoji || '📖') + ' ' + L.title + '</h2>' +
+    '<div class="card">' + body +
+      '<div class="highlight">💡 ' + L.highlight + '</div>' +
+      '<div class="inspiration">💖 ' + L.inspiration + '</div>' +
+    '</div>' +
+    '<div class="center"><button class="btn gold" id="toQ">מוּכָן לַשְּׁאֵלוֹת, ' + userName + '? ✨</button></div>';
+  document.getElementById('toQ').addEventListener('click', function(){ qIndex = 0; lessonScore = 0; screenQuestion(); });
+  window.scrollTo(0, 0);
+}
+
+/* ---------- מסך שאלה ---------- */
+function screenQuestion(){
+  var L = GAME.lessons[lessonIndex];
+  var Q = L.questions[qIndex];
+  answered = false;
+  currentOptions = shuffleArray(Q.answers.map(function(text, i){
+    return { text: text, isCorrect: i === Q.correct };
+  }));
+  var html =
+    progressHtml() +
+    statsBarHtml() +
+    '<div class="q-num">שִׁעוּר ' + (lessonIndex + 1) + ' • שְׁאֵלָה ' + (qIndex + 1) + ' מִתּוֹךְ ' + L.questions.length + '</div>' +
+    '<h2>❓ ' + Q.q + '</h2><div id="answers">';
+  for (var i = 0; i < currentOptions.length; i++){
+    html += '<button class="answer-btn" data-i="' + i + '">' + currentOptions[i].text + '</button>';
+  }
+  html += '</div><div id="fb"></div>';
+  root.innerHTML = html;
+  var btns = root.querySelectorAll('.answer-btn');
+  for (var k = 0; k < btns.length; k++){
+    btns[k].addEventListener('click', function(e){ chooseAnswer(parseInt(e.currentTarget.getAttribute('data-i'), 10)); });
+  }
+  window.scrollTo(0, 0);
+}
+
+var PRAISE = ['מְצֻיָּן', 'כָּל הַכָּבוֹד', 'פְּצָצָה', 'מַדְהִים', 'יָפֶה מְאֹד'];
+var LOVE = [
+  'הַשֵּׁם שָׂמֵחַ כְּשֶׁרוֹאִים אֶת אַהֲבָתוֹ בְּלִבְּךָ',
+  'כָּל לִמּוּד שֶׁלְּךָ הוּא נְשִׁיקָה קְטַנָּה לְהַשֵּׁם',
+  'הַשֵּׁם מִסְתַּכֵּל עָלֶיךָ עַכְשָׁו בְּאַהֲבָה גְּדוֹלָה'
+];
+
+function chooseAnswer(i){
+  if (answered) return;
+  answered = true;
+  var Q = GAME.lessons[lessonIndex].questions[qIndex];
+  var isRight = currentOptions[i].isCorrect;
+  var btns = root.querySelectorAll('.answer-btn');
+  for (var k = 0; k < btns.length; k++){
+    btns[k].disabled = true;
+    if (currentOptions[k].isCorrect) btns[k].classList.add('correct');
+    else if (k === i) btns[k].classList.add('wrong');
+  }
+  if (isRight){ lessonScore++; totalScore++; streak++; if (streak > bestStreak) bestStreak = streak; soundCorrect(); } else { streak = 0; soundWrong(); }
+
+  var streakNote = '';
+  if (isRight && streak >= 3 && streak % 3 === 0){
+    streakNote = '<div class="streak-note">🔥 ' + streak + ' בְּרֶצֶף! אַתָּה מַמָּשׁ עַף, ' + userName + '!</div>';
+  }
+
+  var fb = document.getElementById('fb');
+  if (isRight){
+    fb.innerHTML =
+      '<div class="feedback ok">' +
+        '<p><strong>' + PRAISE[Math.floor(Math.random() * PRAISE.length)] + ', ' + userName + '! ⭐</strong></p>' +
+        '<p>' + Q.explain + '</p>' +
+        '<p style="margin-top:8px">' + LOVE[Math.floor(Math.random() * LOVE.length)] + ', ' + userName + ' 💖</p>' +
+        '<div class="inspiration">🤔 ' + Q.depth + '</div>' +
+        streakNote +
+        '<div class="center"><button class="btn" id="next">הַמְשֵׁךְ ➡️</button></div>' +
+      '</div>';
+  } else {
+    fb.innerHTML =
+      '<div class="feedback bad">' +
+        '<p><strong>לֹא בְּדִיּוּק, ' + userName + '... 🤔</strong></p>' +
+        '<p>' + Q.explain + '</p>' +
+        '<p style="margin-top:8px">גַּם כְּשֶׁטּוֹעִים — לוֹמְדִים! הַשֵּׁם אוֹהֵב אוֹתְךָ, ' + userName + '! 💡</p>' +
+        '<div class="inspiration">🤔 ' + Q.depth + '</div>' +
+        '<div class="center"><button class="btn" id="next">הַמְשֵׁךְ ➡️</button></div>' +
+      '</div>';
+  }
+  document.getElementById('next').addEventListener('click', nextStep);
+  document.getElementById('next').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function nextStep(){
+  var L = GAME.lessons[lessonIndex];
+  qIndex++;
+  if (qIndex < L.questions.length) screenQuestion();
+  else screenLessonSummary();
+}
+
+/* ---------- סיכום שיעור ושער מעבר ---------- */
+function screenLessonSummary(){
+  var L = GAME.lessons[lessonIndex];
+  var n = L.questions.length;
+  var pct = lessonScore / n;
+  var passed = pct >= 0.66;
+  var msg, emoji;
+  if (lessonScore === n){ msg = 'מַדְהִים, ' + userName + '! אַתָּה חַי בְּאַהֲבַת ה׳!'; emoji = '🏆🎉'; soundWin(); }
+  else if (passed){ msg = 'כִּמְעַט מֻשְׁלָם, ' + userName + '! מַמָּשׁ כְּמוֹ בְּאַהֲבָה — מַמְשִׁיךְ לִצְמֹחַ'; emoji = '💪🌱'; soundCorrect(); }
+  else { msg = 'בּוֹא נְנַסֶּה שׁוּב, ' + userName + ', בְּאַהֲבָה וּבְסַבְלָנוּת'; emoji = '💖'; }
+
+  var html = progressHtml() +
+    '<h2>' + emoji + ' סִכּוּם שִׁעוּר ' + (lessonIndex + 1) + '</h2>' +
+    '<div class="card center"><p style="font-size:1.3em;font-weight:800">' + lessonScore + ' מִתּוֹךְ ' + n + '</p><p>' + msg + '</p></div>';
+
+  if (passed && L.funFact){
+    html += '<div class="funfact-box"><div class="funfact-title">🔓 גִּלִּיתָ עוּבְדָּה מְיֻחֶדֶת!</div><p>' + L.funFact + '</p></div>';
+  }
+
+  if (passed){
+    if (lessonIndex < GAME.lessons.length - 1){
+      html += '<div class="center"><button class="btn gold" id="go">' +
+        'רוֹצֶה לְהַמְשִׁיךְ וּלְגַלּוֹת עוֹד דֶּרֶךְ לֶאֱהֹב אֶת הַשֵּׁם? ➡️</button></div>';
+    } else {
+      html += '<div class="center"><button class="btn gold" id="go">לַתְּעוּדָה שֶׁלְּךָ! 🏅</button></div>';
+    }
+  } else {
+    html += '<div class="center"><button class="btn" id="go">לַחֲזֹר עַל הַשִּׁעוּר וּלְנַסּוֹת שׁוּב 🔁</button></div>';
+  }
+  root.innerHTML = html;
+  document.getElementById('go').addEventListener('click', function(){
+    if (!passed){ totalScore -= lessonScore; screenLesson(); return; }
+    if (lessonIndex < GAME.lessons.length - 1){ lessonIndex++; screenLesson(); }
+    else screenCertificate();
+  });
+  window.scrollTo(0, 0);
+}
+
+/* ---------- תעודה ---------- */
+function screenCertificate(){
+  var tq = totalQuestions();
+  var pct = Math.round((totalScore / tq) * 100);
+  var thinks = '';
+  for (var i = 0; i < GAME.thinkQuestions.length; i++){
+    thinks += '<div class="think-q">' + (i + 1) + '. ' + GAME.thinkQuestions[i] + '</div>';
+  }
+  root.innerHTML =
+    '<div class="certificate">' +
+      '<div style="font-size:2.4em">🏅</div>' +
+      '<h2 style="text-align:center">תְּעוּדַת הִצְטַיְּנוּת</h2>' +
+      '<p>מוּעֶנֶת בְּאַהֲבָה לְ:</p>' +
+      '<div class="cert-name">' + userName + ' ' + avatarForScore(totalScore) + '</div>' +
+      '<p>' + GAME.title + '</p>' +
+      '<div class="cert-score">' + totalScore + '/' + tq + ' — ' + pct + '%</div>' +
+      (bestStreak >= 3 ? '<p style="font-weight:700;color:#7a5200">🔥 הָרֶצֶף הֲכִי טוֹב שֶׁלְּךָ: ' + bestStreak + ' בְּרֶצֶף!</p>' : '') +
+      '<div class="highlight" style="text-align:center">' + GAME.certificateVerse + '</div>' +
+    '</div>' +
+    '<div class="card"><h2>🤔 שְׁאֵלוֹת לַמַּחְשָׁבָה</h2>' + thinks + '</div>' +
+    '<div class="link-box">🎁 הִשְׁתַּתֵּף בַּהַגְרָלָה!<br>' +
+      '<a href="' + RAFFLE_URL + '" target="_blank" rel="noopener">לְמִלּוּי הַטֹּפֶס לְחַץ כָּאן</a></div>' +
+    '<div class="center"><button class="btn" id="again">לְשַׂחֵק שׁוּב 🔄</button></div>' +
+    '<p class="contact">' + CONTACT + '</p>';
+  document.getElementById('again').addEventListener('click', screenWelcome);
+  soundWin();
+  sendScoreToTeacher(totalScore, tq, pct);
+  window.scrollTo(0, 0);
+}
+
+/* ---------- שליחה למורה + fallback ---------- */
+function sendScoreToTeacher(score, tq, pct){
+  var now = new Date();
+  var data = {
+    name: userName,
+    score: score + '/' + tq,
+    percentage: pct + '%',
+    gameName: GAME.title || document.title || 'משחק למידה',
+    date: now.toLocaleDateString('he-IL'),
+    time: now.toLocaleTimeString('he-IL')
+  };
+  showScoreOnScreen(data);
+  try {
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(data)
+    })['catch'](function(){ /* ה־fallback כבר מוצג על המסך */ });
+  } catch (e) { /* ה־fallback כבר מוצג על המסך */ }
+}
+function showScoreOnScreen(data){
+  var note = document.createElement('p');
+  note.style.cssText = 'font-size:0.9em;color:#666;margin-top:10px;text-align:center;line-height:1.8';
+  note.textContent = 'הציון שלך: ' + data.score + ' (' + data.percentage + ') — אם המורה לא רואה זאת בגיליון, אפשר לצלם מסך.';
+  root.appendChild(note);
+}
+
+/* ---------- הפעלה ---------- */
+applyTheme();
+screenWelcome();
+</script>
+</body>
+</html>

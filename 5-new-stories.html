@@ -278,6 +278,38 @@ body {
 }
 #backTop:hover { transform: scale(1.1); }
 
+/* ═══ DIRECT-LINK NAVIGATION & SHARING ═══════════════════════════════════ */
+html { scroll-behavior: smooth; }
+.story-card { scroll-margin-top: 20px; }
+.copy-story-link {
+  border: none; border-radius: 50px; padding: .35rem .8rem;
+  font-size: .78rem; font-weight: 700; cursor: pointer;
+  background: rgba(0,0,0,.08); color: var(--dark);
+  transition: background .2s, transform .2s;
+  white-space: nowrap;
+}
+.copy-story-link:hover { background: rgba(0,0,0,.15); transform: translateY(-1px); }
+.toc-copy-link {
+  border: none; background: transparent; cursor: pointer;
+  font-size: .85rem; opacity: .7; padding: 0 .3rem;
+  flex-shrink: 0;
+}
+.toc-copy-link:hover { opacity: 1; }
+.toc-stories li { display: flex; align-items: center; justify-content: space-between; gap: .3rem; }
+.story-navigation {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .8rem; flex-wrap: wrap;
+  padding: 1rem 2rem 1.5rem;
+  border-top: 1px dashed rgba(0,0,0,.1);
+}
+.story-navigation a {
+  color: var(--dark); text-decoration: none; font-weight: 700;
+  font-size: .9rem; padding: .4rem .8rem; border-radius: 50px;
+  background: rgba(0,0,0,.05); transition: background .2s;
+}
+.story-navigation a:hover { background: rgba(0,0,0,.12); }
+.back-to-toc-nav { order: 2; }
+
 /* ═══ HIGHLIGHT ═════════════════════════════════════════════════════════ */
 .highlight-story {
   animation: pulse-border 1s ease 2;
@@ -323,7 +355,7 @@ body {
 <div class="layout">
 
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="toc">
     <div class="sidebar-title">🍬 תוכן העניינים</div>
 
     <div class="search-wrap">
@@ -335,77 +367,77 @@ body {
     <div class="toc-chapter open" style="border-color:#00b894">
 <div class="toc-chapter-title" style="background:#00b894" onclick="toggleTocChapter(this)"><span class="toc-icon">🌿</span><a href="#chapter-רבי-יהודה-בר-אלעאי" class="toc-sage-link">רבי יהודה בר אלעאי</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-133">רבי יהודה בר אלעאי והלחמנייה שבבוץ</a></li>
+<li><a href="#story-133">רבי יהודה בר אלעאי והלחמנייה שבבוץ</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-133', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
     <div class="toc-chapter" style="border-color:#ff4757">
 <div class="toc-chapter-title" style="background:#ff4757" onclick="toggleTocChapter(this)"><span class="toc-icon">💔</span><a href="#chapter-קמצא-ובר-קמצא" class="toc-sage-link">קמצא ובר קמצא</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-134">קמצא ובר קמצא — סיפור האזהרה וסוד אהבת החינם</a></li>
+<li><a href="#story-134">קמצא ובר קמצא — סיפור האזהרה וסוד אהבת החינם</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-134', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
     <div class="toc-chapter" style="border-color:#ffd93d">
 <div class="toc-chapter-title" style="background:#ffd93d" onclick="toggleTocChapter(this)"><span class="toc-icon">☀️</span><a href="#chapter-אבא-תחנא" class="toc-sage-link">אבא תחנא</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-135">אבא תחנא החסיד ונס השמש שבדרך</a></li>
+<li><a href="#story-135">אבא תחנא החסיד ונס השמש שבדרך</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-135', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
     <div class="toc-chapter" style="border-color:#4ec9f0">
 <div class="toc-chapter-title" style="background:#4ec9f0" onclick="toggleTocChapter(this)"><span class="toc-icon">📖</span><a href="#chapter-רבי-ינאי" class="toc-sage-link">רבי ינאי</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-136">רבי ינאי והרוכל הפשוט — סם החיים הקדוש</a></li>
+<li><a href="#story-136">רבי ינאי והרוכל הפשוט — סם החיים הקדוש</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-136', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
     <div class="toc-chapter" style="border-color:#a29bfe">
 <div class="toc-chapter-title" style="background:#a29bfe" onclick="toggleTocChapter(this)"><span class="toc-icon">🍋</span><a href="#chapter-האתרוגים-הקדושים" class="toc-sage-link">האתרוגים הקדושים</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-137">האתרוגים הקדושים מארץ ישראל</a></li>
+<li><a href="#story-137">האתרוגים הקדושים מארץ ישראל</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-137', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
 <div class="toc-chapter" style="border-color:#7bed9f">
 <div class="toc-chapter-title" style="background:#7bed9f" onclick="toggleTocChapter(this)"><span class="toc-icon">🕯️</span><a href="#chapter-אנטיגנוס-איש-סוכו" class="toc-sage-link">אנטיגנוס איש סוכו</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-138">אנטיגנוס איש סוכו — סוד המתנה של האב האוהב</a></li>
+<li><a href="#story-138">אנטיגנוס איש סוכו — סוד המתנה של האב האוהב</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-138', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
 
 <div class="toc-chapter" style="border-color:#ff6b9d">
 <div class="toc-chapter-title" style="background:#ff6b9d" onclick="toggleTocChapter(this)"><span class="toc-icon">🏠</span><a href="#chapter-יוסי-בן-יוחנן" class="toc-sage-link">יוסי בן יוחנן איש ירושלים</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-139">יוסי בן יוחנן איש ירושלים — הבית שלא ננעל מעולם</a></li>
+<li><a href="#story-139">יוסי בן יוחנן איש ירושלים — הבית שלא ננעל מעולם</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-139', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
 
 <div class="toc-chapter" style="border-color:#4ec9f0">
 <div class="toc-chapter-title" style="background:#4ec9f0" onclick="toggleTocChapter(this)"><span class="toc-icon">🐑</span><a href="#chapter-נתאי-הארבלי" class="toc-sage-link">נתאי הארבלי</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-140">נתאי הארבלי — הרוח בצוקים של ארבל</a></li>
+<li><a href="#story-140">נתאי הארבלי — הרוח בצוקים של ארבל</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-140', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
 
 <div class="toc-chapter" style="border-color:#a29bfe">
 <div class="toc-chapter-title" style="background:#a29bfe" onclick="toggleTocChapter(this)"><span class="toc-icon">✉️</span><a href="#chapter-רבי-יהושע-בן-פרחיה" class="toc-sage-link">רבי יהושע בן פרחיה</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-141">רבי יהושע בן פרחיה — המכתב הסודי מן החורבן</a></li>
+<li><a href="#story-141">רבי יהושע בן פרחיה — המכתב הסודי מן החורבן</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-141', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
 
 <div class="toc-chapter" style="border-color:#ffd93d">
 <div class="toc-chapter-title" style="background:#ffd93d" onclick="toggleTocChapter(this)"><span class="toc-icon">❤️</span><a href="#chapter-רבי-אלעזר-בן-ערך" class="toc-sage-link">רבי אלעזר בן ערך</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-142">רבי אלעזר בן ערך — הפקדון הקדוש שחזר למלך</a></li>
+<li><a href="#story-142">רבי אלעזר בן ערך — הפקדון הקדוש שחזר למלך</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-142', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
 <div class="toc-chapter" style="border-color:#ff4757">
 <div class="toc-chapter-title" style="background:#ff4757" onclick="toggleTocChapter(this)"><span class="toc-icon">🐴</span><a href="#chapter-רבי-יוסי-בן-יועזר" class="toc-sage-link">רבי יוסי בן יועזר</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-143">סוס הזהב וסוס העץ — יוסי בן יועזר ויקים איש צרורות</a></li>
+<li><a href="#story-143">סוס הזהב וסוס העץ — יוסי בן יועזר ויקים איש צרורות</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-143', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
 <div class="toc-chapter" style="border-color:#4ec9f0">
 <div class="toc-chapter-title" style="background:#4ec9f0" onclick="toggleTocChapter(this)"><span class="toc-icon">🕍</span><a href="#chapter-שמעיה-ואבטליון" class="toc-sage-link">שמעיה ואבטליון</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
 <ul class="toc-stories">
-<li><a href="#story-144">מעשה אהרן בירושלים — שמעיה ואבטליון והכהן הגדול</a></li>
+<li><a href="#story-144">מעשה אהרן בירושלים — שמעיה ואבטליון והכהן הגדול</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-144', this)" title="העתק קישור">🔗</button></li>
 </ul>
 </div>
   </aside>
@@ -423,6 +455,7 @@ body {
 <span class="story-num" style="background:#00b894">#1</span>
 <h3 class="story-title">רבי יהודה בר אלעאי והלחמנייה שבבוץ</h3>
 <span class="teacher-badge" style="background:#00b894">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-133', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <ul class="story-list">
@@ -544,6 +577,11 @@ body {
 <li><strong>תַּלְמּוּד בַּבְלִי, מַּסֶּכֶת נְדָרִים, דַּף מִ"ט עַמּוּד ב' - נ' עַמּוּד א'</strong> – הַפִּירוּט עַל עֲנִיוּתוֹ הַמֻּפְלָאָה שֶׁל רַבִּי יְהוּדָה בַּר אִלְעָאִי וְהַמְּעִיל הַמְּשֻׁתָּף שֶׁלּוֹ.</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-134">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -558,6 +596,7 @@ body {
 <span class="story-num" style="background:#ff4757">#134</span>
 <h3 class="story-title">קמצא ובר קמצא — סיפור האזהרה וסוד אהבת החינם</h3>
 <span class="teacher-badge" style="background:#ff4757">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-134', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🔹 בֵּרוּר מַקְדִּים (הֲכָנָה לַמּוֹרֶה)</h3>
@@ -674,6 +713,12 @@ body {
 <li>תַּלְמוּד בַּבְלִי, מַסֶּכֶת גִּטִּין, דַּף נ"ה עַמּוּד ב' – דַּף נ"ו עַמּוּד א'.</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-133">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-135">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -688,6 +733,7 @@ body {
 <span class="story-num" style="background:#ffd93d">#135</span>
 <h3 class="story-title">אבא תחנא החסיד ונס השמש שבדרך</h3>
 <span class="teacher-badge" style="background:#ffd93d">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-135', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🕰️ כַּרְטִיס זִהוּי לַתַּלְמִיד</h3>
@@ -814,6 +860,12 @@ body {
 <li><strong>מִּשְׂחַק תַּפְקִידִים – "פָּרָשַׁת הַדְּרָכִים שֶׁלִּי":</strong> הַמּוֹרֶה מֵּסִיב אֶת הַבָּנִים בַּכִּתָּה לִשְׁלָשׁוֹת. אֶחָד מְּשַׂחֵק אֶת אָבָּא תַּחְנָא, הַשֵּׁנִי אֶת יֵצֶר הָרַע הַמַּפְחִיד אוֹתוֹ עַל הַמָּמּוֹן, וְהַשְּׁלִישִׁי אֶת יֵצֶר הַטּוֹב הַמַּזְכִּיר לוֹ אֶת חֲשִׁיבוּת הַחֶסֶד וְהַשָּׁלוֹם. הַבָּנִים מְּתַרְגְּלִים כֵּיצַד יֵצֶר הַטּוֹב "מְּנַצֵּחַ" בַּדּוּ-שִׂיחַ, כְּדֵי לְהַפְנִים אֶת הַכְּלָל שֶׁלָּמַּדְנוּ!</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-134">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-136">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -828,6 +880,7 @@ body {
 <span class="story-num" style="background:#4ec9f0">#136</span>
 <h3 class="story-title">רבי ינאי והרוכל הפשוט — סם החיים הקדוש</h3>
 <span class="teacher-badge" style="background:#4ec9f0">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-136', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🔹 בֵּרוּר מַקְדִּים (הֲכָנָה לַמּוֹרֶה/לַמְּסַפֵּר)</h3>
@@ -945,6 +998,12 @@ body {
 <li><strong>שְׁמִּירַת הַלָּשׁוֹן וְהַחַיִּים:</strong> סֵפֶר תְּהִלִּים, פֶּרֶק ל"ד, פְּסוּקִים י"ג-ט"ו.</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-135">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-137">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -959,6 +1018,7 @@ body {
 <span class="story-num" style="background:#a29bfe">#137</span>
 <h3 class="story-title">האתרוגים הקדושים מארץ ישראל</h3>
 <span class="teacher-badge" style="background:#a29bfe">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-137', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🕰️ מָתַי הוּא חַי — "כַּרְטִיס זִהוּי" לַתַּלְמִיד</h3>
@@ -1095,6 +1155,12 @@ body {
 <li><strong>תַּלְמוּד בַּבְלִי</strong>, מַּסֶּכֶת תַּעֲנִית, דַּף כִּ"א עַמּוּד א' (לְעִנְיַן הַחְלָפַת הַמַּתָּנָה וְהַשְּׁמִּירָה בַּפֻּנְדָּק).</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-136">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-138">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 <section class="chapter-section" id="chapter-אנטיגנוס-איש-סוכו">
@@ -1108,6 +1174,7 @@ body {
 <span class="story-num" style="background:#7bed9f">#138</span>
 <h3 class="story-title">אנטיגנוס איש סוכו — סוד המתנה של האב האוהב</h3>
 <span class="teacher-badge" style="background:#7bed9f">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-138', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🔹 בֵּרוּר מַקְדִּים (הֲכָנָה לַמּוֹרֶה)</h3>
@@ -1254,6 +1321,12 @@ body {
 
 <p>נַעֲרוֹךְ מִּשְׂחַק תַּפְקִידִים קָטָן וּמְּשַׁעְשֵׁעַ בַּכִּתָּה. הַמּוֹרֶה יַעֲמִיד "מְשִׁימוֹת" מְעַנְיְנוֹת (לְמָּשָׁל: לַעֲזֹר לַחְבֵר, לְסַדֵּר כִּסֵּא, לִטְבֹּל מַטְלִית לַלּוּחַ). כָּל תַּלְמִּיד שֶׁעוֹלֶה צָרִיךְ לְבַצֵּעַ אֶת הַמְּשִׁימָה בִּמְהִירוּת, וְלַסּוֹף לְבָרֵךְ בְּקוֹל שָׂמֵּחַ וּבְכוֹחַ לִכְבוֹד בּוֹרֵא עוֹלָם, בְּלִי לְקַבֵּל שׁוּם פְּרָס גַּשְׁמִי! הַבָּנִים מְּתַרְגְּלִים כֵּיצַד עֲשִׂיַּת הַטּוֹב בִּשְׁבִיל הַטּוֹב עַצְמוֹ מְמַלֵּאת אֶת הַלֵּב בְּגַאֲוָה קְדוֹשָׁה וּבְאַהֲבַת ה'!.</p>
 </div>
+<div class="story-navigation">
+<a href="#story-137">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-139">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -1268,6 +1341,7 @@ body {
 <span class="story-num" style="background:#ff6b9d">#139</span>
 <h3 class="story-title">יוסי בן יוחנן איש ירושלים — הבית שלא ננעל מעולם</h3>
 <span class="teacher-badge" style="background:#ff6b9d">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-139', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🕰️ כַּרְטִיס זִהוּי לַתַּלְמִיד</h3>
@@ -1403,6 +1477,12 @@ body {
 <li><strong>מַּסֶּכֶת אָבוֹת דְּרַבִּי נָתָן, פֶּרֶק שְׁבִיעִי</strong> (עַל גֻּדְלָהּ וְקַבָּלָתָהּ שֶׁל מִּצְוַת הַכְנָסַת אוֹרְחִים לִפְנִים מִשּׁוּרַת הַדִּין כִּבְנֵי בַּיִת).</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-138">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-140">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -1417,6 +1497,7 @@ body {
 <span class="story-num" style="background:#4ec9f0">#140</span>
 <h3 class="story-title">נתאי הארבלי — הרוח בצוקים של ארבל</h3>
 <span class="teacher-badge" style="background:#4ec9f0">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-140', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🔹 בֵּרוּר מַקְדִּים (הֲכָנָה לַמּוֹרֶה)</h3>
@@ -1556,6 +1637,12 @@ body {
 <li><strong>מִּשְׂחַק תַּפְקִידִים – "מְּרַחֲקִים מִּשָּׁכֵן רָע":</strong> \   נַעֲרוֹךְ מִּשְׂחַק תַּפְקִידִים קָטָן וּמְּשַׁעְשֵׁעַ בַּכִּתָּה. \   הַמּוֹרֶה יַעֲמִּיד שְׁנֵי תַּלְמִּידִים – אֶחָד יְשַׂחֵק אֶת נִתַּאי, וְהַשֵּׁנִי אֶת מַּלְכּוּשׁ הַמְּנַסֶּה לְפַתּוֹת אוֹתוֹ לְשַׂחֵק בִּדְבָּרִים לֹא יָשְׁרִים בַּכִּתָּה. \   הַבָּנִים מְּתַרְגְּלִים כֵּיצַד נִתַּאי עוֹנֶה בַּעֲנָוָה, מִּסְתּוֹבֵּב וּמִּתְרַחֵק אֶל קְבוּצַת הַחֲבֵּרִים הַטוֹבִּים, וּמְּסַיֵּם בְּשִׁקּוּל וּבִּתְפִּלָּה יַחַד עִם כָּל הַכִּתָּה!.</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-139">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-141">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -1570,6 +1657,7 @@ body {
 <span class="story-num" style="background:#a29bfe">#141</span>
 <h3 class="story-title">רבי יהושע בן פרחיה — המכתב הסודי מן החורבן</h3>
 <span class="teacher-badge" style="background:#a29bfe">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-141', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🕰️ כַּרְטִיס זִהוּי לַתַּלְמִיד</h3>
@@ -1703,6 +1791,12 @@ body {
 <li><strong>מִּדְרַשׁ בְּרֵאשִׁית רַבָּה, פָּרָשָׁה ע'</strong> (לְעִנְיַן הַחְלָפַת הַמַּתָּנָה וְהַשְּׁמִּירָה בַּגָּלוּת וְהַבִּטָּחוֹן בַּה').</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-140">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-142">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 
@@ -1717,6 +1811,7 @@ body {
 <span class="story-num" style="background:#ffd93d">#142</span>
 <h3 class="story-title">רבי אלעזר בן ערך — הפקדון הקדוש שחזר למלך</h3>
 <span class="teacher-badge" style="background:#ffd93d">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-142', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🔹 בֵּרוּר מַקְדִּים (הֲכָנָה לַמּוֹרֶה)</h3>
@@ -1846,6 +1941,12 @@ body {
 <li><strong>מִּשְׂחַק תַּפְקִידִים – "פִּקָּדוֹן שֶׁל מַּעֲשִׂים טוֹבִים":</strong>    נַעֲרוֹךְ מִּשְׂחַק תַּפְקִידִים קָטָן וּמְּשַׁעְשֵׁעַ בַּכִּתָּה.    הַמּוֹרֶה יַחֲלֵק לַבָּנִים בַּכִּתָּה "גְּבִּיעֵי זָהָבּ" (גְּזוּרִים מִּקַּרְטוֹן זָהָבּ נוֹצֵץ). כָּל תַּלְמִּיד מְּקַבֵּל גְּבִּיעַ שֶׁנִּקְרָא "פִּקָּדוֹן". הַמּוֹרֶה מְּסַפֵּר שֶׁהַקָּדוֹשׁ בָּרוּךְ הוּא הִפְקִיד אֶצְלָנוּ אֶת הַנְּשָׁמָּה וְאֶת הַכּוֹחוֹת לַעֲשׂוֹת טוֹב.    כָּל יֶלֶד כּוֹתֵב עַל הַגְּבִּיעַ מַּעֲשֶׂה טוֹב אֶחָד אוֹ וִתּוּר שֶׁהוּא כְּבָּר עָשָׂה אוֹ מִּתְחַיֵּב לַעֲשׂוֹת מָּחָר בַּבֹּקֶר, וּמַּדְבִּיק אוֹתוֹ עַל "לוּחַ הַפִּקְּדוֹנוֹת הַקְּדוֹשִׁים" שֶׁל הַכִּתָּה, לַעֲשׂוֹת נַחַת רוּחַ לַבּוֹרֵא!.</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-141">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-143">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 <section class="chapter-section" id="chapter-רבי-יוסי-בן-יועזר">
@@ -1859,6 +1960,7 @@ body {
 <span class="story-num" style="background:#ff4757">#143</span>
 <h3 class="story-title">סוס הזהב וסוס העץ — יוסי בן יועזר ויקים איש צרורות</h3>
 <span class="teacher-badge" style="background:#ff4757">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-143', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🔹 בֵּרוּר מַקְדִּים</h3>
@@ -1963,6 +2065,12 @@ body {
 <li><strong>סֵפֶר הָאַגָּדָה:</strong> תַּחַת הַכּוֹתֶרֶת <strong>"יקום איש צרורות"</strong> בְּתוֹךְ פֶּרֶק שִׁעְבּוּד יָוָן וּמַרְשִׁיעֵי בְּרִית.</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-142">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+<a href="#story-144">הסיפור הבא ←</a>
+</div>
+
 </article>
 </section>
 <section class="chapter-section" id="chapter-שמעיה-ואבטליון">
@@ -1976,6 +2084,7 @@ body {
 <span class="story-num" style="background:#4ec9f0">#144</span>
 <h3 class="story-title">מעשה אהרן בירושלים — שמעיה ואבטליון והכהן הגדול</h3>
 <span class="teacher-badge" style="background:#4ec9f0">👨‍🏫 כולל מדריך למורה</span>
+<button class="copy-story-link" onclick="copyStoryLink('story-144', this)">🔗 העתק קישור</button>
 </div>
 <div class="story-body">
 <h3 class="section-heading">🔹 בֵּרוּר מַקְדִּים</h3>
@@ -2070,6 +2179,11 @@ body {
 <li><strong>סֵפֶר הָאַגָּדָה:</strong> תַּחַת הַכּוֹתֶרֶת <strong>"שמעיה ואבטליון"</strong> (מַאֲמָר קטעים פ"א, בְּתוֹךְ פֶּרֶק מַעֲשֵׂי חֲכָמִים).</li>
 </ul>
 </div>
+<div class="story-navigation">
+<a href="#story-143">→ הסיפור הקודם</a>
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+</div>
+
 </article>
 </section>
   </main>
@@ -2156,18 +2270,32 @@ document.addEventListener('click', e => {
     document.getElementById('searchResults').style.display = 'none';
 });
 
-// jump straight to the story named in the URL hash (e.g. #story-134), even if it
-// arrives inside an artifact viewer that renders the page after initial load
-function goToHashStory() {
-  const id = location.hash.slice(1);
-  if (!id) return;
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.scrollIntoView({behavior:'auto', block:'start'});
-  el.classList.add('highlight-story');
-  setTimeout(() => el.classList.remove('highlight-story'), 2200);
+// copy a direct, shareable link to one story ("...#story-133") to the clipboard
+function copyStoryLink(storyId, button) {
+  const baseUrl = window.location.href.split('#')[0];
+  const storyUrl = baseUrl + '#' + storyId;
+
+  navigator.clipboard.writeText(storyUrl).then(() => {
+    const oldText = button.innerHTML;
+    button.innerHTML = button.classList.contains('toc-copy-link') ? '✅' : '✅ הקישור הועתק';
+    setTimeout(() => { button.innerHTML = oldText; }, 1800);
+  });
 }
-window.addEventListener('load', () => setTimeout(goToHashStory, 50));
-window.addEventListener('hashchange', goToHashStory);
+
+// jump straight to the story named in the URL hash (e.g. #story-134) and highlight it,
+// even if it arrives inside an artifact viewer that renders the page after initial load
+function highlightCurrentStory() {
+  const id = window.location.hash.replace('#', '');
+  if (!id) return;
+  const story = document.getElementById(id);
+  if (!story) return;
+  setTimeout(() => {
+    story.scrollIntoView({behavior:'auto', block:'start'});
+    story.classList.add('highlight-story');
+    setTimeout(() => story.classList.remove('highlight-story'), 3000);
+  }, 300);
+}
+window.addEventListener('load', highlightCurrentStory);
+window.addEventListener('hashchange', highlightCurrentStory);
 </script>
 </body></html>

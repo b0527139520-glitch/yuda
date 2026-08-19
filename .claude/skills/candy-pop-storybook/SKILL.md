@@ -1,19 +1,17 @@
 ---
 name: candy-pop-storybook
 description: >
-  Build a colorful Hebrew HTML **story book** (ספר סיפורים) — an anthology of many short
-  stories in one self-contained page, in the bright "Candy Pop" style for children: a
-  sticky sidebar table of contents, live search, and a permanent shareable link to every
-  single story (#story-N) with a copy-link button, so a teacher or parent can send someone
-  straight to one story. Also publishes it to GitHub Pages or as a Claude Artifact.
-  Use this whenever someone wants a story book, סיפורי צדיקים, סיפורי חז"ל, a children's
-  Hebrew reader, an anthology or collection of stories, "ספר סיפורים", a colorful HTML book
-  for kids, a sidebar/bookmark table of contents, a direct link or permalink per chapter or
-  per story, a "copy link" button, or wants an existing HTML book uploaded to GitHub Pages —
-  even when they don't name this skill. This is NOT the same as `torah-html-article-v2`,
-  which builds a Torah *study* book (ספר לימוד תורני) — shiurim, parasha, halacha — in a
-  rabbinic house style with text-to-speech and page-turning. Study material goes there;
-  narrative stories for children come here.
+  Build a colorful Hebrew HTML story book (ספר סיפורים) — many short stories in one
+  self-contained page, "Candy Pop" style for children: sticky sidebar contents, live
+  search, and a permanent shareable link to every story (#story-N) with a copy-link
+  button. Publishes to GitHub Pages or as a Claude Artifact. Use whenever someone wants
+  a story book, סיפורי צדיקים, סיפורי חז"ל, a children's Hebrew reader, an anthology or
+  collection of stories, a colorful HTML book for kids, a sidebar table of contents, a
+  direct link or permalink per story or chapter, a "copy link" button, or an existing
+  HTML book put on GitHub Pages — even without naming this skill. NOT
+  torah-html-article-v2, which builds a Torah study book (ספר לימוד תורני) — shiurim,
+  parasha, halacha — in a rabbinic style with text-to-speech and page-turning. Study
+  material goes there; stories for children come here.
 ---
 
 # Candy Pop story book

@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl"><head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🍭 12 סיפורים חדשים – ספר קנדי מתוק!</title>
 
 <!-- Google Fonts for Hebrew + decorative -->
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&amp;family=Fredoka+One&amp;display=swap" rel="stylesheet">
 
 <style>
-<style>
+/* The page is served inside a host document, so the right-to-left direction
+   that used to live on the root element's dir attribute is set here instead. */
+html { direction: rtl; }
 /* ═══ CANDY POP BASE ═════════════════════════════════════════════════════ */
 :root {
   --pink:   #ff6b9d;
@@ -331,8 +330,13 @@ html { scroll-behavior: smooth; }
   .story-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
 }
 </style>
-</style>
-<body>
+
+<script>
+// Mirror the language and direction onto the host document, which this page no
+// longer supplies itself.
+document.documentElement.lang = 'he';
+document.documentElement.dir = 'rtl';
+</script>
 
 <!-- floating confetti -->
 <div class="confetti" aria-hidden="true">
@@ -2363,4 +2367,3 @@ window.addEventListener('load', () => {
 // An in-page click: the browser scrolls smoothly on its own, the highlight is ours.
 window.addEventListener('hashchange', () => highlightCurrentStory(false));
 </script>
-</body></html>

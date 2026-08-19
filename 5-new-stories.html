@@ -2271,9 +2271,20 @@ document.addEventListener('click', e => {
 });
 
 // copy a direct, shareable link to one story ("...#story-133") to the clipboard
+// The page may be rendered inside a viewer's iframe, where location.href is the
+// iframe's internal address rather than the address the reader sees and can share.
+// In that case document.referrer holds the containing page's URL, which is the one
+// worth copying.
+function shareableBaseUrl() {
+  let base = window.location.href;
+  if (window.self !== window.top && document.referrer && /^https?:/i.test(document.referrer)) {
+    base = document.referrer;
+  }
+  return base.split('#')[0];
+}
+
 function copyStoryLink(storyId, button) {
-  const baseUrl = window.location.href.split('#')[0];
-  const storyUrl = baseUrl + '#' + storyId;
+  const storyUrl = shareableBaseUrl() + '#' + storyId;
 
   function showCopied() {
     const oldText = button.innerHTML;
@@ -2309,18 +2320,47 @@ function copyStoryLink(storyId, button) {
 
 // jump straight to the story named in the URL hash (e.g. #story-134) and highlight it,
 // even if it arrives inside an artifact viewer that renders the page after initial load
-function highlightCurrentStory() {
+// Arriving on a shared link, the browser starts its own smooth scroll toward the
+// anchor — across a book this long that animation runs for seconds, and anything
+// we do mid-flight just fights it. So when the page opens with a hash, switch
+// scroll-behavior off before that animation can start; it goes back to smooth
+// once we have landed, in time for in-page clicks.
+const arrivedOnStory = !!window.location.hash;
+if (arrivedOnStory) document.documentElement.style.scrollBehavior = 'auto';
+
+function storyFromHash() {
   const id = window.location.hash.replace('#', '');
-  if (!id) return;
-  const story = document.getElementById(id);
-  if (!story) return;
-  setTimeout(() => {
-    story.scrollIntoView({behavior:'auto', block:'start'});
-    story.classList.add('highlight-story');
-    setTimeout(() => story.classList.remove('highlight-story'), 3000);
-  }, 300);
+  return id ? document.getElementById(id) : null;
 }
-window.addEventListener('load', highlightCurrentStory);
-window.addEventListener('hashchange', highlightCurrentStory);
+
+function scrollToHashStory() {
+  const story = storyFromHash();
+  if (story) story.scrollIntoView({block: 'start'});
+}
+
+function highlightCurrentStory(jump) {
+  const story = storyFromHash();
+  if (!story) return;
+  if (jump) scrollToHashStory();
+  story.classList.add('highlight-story');
+  setTimeout(() => story.classList.remove('highlight-story'), 3000);
+}
+
+window.addEventListener('load', () => {
+  if (!arrivedOnStory) return;
+  setTimeout(() => {
+    highlightCurrentStory(true);
+    // Re-assert once the last images and late layout have settled, then hand
+    // smooth scrolling back for ordinary in-page navigation.
+    setTimeout(scrollToHashStory, 200);
+    setTimeout(() => {
+      scrollToHashStory();
+      document.documentElement.style.scrollBehavior = '';
+    }, 500);
+  }, 300);
+});
+
+// An in-page click: the browser scrolls smoothly on its own, the highlight is ours.
+window.addEventListener('hashchange', () => highlightCurrentStory(false));
 </script>
 </body></html>

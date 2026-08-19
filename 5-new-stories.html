@@ -2275,11 +2275,36 @@ function copyStoryLink(storyId, button) {
   const baseUrl = window.location.href.split('#')[0];
   const storyUrl = baseUrl + '#' + storyId;
 
-  navigator.clipboard.writeText(storyUrl).then(() => {
+  function showCopied() {
     const oldText = button.innerHTML;
     button.innerHTML = button.classList.contains('toc-copy-link') ? '✅' : '✅ הקישור הועתק';
     setTimeout(() => { button.innerHTML = oldText; }, 1800);
-  });
+  }
+
+  function fallbackCopy() {
+    // navigator.clipboard is blocked in some embedded/sandboxed viewers —
+    // fall back to a hidden textarea + execCommand, and finally to a prompt
+    // the user can copy from by hand.
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = storyUrl;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) { showCopied(); return; }
+    } catch (err) { /* fall through */ }
+    window.prompt('העתק את הקישור:', storyUrl);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(storyUrl).then(showCopied, fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
 }
 
 // jump straight to the story named in the URL hash (e.g. #story-134) and highlight it,

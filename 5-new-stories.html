@@ -2155,5 +2155,19 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.search-wrap'))
     document.getElementById('searchResults').style.display = 'none';
 });
+
+// jump straight to the story named in the URL hash (e.g. #story-134), even if it
+// arrives inside an artifact viewer that renders the page after initial load
+function goToHashStory() {
+  const id = location.hash.slice(1);
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({behavior:'auto', block:'start'});
+  el.classList.add('highlight-story');
+  setTimeout(() => el.classList.remove('highlight-story'), 2200);
+}
+window.addEventListener('load', () => setTimeout(goToHashStory, 50));
+window.addEventListener('hashchange', goToHashStory);
 </script>
 </body></html>

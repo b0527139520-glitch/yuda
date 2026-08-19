@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{BOOK_TITLE}}</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&amp;family=Fredoka+One&amp;display=swap" rel="stylesheet">
+<style>
+{{BOOK_CSS}}
+</style>
+</head>
+<body>
+
+<div class="confetti" aria-hidden="true">
+<span style="top:5%;left:10%;animation-delay:0s;animation-duration:3s">🍭</span><span style="top:8%;left:90%;animation-delay:1s;animation-duration:4s">🌟</span><span style="top:15%;left:45%;animation-delay:2s;animation-duration:3.5s">🍬</span><span style="top:3%;left:70%;animation-delay:0.5s;animation-duration:3s">🍎</span><span style="top:20%;left:25%;animation-delay:1.5s;animation-duration:4s">🎉</span><span style="top:12%;left:60%;animation-delay:2.5s;animation-duration:3s">🌈</span><span style="top:6%;left:80%;animation-delay:0s;animation-duration:4s">✨</span><span style="top:18%;left:15%;animation-delay:1s;animation-duration:3.5s">🍭</span>
+</div>
+
+<header class="hero">
+  <h1 class="hero-title">{{HERO_TITLE}}</h1>
+  <p class="hero-subtitle">{{HERO_SUBTITLE}}</p>
+  <div class="hero-stats">
+    <div class="stat-bubble">📚 {{STORY_COUNT}} סיפורים</div>
+    <div class="stat-bubble">👑 {{CHAPTER_COUNT}} פרקים</div>
+    <div class="stat-bubble">🔍 חיפוש מובנה</div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar" id="toc">
+    <div class="sidebar-title">🍬 תוכן העניינים</div>
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchBox" placeholder="חפש סיפור..." oninput="doSearch(this.value)">
+      <div id="searchResults"></div>
+    </div>
+
+<!-- One block per chapter. The first one carries class="open" so the book does
+     not open on a wall of collapsed headings. -->
+{{TOC_BLOCKS}}
+  </aside>
+
+  <main class="main">
+{{CHAPTER_SECTIONS}}
+  </main>
+
+</div>
+
+<button id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆️</button>
+
+<script>
+const searchData = [
+{{SEARCH_DATA}}
+];
+
+{{BOOK_JS}}
+</script>
+</body>
+</html>

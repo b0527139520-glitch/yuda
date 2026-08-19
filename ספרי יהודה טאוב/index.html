@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍭 ספרי יהודה טאוב</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&amp;family=Fredoka+One&amp;display=swap" rel="stylesheet">
+<style>
+
+/* The page is served inside a host document, so the right-to-left direction
+   that used to live on the root element's dir attribute is set here instead. */
+html { direction: rtl; }
+/* ═══ CANDY POP BASE ═════════════════════════════════════════════════════ */
+:root {
+  --pink:   #ff6b9d;
+  --blue:   #4ec9f0;
+  --yellow: #ffd93d;
+  --red:    #ff4757;
+  --green:  #7bed9f;
+  --purple: #a29bfe;
+  --white:  #ffffff;
+  --dark:   #2d1b69;
+  --shadow: 0 8px 32px rgba(174,0,255,.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Heebo', 'Arial Hebrew', Arial, sans-serif;
+  background: linear-gradient(135deg, #ffe0f7 0%, #e0f4ff 30%, #fff8cc 60%, #ffe0e3 100%);
+  min-height: 100vh;
+  color: #2d1b69;
+  direction: rtl;
+}
+
+/* ═══ CONFETTI ANIMATION ════════════════════════════════════════════════ */
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(0deg); opacity:.8; }
+  50%      { transform: translateY(-20px) rotate(180deg); opacity:1; }
+}
+.confetti {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0; overflow: hidden;
+}
+.confetti span {
+  position: absolute; font-size: 1.5rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ═══ HERO HEADER ═══════════════════════════════════════════════════════ */
+.hero {
+  position: relative; z-index: 1;
+  background: linear-gradient(135deg, #ff6b9d 0%, #a29bfe 40%, #4ec9f0 80%, #ffd93d 100%);
+  padding: 3rem 2rem 4rem;
+  text-align: center;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='4' fill='rgba(255,255,255,.15)'/%3E%3C/svg%3E") repeat;
+}
+.hero-title {
+  font-family: 'Fredoka One', 'Heebo', sans-serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  color: white;
+  text-shadow: 3px 3px 0 #c62b6b, 6px 6px 0 rgba(0,0,0,.15);
+  letter-spacing: .04em;
+  line-height: 1.2;
+  position: relative;
+}
+.hero-subtitle {
+  font-size: 1.3rem;
+  color: rgba(255,255,255,.92);
+  margin-top: .8rem;
+  font-weight: 700;
+  position: relative;
+}
+.hero-stats {
+  display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+  margin-top: 1.5rem; position: relative;
+}
+.stat-bubble {
+  background: rgba(255,255,255,.25);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,.5);
+  border-radius: 50px;
+  padding: .5rem 1.2rem;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ═══ LAYOUT ════════════════════════════════════════════════════════════ */
+.layout {
+  display: flex; gap: 0; max-width: 1400px; margin: 0 auto;
+  position: relative; z-index: 1;
+}
+
+/* ═══ SIDEBAR / TOC ═════════════════════════════════════════════════════ */
+.sidebar {
+  width: 300px; flex-shrink: 0;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(20px);
+  border-left: 4px solid var(--pink);
+  box-shadow: -4px 0 20px rgba(255,107,157,.15);
+  padding: 1rem;
+}
+.sidebar-title {
+  font-size: 1.1rem; font-weight: 900; color: var(--dark);
+  text-align: center; padding: .8rem;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: white; border-radius: 12px; margin-bottom: 1rem;
+}
+
+/* Search box */
+.search-wrap {
+  position: relative; margin-bottom: 1rem;
+}
+#searchBox {
+  width: 100%; padding: .6rem 1rem .6rem 2.5rem;
+  border: 2px solid var(--pink);
+  border-radius: 50px; font-size: .95rem; font-family: inherit;
+  background: white; outline: none; direction: rtl;
+  transition: border-color .2s;
+}
+#searchBox:focus { border-color: var(--purple); }
+.search-icon {
+  position: absolute; right: .8rem; top: 50%; transform: translateY(-50%);
+  font-size: 1rem; pointer-events: none;
+}
+#searchResults {
+  background: white; border: 2px solid var(--pink); border-radius: 12px;
+  max-height: 60vh; overflow-y: auto; margin-top: .5rem; display: none;
+}
+#searchResults .sr-item {
+  padding: .5rem .8rem; cursor: pointer; font-size: .9rem;
+  border-bottom: 1px solid #fce; transition: background .15s;
+}
+#searchResults .sr-item:hover { background: #ffe0ee; }
+#searchResults .sr-item mark { background: var(--yellow); border-radius: 3px; }
+
+/* TOC chapters */
+.toc-chapter { margin-bottom: .5rem; border: 2px solid; border-radius: 10px; overflow: hidden; }
+.toc-chapter-title {
+  display: flex; align-items: center; gap: .4rem;
+  padding: .5rem .7rem; cursor: pointer; font-weight: 700;
+  font-size: .9rem; color: white;
+  user-select: none;
+}
+.toc-sage-link { color: white; text-decoration: none; flex: 1; }
+.toc-count {
+  font-size: .75rem; background: rgba(255,255,255,.3);
+  border-radius: 50px; padding: .1rem .5rem; white-space: nowrap;
+}
+.toc-arrow { margin-right: auto; transition: transform .2s; }
+.toc-chapter.open .toc-arrow { transform: rotate(180deg); }
+.toc-stories {
+  list-style: none; max-height: 0; overflow: hidden;
+  transition: max-height .3s ease;
+  background: white; padding: 0;
+}
+.toc-chapter.open .toc-stories { max-height: 600px; padding: .3rem 0; }
+.toc-stories li { padding: .25rem .8rem; font-size: .85rem; border-bottom: 1px solid #f0e8ff; }
+.toc-stories a { color: var(--dark); text-decoration: none; }
+.toc-stories a:hover { color: var(--pink); font-weight: 700; }
+
+/* ═══ MAIN CONTENT ══════════════════════════════════════════════════════ */
+.main { flex: 1; min-width: 0; padding: 2rem; }
+
+/* Chapter section */
+.chapter-section { margin-bottom: 3rem; }
+.chapter-header {
+  border-radius: 20px; padding: 2rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,.15);
+  position: relative; overflow: hidden;
+}
+.chapter-header::after {
+  content: '';
+  position: absolute; top: -50%; right: -50%;
+  width: 100%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,.2) 0%, transparent 60%);
+}
+.chapter-icon { font-size: 3rem; }
+.chapter-title {
+  font-family: 'Fredoka One', 'Heebo', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  color: white;
+  text-shadow: 2px 2px 6px rgba(0,0,0,.25);
+}
+.chapter-subtitle { color: rgba(255,255,255,.85); font-size: 1rem; font-weight: 600; }
+
+/* Story card */
+.story-card {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 1.8rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+}
+.story-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px rgba(0,0,0,.15);
+}
+.story-header {
+  padding: 1rem 1.5rem;
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+}
+.story-num {
+  color: white; font-weight: 900; font-size: .85rem;
+  padding: .3rem .7rem; border-radius: 50px; white-space: nowrap;
+}
+.story-title {
+  font-size: 1.2rem; font-weight: 900; color: var(--dark); flex: 1;
+}
+.teacher-badge {
+  color: white; font-size: .78rem; font-weight: 700;
+  padding: .2rem .7rem; border-radius: 50px;
+}
+
+/* Story body */
+.story-body {
+  padding: 1.5rem 2rem;
+  font-size: 1.05rem; line-height: 1.9;
+  color: #2d2d3a;
+}
+.story-body h3.section-heading {
+  font-size: 1.1rem; font-weight: 900;
+  color: var(--pink); margin: 1.5rem 0 .5rem;
+  padding-right: .8rem;
+  border-right: 4px solid var(--pink);
+}
+.story-body h4.sub-heading {
+  font-size: 1rem; font-weight: 700;
+  color: var(--purple); margin: 1rem 0 .3rem;
+}
+.story-body p {
+  margin-bottom: .8rem;
+}
+.story-body p.bold-para {
+  font-weight: 900; font-size: 1.1rem;
+  color: var(--dark);
+  background: linear-gradient(135deg, #fff8cc, #ffe0ee);
+  border-radius: 8px; padding: .5rem 1rem;
+  margin: .8rem 0;
+}
+.story-body strong { color: var(--red); }
+.story-body em { color: var(--purple); font-style: normal; font-weight: 600; }
+.story-body ul.story-list {
+  margin: .5rem 0 .8rem 1.5rem; padding: 0;
+}
+.story-body ul.story-list li {
+  margin-bottom: .4rem; padding-right: .3rem;
+  list-style: none; position: relative;
+}
+.story-body ul.story-list li::before {
+  content: '🍭';
+  position: absolute; right: -1.5rem; font-size: .8rem;
+}
+.story-body hr.story-sep {
+  border: none; height: 3px;
+  background: linear-gradient(90deg, var(--pink), var(--yellow), var(--blue));
+  border-radius: 3px; margin: 1.5rem 0;
+}
+
+/* ═══ BACK TO TOP ════════════════════════════════════════════════════════ */
+#backTop {
+  position: fixed; bottom: 2rem; left: 2rem; z-index: 100;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: white; border: none; cursor: pointer;
+  border-radius: 50%; width: 48px; height: 48px;
+  font-size: 1.3rem; box-shadow: 0 4px 15px rgba(166,107,157,.4);
+  display: none; align-items: center; justify-content: center;
+  transition: transform .2s;
+}
+#backTop:hover { transform: scale(1.1); }
+
+/* ═══ DIRECT-LINK NAVIGATION & SHARING ═══════════════════════════════════ */
+html { scroll-behavior: smooth; }
+.story-card { scroll-margin-top: 20px; }
+.copy-story-link {
+  border: none; border-radius: 50px; padding: .35rem .8rem;
+  font-size: .78rem; font-weight: 700; cursor: pointer;
+  background: rgba(0,0,0,.08); color: var(--dark);
+  transition: background .2s, transform .2s;
+  white-space: nowrap;
+}
+.copy-story-link:hover { background: rgba(0,0,0,.15); transform: translateY(-1px); }
+.toc-copy-link {
+  border: none; background: transparent; cursor: pointer;
+  font-size: .85rem; opacity: .7; padding: 0 .3rem;
+  flex-shrink: 0;
+}
+.toc-copy-link:hover { opacity: 1; }
+.toc-stories li { display: flex; align-items: center; justify-content: space-between; gap: .3rem; }
+.story-navigation {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .8rem; flex-wrap: wrap;
+  padding: 1rem 2rem 1.5rem;
+  border-top: 1px dashed rgba(0,0,0,.1);
+}
+.story-navigation a {
+  color: var(--dark); text-decoration: none; font-weight: 700;
+  font-size: .9rem; padding: .4rem .8rem; border-radius: 50px;
+  background: rgba(0,0,0,.05); transition: background .2s;
+}
+.story-navigation a:hover { background: rgba(0,0,0,.12); }
+.back-to-toc-nav { order: 2; }
+
+/* ═══ HIGHLIGHT ═════════════════════════════════════════════════════════ */
+.highlight-story {
+  animation: pulse-border 1s ease 2;
+}
+@keyframes pulse-border {
+  0%,100% { box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+  50% { box-shadow: 0 0 0 6px var(--yellow), 0 4px 30px rgba(0,0,0,.2); }
+}
+
+/* ═══ RESPONSIVE ════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: relative; border-left: none; border-bottom: 4px solid var(--pink); }
+  .main { padding: 1rem; }
+}
+@media print {
+  .sidebar, .confetti, #backTop { display: none !important; }
+  .main { padding: 0; }
+  .story-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="confetti" aria-hidden="true">
+<span style="top:5%;left:10%;animation-delay:0s;animation-duration:3s">🍭</span><span style="top:8%;left:90%;animation-delay:1s;animation-duration:4s">🌟</span><span style="top:15%;left:45%;animation-delay:2s;animation-duration:3.5s">🍬</span><span style="top:3%;left:70%;animation-delay:0.5s;animation-duration:3s">🍎</span><span style="top:20%;left:25%;animation-delay:1.5s;animation-duration:4s">🎉</span><span style="top:12%;left:60%;animation-delay:2.5s;animation-duration:3s">🌈</span><span style="top:6%;left:80%;animation-delay:0s;animation-duration:4s">✨</span><span style="top:18%;left:15%;animation-delay:1s;animation-duration:3.5s">🍭</span>
+</div>
+
+<header class="hero">
+  <h1 class="hero-title">🍭 ספרי יהודה טאוב</h1>
+  <p class="hero-subtitle">סיפורי חינוך והשראה</p>
+  <div class="hero-stats">
+    <div class="stat-bubble">📚 1 סיפורים</div>
+    <div class="stat-bubble">👑 1 פרקים</div>
+    <div class="stat-bubble">🔍 חיפוש מובנה</div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <aside class="sidebar" id="toc">
+    <div class="sidebar-title">🍬 תוכן העניינים</div>
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchBox" placeholder="חפש סיפור..." oninput="doSearch(this.value)">
+      <div id="searchResults"></div>
+    </div>
+
+<!-- One block per chapter. The first one carries class="open" so the book does
+     not open on a wall of collapsed headings. -->
+<div class="toc-chapter open" style="border-color:#ff6b9d">
+<div class="toc-chapter-title" style="background:#ff6b9d" onclick="toggleTocChapter(this)"><span class="toc-icon">🧺</span><a href="#chapter-רבא" class="toc-sage-link">רבא</a><span class="toc-count">1 סיפורים</span><span class="toc-arrow">▼</span></div>
+<ul class="toc-stories">
+<li><a href="#story-1">מִשֻּׁלְחָנוֹ שֶׁל מֶלֶךְ — הַסִּפּוּר הַמֻּפְלָא עַל רָבָא, קֻפַּת הַצְּדָקָה וְהַשְׁגָּחָה פְּרָטִית</a><button class="toc-copy-link" onclick="event.preventDefault(); copyStoryLink('story-1', this)" title="העתק קישור">🔗</button></li>
+</ul>
+</div>
+  </aside>
+
+  <main class="main">
+<section class="chapter-section" id="chapter-רבא">
+<div class="chapter-header" style="background: linear-gradient(135deg, #ff6b9d, #c62b6b)">
+<div class="chapter-icon">🧺</div>
+<h2 class="chapter-title">רבא</h2>
+<div class="chapter-subtitle">1 סיפורים</div>
+</div>
+<article class="story-card" id="story-1" style="border-top: 6px solid #ff6b9d">
+<div class="story-header" style="background:#f4f4ff">
+<span class="story-num" style="background:#ff6b9d">#1</span>
+<h3 class="story-title">מִשֻּׁלְחָנוֹ שֶׁל מֶלֶךְ — הַסִּפּוּר הַמֻּפְלָא עַל רָבָא, קֻפַּת הַצְּדָקָה וְהַשְׁגָּחָה פְּרָטִית</h3>
+<button class="copy-story-link" onclick="copyStoryLink('story-1', this)">🔗 העתק קישור</button>
+</div>
+<div class="story-body">
+<p>יְלָדִים יְקָרִים, תָּאֲרוּ לָכֶם שֶׁאַתֶּם מְבַקְּשִׁים מֵאִמָּא אֲרוּחָה מְיֻחֶדֶת מְאֹד – כָּזוֹ שֶׁאוֹכְלִים רַק בַּחֲתֻנּוֹת אוֹ בְּבָתֵּי מָלוֹן מְפֹאָרִים. אֲבָל בַּבַּיִת אֵין כֶּסֶף לְכָךְ, וּמִנְהַל קֻפַּת הַצְּדָקָה שֶׁל הָעִיר צָרִיךְ לְהַחְלִיט: הַאִם לִקְנוֹת לָכֶם אֶת הָאֹכֶל הַיָּקָר הַזֶּה מִכַּסְפֵּי הַצִּבּוּר? הַיּוֹם נִלְמַד עַל עָנִי אֶחָד שֶׁבִּקֵּשׁ בַּקָּשָׁה מוּזָרָה, עַל גְּדוֹל הַדּוֹר שֶׁהִתְלַבֵּט מְאֹד, וְעַל נֵס מַדְהִים וּפִתְאוֹמִי שֶׁהֶרְאָה לְכֻלָּם מִי בֶּאֱמֶת מְנַהֵל אֶת הָעוֹלָם וּמַאֲכִיל אֶת כָּל הַבְּרוּאִים!</p>
+<h3 class="section-heading">מִי הָיָה רָבָא?</h3>
+<p>לִפְנֵי שֶׁנִּצְלֹל לַסִּפּוּר, בּוֹאוּ נַכִּיר אֶת הַדְּמוּת הַמֶּרְכָּזִית שֶׁלָּנוּ – הָאָמוֹרָא הַקָּדוֹשׁ רָבָא. רָבָא חַי בְּבָבֶל, לִפְנֵי כְּ־1700 שָׁנָה, וְהָיָה הַמַּנְהִיג הָרוּחָנִי שֶׁל הָעִיר הַגְּדוֹלָה מְחוֹזָא. הוּא הָיָה חָכָם עָצוּם, וְכֻלָּם הָיוּ בָּאִים לִשְׁאֹל אוֹתוֹ שְׁאֵלוֹת קָשׁוֹת בַּתּוֹרָה. אֲבָל מִלְּבַד הֱיוֹתוֹ רֹאשׁ יְשִׁיבָה, רָבָא הָיָה גַּם הָאַחְרָאִי עַל קֻפַּת הַצְּדָקָה שֶׁל הָעִיר! הוּא הָיָה דּוֹאֵג שֶׁלְּשׁוּם עָנִי לֹא יֶחְסַר אֹכֶל לְחַגִּים וּלְשַׁבָּתוֹת.</p>
+<h3 class="section-heading">קֻפַּת הַצְּדָקָה שֶׁל מְחוֹזָא</h3>
+<p>בִּמְחוֹזָא חָיוּ אֲנָשִׁים רַבִּים. חֵלֶק מֵהֶם הָיוּ עֲשִׁירִים וְחֵלֶק הָיוּ עֲנִיִּים מְאֹד. בְּכָל יוֹם, רָבָא הָיָה מְקַבֵּל אֶת הַתְּרוּמוֹת שֶׁל הָעֲשִׁירִים וּמְחַלֵּק אוֹתָן לָעֲנִיִּים. הוּא יָדַע שֶׁהַתּוֹרָה מְצַוָּה עָלֵינוּ לָתֵת לֶעָנִי 'דֵּי מַחְסוֹרוֹ אֲשֶׁר יֶחְסַר לוֹ'. לָכֵן, לְאָדָם שֶׁהָיָה רָגִיל לֶאֱכֹל לֶחֶם פָּשׁוּט – נָתַן לֶחֶם פָּשׁוּט. אֲבָל מָה קוֹרֶה כְּשֶׁמַּגִּיעַ אָדָם שֶׁפַּעַם הָיָה עָשִׁיר עָצוּם, וְהִתְרַגֵּל לְמַאֲכָלֵי מְלָכִים?</p>
+<p>לְרָבָא הָיָה רָצוֹן עָמֹק מְאֹד: לַעֲשׂוֹת נַחַת רוּחַ לַקָּדוֹשׁ בָּרוּךְ הוּא. הוּא לֹא סְתָם זָרַק כֶּסֶף לָעֲנִיִּים, אֶלָּא הִקְשִׁיב לָהֶם, דִּבֵּר אִתָּם בְּנֹעַם וּבָחַן אֶת הַצְּרָכִים הַמְּיֻחָדִים שֶׁל כָּל אֶחָד וְאֶחָד. הַצְּדָקָה הָיְתָה עֲבוּרוֹ מִצְוָה קְדוֹשָׁה וְיָקָרָה מִפַּז, שֶׁמְּחַבֶּרֶת אֶת עַם יִשְׂרָאֵל יַחַד וּמַגְבִּירָה אֶת אַהֲבַת ה' בָּעוֹלָם.</p>
+<h3 class="section-heading">הַבַּקָּשָׁה הַמַּפְתִּיעָה</h3>
+<p>אֲבָל יוֹם אֶחָד, הַשִּׁגְרָה בְּקֻפַּת הַצְּדָקָה הוּפְרָה. אֶל רָבָא נִגַּשׁ עָנִי אֶחָד, שֶׁבֶּעָבָר הָיָה עָשִׁיר מְאֹד וְהִתְרַגֵּל לְחַיֵּי פְּאֵר. הוּא הִבִּיט בְּרָבָא וּבִקֵּשׁ בַּקָּשָׁה מַדְהִימָה: "אֲנִי רוֹצֶה שֶׁקֻּפַּת הַצְּדָקָה תְּשַׁלֵּם לִי בְּכָל יוֹם עַל תַּרְנְגֹלֶת שְׁמֵנָה וּמְבֻשֶּׁלֶת הֵיטֵב, וְעַל כּוֹס שֶׁל יַיִן יָשָׁן וְטוֹב! אֵלּוּ הַמַּאֲכָלִים שֶׁהַגּוּף שֶׁלִּי רָגִיל אֲלֵיהֶם, וְאִם לֹא אֹכַל אוֹתָם – אֶהְיֶה חוֹלֶה!"</p>
+<p>רָבָא עָמַד נָבוֹךְ. מִצַּד אֶחָד, הַהֲלָכָה אוֹמֶרֶת שֶׁצָּרִיךְ לָתֵת לֶעָנִי אֶת מָה שֶׁהוּא רָגִיל אֵלָיו. אֲבָל מִצַּד שֵׁנִי – הַאִם זֶה הוֹגֵן? הַכֶּסֶף בַּקֻּפָּה שַׁיָּךְ לְכָל תּוֹשָׁבֵי הָעִיר! הָאֲנָשִׁים שֶׁתָּרְמוּ אֶת הַכֶּסֶף הַזֶּה עוֹבְדִים קָשֶׁה מְאֹד וְאוֹכְלִים רַק לֶחֶם וּמַיִם. אֵיךְ יִקַּח אֶת כַּסְפָּם וְיִקְנֶה בּוֹ מַאֲכָלֵי מְלָכִים לְאָדָם אֶחָד?</p>
+<h3 class="section-heading">מִשֻּׁלְחָנוֹ שֶׁל מִי אֲנִי אוֹכֵל?</h3>
+<p>רָבָא הֶחְלִיט לְדַבֵּר עִם הָעָנִי בַּעֲדִינוּת. הוּא פָּנָה אֵלָיו וְשָׁאַל: "בְּנִי, אֲנִי מֵבִין שֶׁאַתָּה רָגִיל לְכָךְ, אֲבָל הַאִם אֵינְךָ חוֹשֵׁשׁ שֶׁבַּקָּשָׁתְךָ מַכְבִּידָה מְאֹד עַל קֻפַּת הָעִיר? אוּלַי תְּנַסֶּה לְהִסְתַּפֵּק בְּמַאֲכָל פָּשׁוּט יוֹתֵר לְמַעַן הַכְּלָל?"</p>
+<p class="bold-para">אֲבָל הָעָנִי הֵשִׁיב בֶּאֱמוּנָה פְּשׁוּטָה: "וְכִי מִשֶּׁלָּהֶם אֲנִי אוֹכֵל?! מִשֻּׁלְחָנוֹ שֶׁל הַקָּדוֹשׁ בָּרוּךְ הוּא אֲנִי אוֹכֵל!"</p>
+<p>הוּא הִבִּיט בָּרַב וְאָמַר: "כְּבוֹד הָרַב, וְכִי מִשֶּׁל הָאֲנָשִׁים אֲנִי אוֹכֵל? וְכִי הַצִּבּוּר הוּא זֶה שֶׁנּוֹתֵן לִי חַיִּים? לֹא! הַקָּדוֹשׁ בָּרוּךְ הוּא בָּרָא אֶת כָּל הָעוֹלָם וְהוּא זֶה שֶׁזָּן וּמְפַרְנֵס אֶת כָּל הַבְּרוּאִים. הַצִּבּוּר הוּא רַק הַשָּׁלִיחַ שֶׁל ה'. אִם ה' הֶחְלִיט שֶׁמַּגִּיעַ לִי אֹכֶל – הוּא יִשְׁלַח לִי אוֹתוֹ!"</p>
+<p>רָבָא הִתְפַּעֵל מְאֹד מִן הַמִּלִּים הַקְּדוֹשׁוֹת שֶׁל הָעָנִי. הוּא רָאָה שֶׁאֵין בּוֹ גַּאֲוָה, אֶלָּא רַק בִּטָּחוֹן מֻחְלָט בַּהַשְׁגָּחָה שֶׁל הַקָּדוֹשׁ בָּרוּךְ הוּא. אֲבָל הַדְּאָגָה הַגַּשְׁמִית עֲדַיִן עָמְדָה בָּאֲוִיר. הָעָנִי הָיָה רָעֵב מְאֹד, וְרָבָא עֲדַיִן לֹא יָדַע כֵּיצַד הַקָּדוֹשׁ בָּרוּךְ הוּא יִפְתֹּר אֶת הַבְּעָיָה הַזּוֹ מִבְּלִי לִפְגֹּעַ בְּכַסְפֵּי הַצִּבּוּר.</p>
+<h3 class="section-heading">הַצְּעָדִים בַּפֶּתַח</h3>
+<p>הַשָּׁעוֹת חָלְפוּ. הַבֶּטֶן שֶׁל הָעָנִי קִרְקְרָה מֵרָעָב כָּבֵד. הַחֶדֶר הָיָה שָׁקֵט לְגַמְרֵי. רָבָא הִבִּיט בַּפֶּתַח הַפָּתוּחַ שֶׁל הַחָצֵר. הוּא יָדַע שֶׁהַיְשׁוּעָה שֶׁל ה' יְכוֹלָה לְהַגִּיעַ כְּהֶרֶף עַיִן, אֲבָל הַמְּתִיחוּת הָיְתָה בָּאֲוִיר. הַאִם הָעָנִי יִשָּׁאֵר רָעֵב? הַאִם יֵאָלֵץ לֶאֱכֹל לֶחֶם יָבֵשׁ? פִּתְאוֹם... נִשְׁמְעוּ צְעָדִים בַּחוּץ.</p>
+<h3 class="section-heading">הַסַּל שֶׁהִגִּיעַ מִן הַשָּׁמַיִם</h3>
+<p class="bold-para">וּבְאוֹתוֹ רֶגַע מַמָּשׁ – נֵס גָּלוּי וּמַדְהִים! בַּפֶּתַח מוֹפִיעָה דְּמוּת שֶׁל אִשָּׁה צַדֶּקֶת. רָבָא הִבִּיט בָּהּ, וְהַלֵּב שֶׁלּוֹ הֶחְסִיר פְּעִימָה. זוֹ הָיְתָה אֲחוֹתוֹ הָאֲהוּבָה, שֶׁלֹּא רָאָה וְלֹא שָׁמַע מִמֶּנָּה כְּבָר שְׁלֹשׁ עֶשְׂרֵה שָׁנִים אֲרֻכּוֹת!</p>
+<p>הִיא הִגִּיעָה מִמֶּרְחַקִּים כְּדֵי לְבַקֵּר אֶת אָחִיהָ הַגָּדוֹל. וּמָה הִיא הֶחְזִיקָה בְּיָדָהּ כְּמַתָּנָה? סַל קַשׁ, וּבְתוֹכוֹ – בְּדִיּוּק מֻשְׁלָם: תַּרְנְגֹלֶת שְׁמֵנָה וּמְבֻשֶּׁלֶת הֵיטֵב, וּבַקְבּוּק שֶׁל יַיִן יָשָׁן וּמְשֻׁבָּח!</p>
+<h3 class="section-heading">קוּם וֶאֱכֹל</h3>
+<p>רָבָא הֵבִין בְּאוֹתוֹ רֶגַע אֶת הָאֱמֶת הַגְּדוֹלָה: הָעָנִי צָדַק! הַקָּדוֹשׁ בָּרוּךְ הוּא שָׁלַח אֶת הָאֹכֶל הַזֶּה בִּמְיֻחָד עֲבוּרוֹ, וְלֹא מִכַּסְפֵּי קֻפַּת הַצְּדָקָה! רָבָא הִסְתּוֹבֵב אֶל הָעָנִי בַּעֲנָוָה עֲצוּמָה, בִּקֵּשׁ מִמֶּנּוּ מְחִילָה עַל כָּךְ שֶׁהִסֵּס, וְהוֹשִׁיט לוֹ אֶת הָאֲרוּחָה בְּשִׂמְחָה.</p>
+<p class="bold-para">"קוּם וֶאֱכֹל, יְדִידִי הַיָּקָר! הָאֹכֶל הַזֶּה לֹא מִקֻּפַּת הָעִיר הִגִּיעַ, אֶלָּא יָשָׁר מִשֻּׁלְחָנוֹ הַמָּלֵא וְהָרָחָב שֶׁל בּוֹרֵא הָעוֹלָם שֶׁאוֹהֵב אוֹתְךָ וְדוֹאֵג לְךָ!"</p>
+<h3 class="section-heading">מָה נִשְׁאָר אִתָּנוּ מֵהַסִּפּוּר</h3>
+<p>גַּם אֲנַחְנוּ, כְּמוֹ הָעָנִי הַמְיֻחָס, מְגַלִּים כֹּחַ עָצוּם שֶׁיֵּשׁ בְּתוֹכֵנוּ – כֹּחַ הָאֱמוּנָה. הַהוֹרִים שֶׁלָּנוּ וְהַמּוֹרִים הֵם רַק הַשְּׁלִיחִים הַטּוֹבִים שֶׁל הַקָּדוֹשׁ בָּרוּךְ הוּא, וּמִי שֶׁבֶּאֱמֶת דּוֹאֵג לָנוּ וּמֵבִיא לָנוּ אֶת הַבְּרָכָה – זֶה הַשֵּׁם יִתְבָּרַךְ בְּאַהֲבָה רַבָּה. וּכְשֵׁם שֶׁרָבָא הִקְשִׁיב לָעָנִי בְּרֶגֶשׁ וּבְלֹא זִלְזוּל, כָּךְ גַּם אֲנַחְנוּ יְכוֹלִים לָשִׂים לֵב לְחָבֵר שֶׁקָּשֶׁה לוֹ, וְלַעֲזֹר לוֹ בְּשֶׁקֶט וּבְשִׂמְחָה.</p>
+</div>
+<div class="story-navigation">
+<a class="back-to-toc-nav" href="#toc">📚 חזרה לתוכן העניינים</a>
+</div>
+</article>
+</section>
+  </main>
+
+</div>
+
+<button id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">⬆️</button>
+
+<script>
+const searchData = [
+  {id:'story-1',title:'מִשֻּׁלְחָנוֹ שֶׁל מֶלֶךְ — הַסִּפּוּר הַמֻּפְלָא עַל רָבָא, קֻפַּת הַצְּדָקָה וְהַשְׁגָּחָה פְּרָטִית',body:'יְלָדִים יְקָרִים, תָּאֲרוּ לָכֶם שֶׁאַתֶּם מְבַקְּשִׁים מֵאִמָּא אֲרוּחָה מְיֻחֶדֶת מְאֹד – כָּזוֹ שֶׁאוֹכְלִים רַק בַּחֲתֻנּוֹת אוֹ בְּבָתֵּי מָלוֹן מְפֹאָרִים. אֲבָל בַּבַּיִת אֵין כֶּסֶף לְכָךְ, וּמִנְהַל קֻפַּת הַצְּדָקָה שֶׁל הָעִיר צָרִיךְ לְהַחְלִיט: הַאִם לִקְנוֹת לָכֶם אֶת הָאֹכֶל הַיָּקָר הַזֶּה מִכַּסְפֵּי הַצִּבּוּר? הַיּוֹם נִלְמַד עַל עָנִי אֶחָד שֶׁבִּקֵּשׁ בַּקָּשָׁה מוּזָרָה, עַל גְּדוֹל הַדּוֹר שֶׁהִתְלַבֵּט מְאֹד, וְעַל נֵס מַדְהִים וּפִתְאוֹמִי שֶׁהֶרְאָה לְכֻלָּם מִי בֶּאֱמֶת מְנַהֵל אֶת הָעוֹלָם וּמַאֲכִיל אֶת כָּל הַבְּרוּאִים! מִי הָיָה רָבָא? לִפְנֵי שֶׁנִּצְלֹל לַסִּפּוּר, בּוֹאוּ נַכִּיר אֶת הַדְּמוּת הַמֶּרְכָּזִית שֶׁלָּנוּ – הָאָמוֹרָא הַקָּדוֹשׁ רָבָא. רָבָא חַי בְּבָבֶל, לִפְנֵי כְּ־1700 שָׁנָה, וְהָיָה הַמַּנְהִיג הָרוּחָנִי שֶׁל הָעִיר הַגְּדוֹלָה מְחוֹזָא. הוּא הָיָה חָכָם עָצוּם, וְכֻלָּם הָיוּ בָּאִים לִשְׁאֹל אוֹתוֹ שְׁאֵלוֹת קָשׁוֹת בַּתּוֹרָה. אֲבָל מִלְּבַד הֱיוֹתוֹ רֹאשׁ יְשִׁיבָה, רָבָא הָיָה גַּם הָאַחְרָאִי עַל קֻפַּת הַצְּדָקָה שֶׁל הָעִיר! הוּא הָיָה דּוֹאֵג שֶׁלְּשׁוּם עָנִי לֹא יֶחְסַר אֹכֶל לְחַגִּים וּלְשַׁבָּתוֹת. קֻפַּת הַצְּדָקָה שֶׁל מְחוֹזָא בִּמְחוֹזָא חָיוּ אֲנָשִׁים רַבִּים. חֵלֶק מֵהֶם הָיוּ עֲשִׁירִים וְחֵלֶק הָיוּ עֲנִיִּים מְאֹד. בְּכָל יוֹם, רָבָא הָיָה מְקַבֵּל אֶת הַתְּרוּמוֹת שֶׁל הָעֲשִׁירִים וּמְחַלֵּק אוֹתָן לָעֲנִיִּים. הוּא יָדַע שֶׁהַתּוֹרָה מְצַוָּה עָלֵינוּ לָתֵת לֶעָנִי \'דֵּי מַחְסוֹרוֹ אֲשֶׁר יֶחְסַר לוֹ\'. לָכֵן, לְאָדָם שֶׁהָיָה רָגִיל לֶאֱכֹל לֶחֶם פָּשׁוּט – נָתַן לֶחֶם פָּשׁוּט. אֲבָל מָה קוֹרֶה כְּשֶׁמַּגִּיעַ אָדָם שֶׁפַּעַם הָיָה עָשִׁיר עָצוּם, וְהִתְרַגֵּל לְמַאֲכָלֵי מְלָכִים? לְרָבָא הָיָה רָצוֹן עָמֹק מְאֹד: לַעֲשׂוֹת נַחַת רוּחַ לַקָּדוֹשׁ בָּרוּךְ הוּא. הוּא לֹא סְתָם זָרַק כֶּסֶף לָעֲנִיִּים, אֶלָּא הִקְשִׁיב לָהֶם, דִּבֵּר אִתָּם בְּנֹעַם וּבָחַן אֶת הַצְּרָכִים הַמְּיֻחָדִים שֶׁל כָּל אֶחָד וְאֶחָד. הַצְּדָקָה הָיְתָה עֲבוּרוֹ מִצְוָה קְדוֹשָׁה וְיָקָרָה מִפַּז, שֶׁמְּחַבֶּרֶת אֶת עַם יִשְׂרָאֵל יַחַד וּמַגְבִּירָה אֶת אַהֲבַת ה\' בָּעוֹלָם. הַבַּקָּשָׁה הַמַּפְתִּיעָה אֲבָל יוֹם אֶחָד, הַשִּׁגְרָה בְּקֻפַּת הַצְּדָקָה הוּפְרָה. אֶל רָבָא נִגַּשׁ עָנִי אֶחָד, שֶׁבֶּעָבָר הָיָה עָשִׁיר מְאֹד וְהִתְרַגֵּל לְחַיֵּי פְּאֵר. הוּא הִבִּיט בְּרָבָא וּבִקֵּשׁ בַּקָּשָׁה מַדְהִימָה: "אֲנִי רוֹצֶה שֶׁקֻּפַּת הַצְּדָקָה תְּשַׁלֵּם לִי בְּכָל יוֹם עַל תַּרְנְגֹלֶת שְׁמֵנָה וּמְבֻשֶּׁלֶת הֵיטֵב, וְעַל כּוֹס שֶׁל יַיִן יָשָׁן וְטוֹב! אֵלּוּ הַמַּאֲכָלִים שֶׁהַגּוּף שֶׁלִּי רָגִיל אֲלֵיהֶם, וְאִם לֹא אֹכַל אוֹתָם – אֶהְיֶה חוֹלֶה!" רָבָא עָמַד נָבוֹךְ. מִצַּד אֶחָד, הַהֲלָכָה אוֹמֶרֶת שֶׁצָּרִיךְ לָתֵת לֶעָנִי אֶת מָה שֶׁהוּא רָגִיל אֵלָיו. אֲבָל מִצַּד שֵׁנִי – הַאִם זֶה הוֹגֵן? הַכֶּסֶף בַּקֻּפָּה שַׁיָּךְ לְכָל תּוֹשָׁבֵי הָעִיר! הָאֲנָשִׁים שֶׁתָּרְמוּ אֶת הַכֶּסֶף הַזֶּה עוֹבְדִים קָשֶׁה מְאֹד וְאוֹכְלִים רַק לֶחֶם וּמַיִם. אֵיךְ יִקַּח אֶת כַּסְפָּם וְיִקְנֶה בּוֹ מַאֲכָלֵי מְלָכִים לְאָדָם אֶחָד? מִשֻּׁלְחָנוֹ שֶׁל מִי אֲנִי אוֹכֵל? רָבָא הֶחְלִיט לְדַבֵּר עִם הָעָנִי בַּעֲדִינוּת. הוּא פָּנָה אֵלָיו וְשָׁאַל: "בְּנִי, אֲנִי מֵבִין שֶׁאַתָּה רָגִיל לְכָךְ, אֲבָל הַאִם אֵינְךָ חוֹשֵׁשׁ שֶׁבַּקָּשָׁתְךָ מַכְבִּידָה מְאֹד עַל קֻפַּת הָעִיר? אוּלַי תְּנַסֶּה לְהִסְתַּפֵּק בְּמַאֲכָל פָּשׁוּט יוֹתֵר לְמַעַן הַכְּלָל?" אֲבָל הָעָנִי הֵשִׁיב בֶּאֱמוּנָה פְּשׁוּטָה: "וְכִי מִשֶּׁלָּהֶם אֲנִי אוֹכֵל?! מִשֻּׁלְחָנוֹ שֶׁל הַקָּדוֹשׁ בָּרוּךְ הוּא אֲנִי אוֹכֵל!" הוּא הִבִּיט בָּרַב וְאָמַר: "כְּבוֹד הָרַב, וְכִי מִשֶּׁל הָאֲנָשִׁים אֲנִי אוֹכֵל? וְכִי הַצִּבּוּר הוּא זֶה שֶׁנּוֹתֵן לִי חַיִּים? לֹא! הַקָּדוֹשׁ בָּרוּךְ הוּא בָּרָא אֶת כָּל הָעוֹלָם וְהוּא זֶה שֶׁזָּן וּמְפַרְנֵס אֶת כָּל הַבְּרוּאִים. הַצִּבּוּר הוּא רַק הַשָּׁלִיחַ שֶׁל ה\'. אִם ה\' הֶחְלִיט שֶׁמַּגִּיעַ לִי אֹכֶל – הוּא יִשְׁלַח לִי אוֹתוֹ!" רָבָא הִתְפַּעֵל מְאֹד מִן הַמִּלִּים הַקְּדוֹשׁוֹת שֶׁל הָעָנִי. הוּא רָאָה שֶׁאֵין בּוֹ גַּאֲוָה, אֶלָּא רַק בִּטָּחוֹן מֻחְלָט בַּהַשְׁגָּחָה שֶׁל הַקָּדוֹשׁ בָּרוּךְ הוּא. אֲבָל הַדְּאָגָה הַגַּשְׁמִית עֲדַיִן עָמְדָה בָּאֲוִיר. הָעָנִי הָיָה רָעֵב מְאֹד, וְרָבָא עֲדַיִן לֹא יָדַע כֵּיצַד הַקָּדוֹשׁ בָּרוּךְ הוּא יִפְתֹּר אֶת הַבְּעָיָה הַזּוֹ מִבְּלִי לִפְגֹּעַ בְּכַסְפֵּי הַצִּבּוּר. הַצְּעָדִים בַּפֶּתַח הַשָּׁעוֹת חָלְפוּ. הַבֶּטֶן שֶׁל הָעָנִי קִרְקְרָה מֵרָעָב כָּבֵד. הַחֶדֶר הָיָה שָׁקֵט לְגַמְרֵי. רָבָא הִבִּיט בַּפֶּתַח הַפָּתוּחַ שֶׁל הַחָצֵר. הוּא יָדַע שֶׁהַיְשׁוּעָה שֶׁל ה\' יְכוֹלָה לְהַגִּיעַ כְּהֶרֶף עַיִן, אֲבָל הַמְּתִיחוּת הָיְתָה בָּאֲוִיר. הַאִם הָעָנִי יִשָּׁאֵר רָעֵב? הַאִם יֵאָלֵץ לֶאֱכֹל לֶחֶם יָבֵשׁ? פִּתְאוֹם... נִשְׁמְעוּ צְעָדִים בַּחוּץ. הַסַּל שֶׁהִגִּיעַ מִן הַשָּׁמַיִם וּבְאוֹתוֹ רֶגַע מַמָּשׁ – נֵס גָּלוּי וּמַדְהִים! בַּפֶּתַח מוֹפִיעָה דְּמוּת שֶׁל אִשָּׁה צַדֶּקֶת. רָבָא הִבִּיט בָּהּ, וְהַלֵּב שֶׁלּוֹ הֶחְסִיר פְּעִימָה. זוֹ הָיְתָה אֲחוֹתוֹ הָאֲהוּבָה, שֶׁלֹּא רָאָה וְלֹא שָׁמַע מִמֶּנָּה כְּבָר שְׁלֹשׁ עֶשְׂרֵה שָׁנִים אֲרֻכּוֹת! הִיא הִגִּיעָה מִמֶּרְחַקִּים כְּדֵי לְבַקֵּר אֶת אָחִיהָ הַגָּדוֹל. וּמָה הִיא הֶחְזִיקָה בְּיָדָהּ כְּמַתָּנָה? סַל קַשׁ, וּבְתוֹכוֹ – בְּדִיּוּק מֻשְׁלָם: תַּרְנְגֹלֶת שְׁמֵנָה וּמְבֻשֶּׁלֶת הֵיטֵב, וּבַקְבּוּק שֶׁל יַיִן יָשָׁן וּמְשֻׁבָּח! קוּם וֶאֱכֹל רָבָא הֵבִין בְּאוֹתוֹ רֶגַע אֶת הָאֱמֶת הַגְּדוֹלָה: הָעָנִי צָדַק! הַקָּדוֹשׁ בָּרוּךְ הוּא שָׁלַח אֶת הָאֹכֶל הַזֶּה בִּמְיֻחָד עֲבוּרוֹ, וְלֹא מִכַּסְפֵּי קֻפַּת הַצְּדָקָה! רָבָא הִסְתּוֹבֵב אֶל הָעָנִי בַּעֲנָוָה עֲצוּמָה, בִּקֵּשׁ מִמֶּנּוּ מְחִילָה עַל כָּךְ שֶׁהִסֵּס, וְהוֹשִׁיט לוֹ אֶת הָאֲרוּחָה בְּשִׂמְחָה. "קוּם וֶאֱכֹל, יְדִידִי הַיָּקָר! הָאֹכֶל הַזֶּה לֹא מִקֻּפַּת הָעִיר הִגִּיעַ, אֶלָּא יָשָׁר מִשֻּׁלְחָנוֹ הַמָּלֵא וְהָרָחָב שֶׁל בּוֹרֵא הָעוֹלָם שֶׁאוֹהֵב אוֹתְךָ וְדוֹאֵג לְךָ!" מָה נִשְׁאָר אִתָּנוּ מֵהַסִּפּוּר גַּם אֲנַחְנוּ, כְּמוֹ הָעָנִי הַמְיֻחָס, מְגַלִּים כֹּחַ עָצוּם שֶׁיֵּשׁ בְּתוֹכֵנוּ – כֹּחַ הָאֱמוּנָה. הַהוֹרִים שֶׁלָּנוּ וְהַמּוֹרִים הֵם רַק הַשְּׁלִיחִים הַטּוֹבִים שֶׁל הַקָּדוֹשׁ בָּרוּךְ הוּא, וּמִי שֶׁבֶּאֱמֶת דּוֹאֵג לָנוּ וּמֵבִיא לָנוּ אֶת הַבְּרָכָה – זֶה הַשֵּׁם יִתְבָּרַךְ בְּאַהֲבָה רַבָּה. וּכְשֵׁם שֶׁרָבָא הִקְשִׁיב לָעָנִי בְּרֶגֶשׁ וּבְלֹא זִלְזוּל, כָּךְ גַּם אֲנַחְנוּ יְכוֹלִים לָשִׂים לֵב לְחָבֵר שֶׁקָּשֶׁה לוֹ, וְלַעֲזֹר לוֹ בְּשֶׁקֶט וּבְשִׂמְחָה.'}
+];
+
+
+// ── TOC toggle ──────────────────────────────────────────────────────────
+function toggleTocChapter(el) {
+  el.closest('.toc-chapter').classList.toggle('open');
+}
+// open first chapter by default
+document.querySelectorAll('.toc-chapter')[0]?.classList.add('open');
+
+// ── Back to top ─────────────────────────────────────────────────────────
+const btn = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+});
+
+// ── Search ──────────────────────────────────────────────────────────────
+
+// searchData is injected by build_book.py, above this block.
+// The stories are vocalized but nobody types nikud into a search box, so
+// comparing the two directly finds nothing. Match on text with the points
+// stripped, keeping a map back into the original string so the highlight still
+// lands on the right characters -- including their vowels.
+const NIKUD = /[֑-ׇ]/;
+
+function fold(text) {
+  let plain = '';
+  const map = [];
+  for (let i = 0; i < text.length; i++) {
+    if (!NIKUD.test(text[i])) { plain += text[i]; map.push(i); }
+  }
+  map.push(text.length);
+  return { plain, map };
+}
+
+function findFolded(text, query) {
+  const f = fold(text);
+  const i = f.plain.indexOf(query);
+  if (i < 0) return null;
+  return { start: f.map[i], end: f.map[i + query.length] };
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+}
+
+// Marking by slice rather than by regex keeps a query like "(" from blowing up
+// the whole search, which building a RegExp out of raw input would do.
+function markSlice(text, hit) {
+  if (!hit) return escapeHtml(text);
+  return escapeHtml(text.slice(0, hit.start))
+       + '<mark>' + escapeHtml(text.slice(hit.start, hit.end)) + '</mark>'
+       + escapeHtml(text.slice(hit.end));
+}
+
+function doSearch(raw) {
+  const box = document.getElementById('searchResults');
+  const query = raw.trim().replace(new RegExp(NIKUD.source, 'g'), '');
+  if (query.length < 2) { box.style.display = 'none'; return; }
+
+  const hits = [];
+  for (const d of searchData) {
+    const inTitle = findFolded(d.title, query);
+    const inBody = findFolded(d.body, query);
+    if (inTitle || inBody) hits.push({ d, inTitle, inBody });
+    if (hits.length >= 20) break;
+  }
+
+  if (!hits.length) {
+    box.innerHTML = '<div class="sr-item">לא נמצאו תוצאות</div>';
+    box.style.display = 'block';
+    return;
+  }
+
+  box.innerHTML = hits.map(h => `<div class="sr-item" onclick="jumpTo('${h.d.id}')">
+      <strong>${markSlice(h.d.title, h.inTitle)}</strong><br>
+      <small>${getSnippet(h.d.body, h.inBody)}</small>
+    </div>`).join('');
+  box.style.display = 'block';
+}
+
+function getSnippet(text, hit) {
+  if (!hit) return escapeHtml(text.slice(0, 80)) + '...';
+  const start = Math.max(0, hit.start - 30);
+  const end = Math.min(text.length, hit.end + 50);
+  return (start > 0 ? '...' : '')
+       + escapeHtml(text.slice(start, hit.start))
+       + '<mark>' + escapeHtml(text.slice(hit.start, hit.end)) + '</mark>'
+       + escapeHtml(text.slice(hit.end, end))
+       + (end < text.length ? '...' : '');
+}
+
+function jumpTo(id) {
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('searchBox').value = '';
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({behavior:'smooth', block:'start'});
+  el.classList.add('highlight-story');
+  setTimeout(() => el.classList.remove('highlight-story'), 2200);
+}
+
+// close search when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('.search-wrap'))
+    document.getElementById('searchResults').style.display = 'none';
+});
+
+// copy a direct, shareable link to one story ("...#story-133") to the clipboard
+// The page may be rendered inside a viewer's iframe, where location.href is the
+// iframe's internal address rather than the address the reader sees and can share.
+// In that case document.referrer holds the containing page's URL, which is the one
+// worth copying.
+function shareableBaseUrl() {
+  let base = window.location.href;
+  if (window.self !== window.top && document.referrer && /^https?:/i.test(document.referrer)) {
+    base = document.referrer;
+  }
+  return base.split('#')[0];
+}
+
+function copyStoryLink(storyId, button) {
+  const storyUrl = shareableBaseUrl() + '#' + storyId;
+
+  function showCopied() {
+    const oldText = button.innerHTML;
+    button.innerHTML = button.classList.contains('toc-copy-link') ? '✅' : '✅ הקישור הועתק';
+    setTimeout(() => { button.innerHTML = oldText; }, 1800);
+  }
+
+  function fallbackCopy() {
+    // navigator.clipboard is blocked in some embedded/sandboxed viewers —
+    // fall back to a hidden textarea + execCommand, and finally to a prompt
+    // the user can copy from by hand.
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = storyUrl;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) { showCopied(); return; }
+    } catch (err) { /* fall through */ }
+    window.prompt('העתק את הקישור:', storyUrl);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(storyUrl).then(showCopied, fallbackCopy);
+  } else {
+    fallbackCopy();
+  }
+}
+
+// jump straight to the story named in the URL hash (e.g. #story-134) and highlight it,
+// even if it arrives inside an artifact viewer that renders the page after initial load
+// Arriving on a shared link, the browser starts its own smooth scroll toward the
+// anchor — across a book this long that animation runs for seconds, and anything
+// we do mid-flight just fights it. So when the page opens with a hash, switch
+// scroll-behavior off before that animation can start; it goes back to smooth
+// once we have landed, in time for in-page clicks.
+const arrivedOnStory = !!window.location.hash;
+if (arrivedOnStory) document.documentElement.style.scrollBehavior = 'auto';
+
+function storyFromHash() {
+  const id = window.location.hash.replace('#', '');
+  return id ? document.getElementById(id) : null;
+}
+
+function scrollToHashStory() {
+  const story = storyFromHash();
+  if (story) story.scrollIntoView({block: 'start'});
+}
+
+function highlightCurrentStory(jump) {
+  const story = storyFromHash();
+  if (!story) return;
+  if (jump) scrollToHashStory();
+  story.classList.add('highlight-story');
+  setTimeout(() => story.classList.remove('highlight-story'), 3000);
+}
+
+window.addEventListener('load', () => {
+  if (!arrivedOnStory) return;
+  setTimeout(() => {
+    highlightCurrentStory(true);
+    // Re-assert once the last images and late layout have settled, then hand
+    // smooth scrolling back for ordinary in-page navigation.
+    setTimeout(scrollToHashStory, 200);
+    setTimeout(() => {
+      scrollToHashStory();
+      document.documentElement.style.scrollBehavior = '';
+    }, 500);
+  }, 300);
+});
+
+// An in-page click: the browser scrolls smoothly on its own, the highlight is ours.
+window.addEventListener('hashchange', () => highlightCurrentStory(false));
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>פרשת כי תצא — עיוני פרשה</title>
+<style>
+/* =============================================================================
+   קול תודה — סגנון בית למאמרים תורניים   |   base.css   v2.0
+   ============================================================================= */
+
+:root {
+    --purple: #7e22ce;  --blue: #2563eb;   --green: #059669;
+    --gold:   #f59e0b;  --pink: #ec4899;   --ink:   #1f2937;
+    --paper:  #ffffff;  --muted: #6b7280;  --line:  rgba(0,0,0,.08);
+    --g-page:      linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --g-verse:     linear-gradient(135deg, #e0e7ff 0%, #fce7f3 100%);
+    --g-highlight: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+    --g-quote:     linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    --g-story:     linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+    --g-divider:   linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #ec4899 100%);
+    --g-title:     linear-gradient(135deg, #7e22ce 0%, #ec4899 50%, #f59e0b 100%);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0; padding: 40px 20px;
+    font-family: 'Segoe UI', 'Assistant', 'Noto Sans Hebrew', Arial, sans-serif;
+    background: var(--g-page);
+    color: var(--ink);
+    line-height: 1.8;
+}
+
+.container {
+    max-width: 900px; margin: 0 auto;
+    padding: 60px 80px;
+    background: var(--paper);
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.1);
+}
+
+/* ---------- כותרות ---------- */
+.main-title {
+    font-size: 3em; font-weight: bold; text-align: center; margin: 0 0 10px;
+    background: var(--g-title); -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: var(--purple);
+}
+.subtitle { text-align: center; font-size: 1.25em; color: var(--muted); margin-bottom: 8px; }
+.author   { text-align: center; font-size: 1.05em; color: var(--purple); font-weight: bold; margin-bottom: 10px; }
+
+h2 { font-size: 2.2em; color: var(--purple); border-right: 6px solid var(--purple);
+     padding-right: 20px; margin: 50px 0 20px; }
+h3 { font-size: 1.8em; color: var(--blue);  margin: 35px 0 15px; }
+h4 { font-size: 1.5em; color: var(--green); margin: 25px 0 12px; }
+p, li { font-size: 1.15em; line-height: 1.8; margin: 0 0 20px; text-align: justify; text-justify: inter-word; }
+li { margin-bottom: 10px; }
+.verse-box p, .section-divider, .chapter-card p, .footer p { text-align: center; }
+.toc li, .listen-bar p { text-align: right; }
+
+.emphasis { color: var(--purple); font-weight: bold; }
+em { color: var(--blue); font-style: italic; }
+
+/* ---------- מעבר בין פרקים ---------- */
+.chapter-card {
+    min-height: 55vh; margin: 60px -80px 0; padding: 40px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--g-title); color: #fff; text-align: center;
+}
+.chapter-card .num { font-size: 5.5em; font-weight: bold; line-height: 1; opacity: .85; }
+.chapter-card .name { font-size: 2.2em; font-weight: bold; margin-top: 18px; max-width: 18ch; }
+.chapter-divider {
+    display: flex; align-items: center; gap: 15px; margin: 45px 0;
+    color: var(--gold); font-size: 1.4em;
+}
+.chapter-divider::before, .chapter-divider::after {
+    content: ''; flex: 1; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.chapter-label {
+    display: inline-block; margin-bottom: 6px; padding: 3px 14px;
+    background: var(--purple); color: #fff; border-radius: 20px;
+    font-size: .55em; font-weight: bold; letter-spacing: .5px; vertical-align: middle;
+}
+.in-this-chapter {
+    background: var(--g-highlight); border-right: 6px solid var(--blue);
+    border-radius: 12px; padding: 22px 26px; margin: 22px 0 32px;
+}
+.in-this-chapter h4 { margin: 0 0 10px; font-size: 1.1em; color: var(--blue); }
+.in-this-chapter ul { margin: 0; padding-right: 20px; }
+.in-this-chapter li { font-size: 1em; margin-bottom: 6px; text-align: right; }
+
+.story-title { display: block; font-size: 1.25em; font-weight: bold; color: var(--green); margin-bottom: 12px; }
+
+/* ---------- קופסאות תוכן ---------- */
+.verse-box, .highlight-box, .quote-box, .story-box, .qa-box {
+    padding: 28px; margin: 30px 0; border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.1);
+}
+.verse-box     { background: var(--g-verse); border: 2px solid var(--purple);
+                 text-align: center; font-size: 1.3em; font-weight: 600; color: var(--purple); }
+.verse-box p   { font-size: 1em; margin: 0; }
+.highlight-box { background: var(--g-highlight); border-right: 6px solid var(--blue);
+                 box-shadow: 0 5px 15px rgba(126,34,206,.15); }
+.quote-box     { background: var(--g-quote); border-right: 6px solid var(--gold); font-style: italic; }
+.story-box     { background: var(--g-story); border-right: 6px solid var(--green); }
+.qa-box        { background: #fff; border: 2px dashed var(--pink); }
+.verse-box p:last-child, .highlight-box p:last-child, .quote-box p:last-child,
+.story-box p:last-child, .qa-box p:last-child { margin-bottom: 0; }
+
+.source-tag { display: block; margin-top: 12px; font-size: .9em; font-style: normal;
+              color: var(--muted); font-weight: bold; }
+
+.section-divider {
+    background: var(--g-divider); color: #fff; text-align: center;
+    padding: 18px 25px; margin: 45px 0; border-radius: 10px;
+    font-size: 1.3em; font-weight: bold; letter-spacing: .5px;
+}
+
+.two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin: 30px 0; }
+.two-columns > div { padding: 25px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,.1); }
+.col-purple { background: var(--g-verse);  border-top: 5px solid var(--purple); }
+.col-gold   { background: var(--g-quote);  border-top: 5px solid var(--gold); }
+
+/* ---------- תוכן עניינים / מקורות / חתימה ---------- */
+.toc { background: #faf5ff; border: 2px solid #e9d5ff; border-radius: 12px; padding: 25px 30px; margin: 30px 0; }
+.toc h3 { margin-top: 0; color: var(--purple); }
+.toc ul { list-style: none; padding: 0; margin: 0; }
+.toc li { margin-bottom: 8px; }
+.toc a { color: var(--blue); text-decoration: none; font-size: 1.05em; }
+.toc a:hover { text-decoration: underline; color: var(--purple); }
+.toc > ul > li { margin-bottom: 14px; }
+.toc-chapter { font-weight: bold; font-size: 1.1em; color: var(--purple); }
+.toc-subs { display: block; margin-top: 3px; font-size: .9em; color: var(--muted); line-height: 1.7; }
+.toc-subs a { font-size: 1em; color: var(--muted); }
+.toc-subs a:hover { color: var(--blue); }
+.toc-subs span { margin: 0 6px; opacity: .5; }
+
+/* ---------- מבט-על: רשת הפרקים ---------- */
+.chapter-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 22px;
+    background: linear-gradient(160deg, #fffdf7 0%, #fdf8ee 100%);
+    border: 1px solid #efe4cd; border-radius: 18px;
+    padding: 34px 30px; margin: 30px 0;
+}
+.chapter-grid .grid-title {
+    grid-column: 1 / -1; text-align: center; margin: 0 0 14px;
+    font-size: 1.6em; color: var(--purple); letter-spacing: 1px;
+    border: none; padding: 0;
+}
+.chapter-chip {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--ink); text-decoration: none; font-size: 1.02em; line-height: 1.45;
+    padding: 6px 8px; border-radius: 10px; transition: background .18s, transform .18s;
+}
+.chapter-chip:hover { background: rgba(245,158,11,.12); transform: translateX(-3px); }
+.chapter-chip .n {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #c9982f; color: #fff; font-size: .82em; font-weight: bold;
+}
+.chapter-chip.is-front .n { background: #1e2a5a; font-size: .7em; }
+
+@media (max-width: 900px) { .chapter-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .chapter-grid { grid-template-columns: 1fr; padding: 24px 18px; } }
+
+.sources { background: #f9fafb; border-radius: 12px; padding: 25px 30px; margin-top: 50px; border: 1px solid var(--line); }
+.sources h3 { margin-top: 0; }
+.sources li { font-size: 1em; }
+
+.footer { margin-top: 55px; padding-top: 30px; border-top: 3px solid var(--gold);
+          text-align: center; font-size: 1.05em; }
+.footer a { color: var(--blue); }
+
+.scroll-top {
+    position: fixed; bottom: 30px; left: 30px; z-index: 50;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: var(--g-title); color: #fff; text-decoration: none;
+    display: none; align-items: center; justify-content: center;
+    font-size: 1.3em; box-shadow: 0 5px 15px rgba(0,0,0,.25);
+}
+.scroll-top.visible { display: flex; }
+
+/* ---------- סרגל ההאזנה ---------- */
+.listen-bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 15px;
+    margin: 25px 0; padding: 18px 25px;
+    background: var(--g-quote); border-radius: 12px;
+    border-right: 6px solid var(--gold);
+    box-shadow: 0 3px 10px rgba(0,0,0,.1);
+}
+.listen-btn-group { display: flex; gap: 8px; align-items: center; }
+.listen-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+    color: #fff; border: none; border-radius: 30px; padding: 10px 22px;
+    font-size: 1em; font-weight: bold; font-family: inherit; cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+}
+.listen-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(126,34,206,.3); }
+.listen-btn:active { transform: translateY(0); }
+.listen-stop-btn, .listen-skip-btn {
+    background: #fff; color: var(--purple); border: 2px solid var(--purple);
+    border-radius: 30px; padding: 8px 16px; font-size: .95em; font-weight: bold;
+    font-family: inherit; cursor: pointer; transition: transform .15s, background .15s;
+}
+.listen-skip-btn { padding: 8px 12px; }
+.listen-stop-btn:hover, .listen-skip-btn:hover { transform: translateY(-2px); background: #f3e8ff; }
+
+.listen-toggle-btn {
+    background: #fff; color: var(--purple); border: 2px solid var(--purple);
+    border-radius: 30px; padding: 8px 14px; font-size: .88em; font-weight: bold;
+    font-family: inherit; cursor: pointer; white-space: nowrap;
+    transition: transform .15s, background .15s, opacity .15s;
+}
+.listen-toggle-btn:hover { transform: translateY(-2px); background: #f3e8ff; }
+.listen-toggle-btn[aria-pressed="false"] {
+    color: var(--muted); border-color: #d1d5db; background: #f9fafb; opacity: .8;
+}
+.listen-toggle-btn:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+.listen-btn:focus-visible, .listen-stop-btn:focus-visible,
+.listen-skip-btn:focus-visible, .listen-voice select:focus-visible,
+.listen-rate input:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+
+.listen-status   { font-size: .95em; color: #78350f; flex: 1 1 200px; }
+.listen-progress { font-size: .9em; color: #78350f; font-weight: bold; white-space: nowrap; }
+.listen-rate, .listen-voice { display: flex; align-items: center; gap: 6px; font-size: .9em; color: #78350f; }
+.listen-rate input { accent-color: var(--purple); }
+.listen-rate output { font-weight: bold; min-width: 2.6em; }
+.listen-voice select {
+    border-radius: 20px; border: 1px solid var(--gold); padding: 4px 10px;
+    font-family: inherit; background: #fff; color: var(--ink); max-width: 190px;
+}
+
+.tts-clickable { cursor: pointer; transition: background .2s; border-radius: 6px; }
+.tts-clickable:hover { background: rgba(245,158,11,.10); }
+.reading-highlight {
+    background: var(--g-verse); border-radius: 6px;
+    box-shadow: 0 0 0 3px var(--pink) inset; transition: background .3s;
+}
+
+/* ---------- נייד ---------- */
+@media (max-width: 768px) {
+    body { padding: 15px 10px; }
+    .container { padding: 30px 22px; border-radius: 12px; }
+    .main-title { font-size: 2em; }
+    h2 { font-size: 1.6em; padding-right: 14px; margin-top: 35px; }
+    h3 { font-size: 1.35em; } h4 { font-size: 1.15em; }
+    p, li { font-size: 1.08em; }
+    .two-columns { grid-template-columns: 1fr; }
+    .verse-box, .highlight-box, .quote-box, .story-box, .qa-box { padding: 20px; }
+    .listen-bar { padding: 15px; gap: 10px; }
+    .listen-status { flex: 1 1 100%; }
+    .listen-voice select { max-width: 140px; }
+    .scroll-top { bottom: 18px; left: 18px; width: 44px; height: 44px; }
+    .chapter-card { margin-left: -22px; margin-right: -22px; min-height: 42vh; padding: 30px 20px; }
+    .chapter-card .num { font-size: 3.8em; }
+    .chapter-card .name { font-size: 1.5em; }
+}
+
+/* ---------- העדפת תנועה מופחתת ---------- */
+@media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    .listen-btn:hover, .listen-stop-btn:hover, .listen-skip-btn:hover { transform: none; }
+}
+
+/* ---------- מצב כהה ---------- */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --paper: #1c1b22; --ink: #e8e6ef; --muted: #a8a4b8; --line: rgba(255,255,255,.10);
+        --purple: #c084fc; --blue: #7dd3fc; --green: #4ade80; --gold: #fbbf24; --pink: #f9a8d4;
+        --g-page:      linear-gradient(135deg, #14131a 0%, #221f2e 100%);
+        --g-verse:     linear-gradient(135deg, #2a2440 0%, #3a2436 100%);
+        --g-highlight: linear-gradient(135deg, #1e2c44 0%, #262244 100%);
+        --g-quote:     linear-gradient(135deg, #3a2f16 0%, #4a3a18 100%);
+        --g-story:     linear-gradient(135deg, #16332a 0%, #14291f 100%);
+    }
+    .container { box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+    .toc     { background: #241f33; border-color: #3d2f57; }
+    .chapter-grid { background: linear-gradient(160deg, #262133 0%, #201c2b 100%); border-color: #3d3350; }
+    .chapter-chip { color: var(--ink); }
+    .chapter-chip .n { background: #b08a2e; }
+    .chapter-chip.is-front .n { background: #3b4a86; }
+    .sources { background: #201f28; }
+    .qa-box  { background: #201f28; }
+    .listen-status, .listen-progress, .listen-rate, .listen-voice { color: #fde68a; }
+    .listen-stop-btn, .listen-skip-btn, .listen-toggle-btn { background: #2a2438; color: #e9d5ff; border-color: #c084fc; }
+    .listen-toggle-btn[aria-pressed="false"] { background: #232029; color: #8b8698; border-color: #3f3b4a; }
+    .listen-stop-btn:hover, .listen-skip-btn:hover { background: #3a3050; }
+    .listen-voice select { background: #2a2438; color: var(--ink); }
+    .tts-clickable:hover { background: rgba(251,191,36,.12); }
+}
+
+/* ---------- הדפסה A4 ---------- */
+@media print {
+    @page { size: A4 portrait; margin: 20mm 18mm; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: #fff !important; color: #000 !important; padding: 0 !important; font-size: 11pt; }
+    .container { max-width: 100% !important; padding: 0 !important;
+                 box-shadow: none !important; border-radius: 0 !important; background: #fff !important; }
+    .scroll-top, .listen-bar, .chapter-card, .chapter-divider, .chapter-grid { display: none !important; }
+    .chapter-label { background: none !important; color: #4a0080 !important; padding: 0 !important; }
+    .in-this-chapter { page-break-inside: avoid; break-inside: avoid; }
+    p, li { text-align: justify; }
+    .reading-highlight { box-shadow: none !important; background: none !important; }
+    .tts-clickable { cursor: auto; }
+    h2 { page-break-before: always; break-before: page; font-size: 16pt !important; }
+    h2:first-of-type { page-break-before: avoid; break-before: avoid; }
+    h3, h4 { page-break-after: avoid; break-after: avoid; }
+    h3 { font-size: 13pt !important; } h4 { font-size: 12pt !important; }
+    p, li { font-size: 11pt !important; orphans: 3; widows: 3; }
+    .verse-box, .highlight-box, .quote-box, .story-box, .two-columns, .qa-box, .section-divider {
+        page-break-inside: avoid; break-inside: avoid;
+    }
+    .toc { page-break-after: always; break-after: page; }
+    .main-title { font-size: 26pt !important; background: none !important;
+                  -webkit-text-fill-color: #4a0080 !important; color: #4a0080 !important; }
+    .footer { page-break-before: always; break-before: page; }
+    a { color: #000 !important; text-decoration: none; }
+    a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #444; }
+    [style*="display: flex"], [style*="display: grid"] { display: block !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1 class="main-title" id="top">כִּי תֵצֵא</h1>
+    <div class="subtitle">עיונים בפרשת השבוע — לפי סדר הפסוקים ולפי נושאים</div>
+    <div class="author">מאת: הרב יהודה טאוב</div>
+
+    <!-- ===== סרגל האזנה ===== -->
+    <div class="listen-bar">
+        <div class="listen-btn-group">
+            <button class="listen-btn" id="listenBtn" onclick="toggleListen()"
+                    aria-pressed="false" aria-label="הפעל או השהה הקראה">🔊 האזן למאמר</button>
+            <button class="listen-skip-btn" onclick="skipChapter(-1)" aria-label="פרק קודם" title="פרק קודם">⏪</button>
+            <button class="listen-skip-btn" onclick="skipListen(-1)" aria-label="פסקה קודמת" title="פסקה קודמת">⏮</button>
+            <button class="listen-skip-btn" onclick="skipListen(1)"  aria-label="פסקה הבאה"  title="פסקה הבאה">⏭</button>
+            <button class="listen-skip-btn" onclick="skipChapter(1)"  aria-label="פרק הבא"   title="פרק הבא">⏩</button>
+            <button class="listen-stop-btn" onclick="stopListen()"   aria-label="עצור הקראה">⏹ עצור</button>
+            <button class="listen-toggle-btn" id="clickReadBtn" onclick="toggleClickRead()"
+                    aria-pressed="true" aria-label="לחיצה על פסקה מתחילה הקראה">👆 לחיצה: פעילה</button>
+        </div>
+        <span class="listen-status" id="listenStatus" role="status" aria-live="polite">לחץ כדי להתחיל האזנה, או לחץ על כל פסקה כדי להתחיל להקריא ממנה</span>
+        <span class="listen-progress" id="listenProgress"></span>
+        <div class="listen-rate">
+            <label for="rateRange">מהירות:</label>
+            <input type="range" id="rateRange" min="0.5" max="1.6" step="0.1" value="1"
+                   oninput="setListenRate(this.value)" onchange="applyListenRate(this.value)"
+                   aria-label="מהירות הקראה">
+            <output id="rateValue" for="rateRange">1.0×</output>
+        </div>
+        <div class="listen-voice">
+            <label for="voiceSelect">קול:</label>
+            <select id="voiceSelect" onchange="setListenVoice(this.value)" aria-label="בחירת קול"></select>
+        </div>
+    </div>
+
+    <!-- מבט-על על הפרקים -->
+    <nav class="chapter-grid" aria-label="מבט על פרקי המאמר">
+        <h2 class="grid-title">תּוֹכֶן הָעִנְיָנִים</h2>
+        <a class="chapter-chip" href="#section1"><span class="n">1</span>האישה בפרשה וסוד חודש אלול</a>
+        <a class="chapter-chip" href="#section2"><span class="n">2</span>יפת תואר — היופי בראי התורה</a>
+        <a class="chapter-chip" href="#section3"><span class="n">3</span>בן סורר ומורה ושלום בית</a>
+        <a class="chapter-chip" href="#section4"><span class="n">4</span>שילוח הקן</a>
+        <a class="chapter-chip" href="#section5"><span class="n">5</span>שור וחמור — רגישות לחלש</a>
+        <a class="chapter-chip" href="#section6"><span class="n">6</span>שעטנז, ציצית ונישואין</a>
+        <a class="chapter-chip" href="#section7"><span class="n">7</span>מוציא שם רע, ונערה המאורסה</a>
+        <a class="chapter-chip" href="#section8"><span class="n">8</span>עמוני ומואבי — חיוב הכרת הטוב</a>
+        <a class="chapter-chip" href="#section9"><span class="n">9</span>גט כריתות</a>
+        <a class="chapter-chip" href="#section10"><span class="n">10</span>אשה חדשה, ושמחה כל החיים</a>
+    </nav>
+
+    <div class="toc">
+        <h3>📑 תוכן העניינים</h3>
+        <ul>
+            <li>
+                <a class="toc-chapter" href="#section1">1. האישה בפרשה וסוד חודש אלול</a>
+                <span class="toc-subs">
+                    <a href="#s1a">קרבה של אלול</a><span>·</span><a href="#s1b">תיקון הלב לדורות</a><span>·</span><a href="#s1c">כי תצא מול כי תבוא</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section2">2. יפת תואר — היופי בראי התורה</a>
+                <span class="toc-subs">
+                    <a href="#s2a">למה יש יופי בעולם</a><span>·</span><a href="#s2b">שקר החן והבל היופי</a>
+                </span>
+            </li>
+            <li>
+                <a class="toc-chapter" href="#section3">3. בן סורר ומורה ושלום בית</a>
+                <span class="toc-subs">
+                    <a href="#s3a">כוח האמון של ההורים</a><span>·</span><a href="#s3b">דרוש וקבל שכר</a><span>·</span><a href="#s3c">יפת תואר או שנואה</a><span>·</span><a href="#s3d">קשה תרבות רעה</a>
+                </span>
+            </li>
+            <li><a class="toc-chapter" href="#section4">4. שילוח הקן — רחמים שמעוררים רחמים</a></li>
+            <li><a class="toc-chapter" href="#section5">5. לא תחרוש בשור ובחמור יחדו — רגישות לחלש</a></li>
+            <li>
+                <a class="toc-chapter" href="#section6">6. שעטנז, ציצית ונישואין — סוד האחדות</a>
+                <span class="toc-subs">
+                    <a href="#s6a">מדוע כלאים אסורים</a><span>·</span><a href="#s6b">מנהג הטלית לחתן</a><span>·</span><a href="#s6c">קרבן תודה של חתן וכלה</a>
+                </span>
+            </li>
+            <li><a class="toc-chapter" href="#section7">7. מוציא שם רע, ועל דבר אשר לא צעקה</a></li>
+            <li><a class="toc-chapter" href="#section8">8. עמוני ומואבי — חיוב הכרת הטוב</a></li>
+            <li><a class="toc-chapter" href="#section9">9. גט כריתות — ניתוק שבין נשמות</a></li>
+            <li>
+                <a class="toc-chapter" href="#section10">10. אשה חדשה, שנת ההודיה, ולשמוח כל החיים</a>
+                <span class="toc-subs">
+                    <a href="#s10a">שנה אחת לביתו</a><span>·</span><a href="#s10b">שנת ההודיה</a>
+                </span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- ===== גוף המאמר ===== -->
+
+    <span class="chapter-label">פרק 1</span>
+    <h2 id="section1">האישה בפרשה וסוד חודש אלול</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מדוע רוב מצוות הפרשה סובבות סביב האישה, ומה הקשר לחודש אלול</li>
+            <li>שני הסברים: קרבה כמו "אני לדודי ודודי לי", ותיקון הלב שעובר לדורות הבאים</li>
+            <li>הניגוד בין "כי תצא" ל"כי תבוא" — סוד הברכה בצניעות</li>
+        </ul>
+    </div>
+
+    <p>פרשת "כי תצא" עוסקת בשפע גדול של מצוות בין אדם לחברו, אך המשותף הבולט ביותר לרובן הוא האישה: אשת יפת תואר, אישה אהובה ואישה שנואה, בן סורר ומורה, מוציא שם רע, נערה המאורסה, שילוח הקן שרש"י מדמה לאם, גט כריתות, ואישה חדשה שיש לשמחה. פרשה זו נקראת תמיד בסמוך לחודש אלול, וראוי לשאול: מה הקשר בין ריבוי המצוות שעניינן אישה לבין חודש הרחמים והסליחות?</p>
+
+    <h3 id="s1a">א. קרבה של אלול — "אני לדודי ודודי לי"</h3>
+
+    <p>חודש אלול הוא חודש של קִרבה לה' יתברך. נוטריקון השם המפורסם, "אני לדודי ודודי לי", מבטא יחסי אהבה ההדדיים בין הקב"ה לישראל, וכן נאמר על חודש זה המשל של "המלך בשדה" — שבו המלך יוצא לקראת העם ומתקרב אליהם באהבה גלויה יותר מכל השנה. וכתוב בפרשת ניצבים: <span class="emphasis">"וּמָל ה' אֱלֹהֶיךָ אֶת לְבָבְךָ וְאֶת לְבַב זַרְעֶךָ לְאַהֲבָה"</span>. כשם שבחודש אלול הקב"ה מתקרב אלינו ואוהב אותנו יותר, כך "והלכת בדרכיו" — גם האדם יכול מאוד להתקרב לרעייתו בחודש הזה, שכן מזלו של אלול הוא בתולה, מזל של השפעת אהבה.</p>
+
+    <div class="highlight-box">
+        <p>יש להוסיף על כך במידה שאדם מודד בה מודדים לו: מי שמקרב את רעייתו זוכה שגם הקב"ה מקרב את רעייתו, שהיא כנסת ישראל. וכעין מה שכתב ה<span class="emphasis">מסילת ישרים</span> (פרק יט): <em>"אין הקדוש ברוך הוא אוהב אלא למי שאוהב את ישראל, וכל מה שאדם מגדיל אהבתו לישראל, גם הקדוש ברוך הוא מגדיל אהבתו עליו"</em>. וכיוון שחודש אלול מסוגל מאוד לכך, יש להתאמץ ולעורר זאת. וזהו שכתוב "בזאת אני בוטח" — "לזאת יקרא אשה" (רקאנטי, בראשית).</p>
+    </div>
+
+    <h3 id="s1b">ב. תיקון הלב שעובר לדורות</h3>
+
+    <p>מבואר בליקוטי מוהר"ן שבחודש אלול יכול האדם לתקן את כל החסרונות שנוצרו מחמתו — ומהפרשה למדים שילדים שאינם הולכים בדרך הישרה יוצאים כך לרוב משום שהוריהם אינם אוהבים זה את זה כראוי, ולכן דווקא בחודש אלול ניתן לתקן את הדבר, ועל ידי כך גם הילדים יהיו טובים יותר. וכך דרשו על ראשי התיבות של המילה "אלול" — <span class="emphasis">אֶת לְבָבְךָ וְאֶת לְבַב</span> (זרעך) — ולכאורה יש להקשות: מה נפשך, אם הבן עצמו עושה תשובה, ה' ימול את לבבו; ואם לא, מדוע שר"ת "אלול" יכלול גם את "ואת לבב"?</p>
+
+    <p>אלא, כפי שמבואר בליקוטי מוהר"ן, בחודש אלול האדם מתקן בשורש, וממילא כל מה שנוצר ממנו מתוקן אף הוא. וזהו חידוש נפלא, שיש לו רמז גם בסיפור הידוע על בעל "מגלה עמוקות".<sup><a href="#footnote-1" class="no-tts">[1]</a></sup> רבנו כותב בליקוטי מוהר"ן: "וּמָל ה' אֶת לְבָבְךָ וְאֶת לְבַב זַרְעֲךָ" — על ידי שהאדם מתקן את לבבו, יכול לתקן גם את לב התלויים בו. וממילא, אם יאהב את אשתו, יתקן גם את לב ילדיו. ואולי גם זה נכלל בברכת <span class="emphasis">"ושבית שביו"</span>.</p>
+
+    <p>מכאן למדים שהאב והבן מחוברים זה לזה — לא רק שצדקותו של האב מובילה לצדקות הבן, אלא שיש קשר עמוק ומהותי ביניהם. כך כתב הרמב"ן על הפסוק בפרשת ניצבים: <span class="emphasis">"פֶּן יֵשׁ בָּכֶם אִישׁ אוֹ אִשָּׁה אוֹ מִשְׁפָּחָה אוֹ שֵׁבֶט אֲשֶׁר לְבָבוֹ פֹנֶה הַיּוֹם מֵעִם ה' אֱלֹהֵינוּ... פֶּן יֵשׁ בָּכֶם שֹׁרֶשׁ פֹּרֶה רֹאשׁ וְלַעֲנָה"</span>. לכאורה יש כאן כפל בפסוק — שהרי מי הוא ה"שורש פורה ראש ולענה" אם לא זה ש"לבבו פונה מעם ה'"?</p>
+
+    <div class="quote-box">
+        <p>מסביר הרמב"ן: הביטוי הראשון מדבר על מי שכבר נפתה לעבודה זרה, והוא מאמין בה בלבו כבר היום הזה. ואילו הביטוי השני — "פן יש בכם שרש רע" — מדבר על מי שיפרח ויצמיח מרורות בדורות הבאים, על מי שאיננו כאן היום עמנו; שהרי האב הוא השורש, והבן נצר משרשיו יפרה. והזכיר הכתוב את השורש, ללמד שהוא עלול להביא פרי רע גם בדורות הבאים, שהרי השורש שממנו יצמחו נמצא לפניו כבר היום, בשעה שהוא בא בברית ובאלה הזאת.</p>
+        <span class="source-tag">רמב"ן, דברים כט, יז</span>
+    </div>
+
+    <p>ובאותה פרשה כתוב "וּמָל ה' אֱלֹהֶיךָ אֶת לְבָבְךָ וְאֶת לְבַב זַרְעֶךָ" — ללמדנו שגם לאחר שנולד הילד יש חיבור ביניהם, ואם האב חוזר בתשובה, הדבר משפיע גם על הבנים.</p>
+
+    <h3 id="s1c">ג. "כי תצא" מול "כי תבוא" — סוד הברכה בצניעות</h3>
+
+    <p>פרשה זו פותחת ב"כי תצא", והפרשה הבאה פותחת ב"כי תבוא". בפרשתנו מצויות צרות רבות — אשת יפת תואר, בן השנואה והאהובה, בן סורר ומורה — ואילו בפרשה הבאה מצויות ברכות רבות: ביאה לארץ ישראל, גידול פירות יפים, העלאתם לירושלים בביכורים, וברכת "ושמחת בכל הטוב אשר נתן לך ה' אלהיך". מכאן ניתן ללמוד יסוד: כאשר יוצאים החוצה — כל הצרות באות; וכאשר באים הביתה — כל הברכה מגיעה, כי סוד הברכה הוא בצניעות. אין הברכה שרויה אלא בדבר הסמוי מן העין.</p>
+
+    <div class="verse-box">
+        <p>"כִּי תֵצֵא לַמִּלְחָמָה עַל אֹיְבֶיךָ וּנְתָנוֹ ה' אֱלֹהֶיךָ בְּיָדֶךָ וְשָׁבִיתָ שִׁבְיוֹ: וְרָאִיתָ בַּשִּׁבְיָה אֵשֶׁת יְפַת תֹּאַר וְחָשַׁקְתָּ בָהּ וְלָקַחְתָּ לְךָ לְאִשָּׁה" (דברים כא, י–יא)</p>
+    </div>
+
+    <h3>באלול מצליחים במלחמת היצר</h3>
+
+    <p>נאמר "כי תֵצא לַמלחמה" — בפתח, ולכאורה היה צריך להיות בשוא, "לְמלחמה". אלא שכוונת התורה למלחמה הידועה, המלחמה הגדולה מכולן: המלחמה באויב הגדול ביותר שיש לאדם — יצרו. וכפי שכתב ה<span class="emphasis">חובת הלבבות</span> בלשון נפלאה:</p>
+
+    <div class="quote-box">
+        <p>"בֶּן אדם, ראוי לך לדעת, כי השונא הגדול שיש לך בעולם הוא יִצְרְךָ הנמסך בכוחות נפשך והמעורב במזג רוחך, והמשתתף עמך בהנהגת חושיך הגופניים והרוחניים, המושל בסודות נפשך וצפון חובך, בעל עצתך בכל תנועותיך הנראות והנסתרות שתהיינה ברצונך, האורב לעתות פשיעתך; ואתה ישן לו והוא ער לך, ואתה מתעלם ממנו והוא אינו מתעלם ממך. לבש לך בגדי הידידות ועדה עדי האהבה לך, ונכנס בכלל נאמניך ואנשי עצתך וסגולת אוהביך, רץ אל רצונך בנראה מרמיזותיו וקריצותיו, והוא מורה אותך בחציו הממיתים לשרשך מארץ חיים."</p>
+        <span class="source-tag">חובת הלבבות, שער יחוד המעשה, פרק ה</span>
+    </div>
+
+    <p>כשיוצאים בחודש אלול למלחמה זו, זוכים לסייעתא דשמיא מיוחדת, שנאמר "וּנְתָנוֹ ה' אֱלֹהֶיךָ בְּיָדֶךָ". ממשיך הכתוב: "וְשָׁבִיתָ שִׁבְיוֹ" — ולכאורה היה צריך לומר "שבי" בלבד, ומה פשר "שביו", המשמע שבי שהוא שבה? אלא בא הכתוב ללמדך שבחודש אלול ניתן לאדם להחזיר לעצמו את כל מה שגנב ממנו היצר הרע במשך כל השנה, וזהו "וְשָׁבִיתָ שִׁבְיוֹ".</p>
+
+    <p>ומובא בספרים דרך רמז יפה על תהליך יפת התואר: <span class="emphasis">"וְגִלְּחָה אֶת רֹאשָׁהּ וְעָשְׂתָה אֶת צִפָּרְנֶיהָ"</span> — זו הפרישות מתאוות העולם הזה; <span class="emphasis">"וּבָכְתָה אֶת אָבִיהָ וְאֶת אִמָּהּ יֶרַח יָמִים"</span> — אלו שלושים ימי אלול; <span class="emphasis">"וְאַחַר כֵּן תָּבוֹא אֵלֶיהָ וּבְעַלְתָּהּ"</span> — זו שמחת תורה וסוכות, לאחר ימי הדין וההיטהרות.</p>
+
+    <div class="chapter-card">
+        <span class="num">2</span>
+        <span class="name">יפת תואר — היופי בראי התורה</span>
+    </div>
+
+    <div class="chapter-divider">✡</div>
+    <span class="chapter-label">פרק 2</span>
+    <h2 id="section2">יפת תואר — היופי בראי התורה</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מהי מטרתו של היופי החיצוני, ומדוע ברא אותו הבורא</li>
+            <li>ביאור בספר "קול אליהו" ליישוב "שקר החן והבל היופי" מול יופי האמהות</li>
+            <li>סיפור: רבי אלעזר, רבי יוחנן, ו"שופרא דבלי בעפרא" (ברכות ה ע"ב)</li>
+        </ul>
+    </div>
+
+    <h3 id="s2a">למה יש יופי בעולם</h3>
+
+    <p>לפני שממשיכים בפרטי מצוות יפת תואר, יש להקדים יסוד גדול: מדוע בכלל יש אישה יפה? האם חלילה כדי שיוכל אדם להיסחף אחריה? וכי ה' בורא דברים רעים? התשובה היא שהחן והיופי ניתנו לאישה כדי שיעזרו להגיע אל מהותה הפנימית, שהיא קדושה מאוד. כשם שבית המקדש היה יפה — לא כדי שנהנה מיופיו החיצוני חס ושלום, אלא כדי שנבין שיש כאן דבר קדוש מאוד, כך היופי החיצוני נועד לעזור לנו להגיע אל היופי הפנימי.</p>
+
+    <div class="highlight-box">
+        <p>מטרת היופי באישה היא שבעלה ידע: יש לך כאן דבר גדול מאוד — סוד "בת המלך", כנסת ישראל. ה' ברא אותה יפה כדי שהאיש יתחבר למהותה, לפנימיותה. כאשר יש פנימיות, יש גם טעם לחיצוניות; אך כאשר אין פנימיות, אין שום טעם לחיצוניות. ולכן, שדרה יבשה אינה מכשירה את הלולב אף אם כל עליו לחים ורעננים — כי הלולב פסול.</p>
+    </div>
+
+    <h3 id="s2b">"שקר החן והבל היופי" — כלפי מי?</h3>
+
+    <p>בספר <span class="emphasis">קול אליהו</span> על בראשית מקשה בעל הספר: "וְרָחֵל הָיְתָה יְפַת תֹּאַר וִיפַת מַרְאֶה" (בראשית כט, יז) — הרי שלמה המלך אמר בסוף משלי: <span class="emphasis">"שֶׁקֶר הַחֵן וְהֶבֶל הַיֹּפִי, אִשָּׁה יִרְאַת ה' הִיא תִתְהַלָּל"</span> (משלי לא, ל), ובכל זאת מצינו שהאמהות נשתבחו בחן וביופי, וגם על רבקה נאמר "וְהַנַּעֲרָ טֹבַת מַרְאֶה מְאֹד" (בראשית כד, טז)?</p>
+
+    <div class="quote-box">
+        <p>ויש לומר שפירוש הפסוק הוא: "שקר החן והבל היופי" — כשהם בלתי יראת ה', והרי הם "כְּנֶזֶם זָהָב בְּאַף חֲזִיר". אבל "אשה יראת ה' היא תתהלל" — כלומר, גם החן והיופי יתהללו, כשהם מלווים ביראת שמים. ועל דרך זה יש לפרש גם: "אַל יִתְהַלֵּל חָכָם בְּחָכְמָתוֹ וְגִבּוֹר בִּגְבוּרָתוֹ... כִּי אִם בְּזֹאת יִתְהַלֵּל הַמִּתְהַלֵּל, הַשְׂכֵּל וְיָדֹעַ אוֹתִי" (ירמיה ט, כב–כג): אין להתהלל בחכמה, בגבורה ובעושר לבד, אלא בכל אלה יחד — כשישכיל וידע היאך להתנהג בהם, שהכל יהיה לשם שמים.</p>
+        <span class="source-tag">קול אליהו על בראשית כט, יז, בשם דרך אבות למהר"ם נכד הגר"א</span>
+    </div>
+
+    <div class="story-box">
+        <span class="story-title">"להאי שופרא דבלי בעפרא" — היופי שכלה בעפר</span>
+        <p>רבי אלעזר חלה, ורבי יוחנן בא לבקרו. ראה שהוא שוכב בבית חשוך, גילה את זרועו — ונפל אור מזרועו והאיר את החדר. ראה שרבי אלעזר בוכה, ושאל אותו: "מדוע אתה בוכה? אם משום תורה שלא הרבית — הרי שנינו, אחד המרבה ואחד הממעיט, ובלבד שיכוון ליבו לשמים. ואם משום מזונות — לא כל אדם זוכה לשתי שולחנות. ואם משום בנים — זה עצם בנו העשירי שנפטר לי!"</p>
+        <p>ענה לו רבי אלעזר: "על יופי זה שכלה בעפר אני בוכה" — הצביע על עצמו וגופו. אמר לו רבי יוחנן: "על זה ודאי כדאי לבכות!", ובכו שניהם יחד. ואחר כך שאלו: "חביבים עליך היסורים?" ענה לו: "לא הם ולא שכרם". אמר לו רבי יוחנן: "תן לי ידך", נתן לו ידו — והעמידו.</p>
+        <span class="source-tag">מסכת ברכות דף ה עמוד ב</span>
+    </div>
+
+    <p>סיפור זה מלמד שגם היופי הגופני, שהוא כשלעצמו דבר עובר, ראוי להיבכות עליו כאשר הוא כלה — לא מפני שהוא ערך עליון, אלא מפני שהוא כלי לעבודת ה' בעולם הזה, וחבל על כל כוח שכלה. האריך ביסוד זה ר' צדוק הכהן מלובלין; ומי שרוצה להעמיק בכך, יעיין בספר "עז והדר לבושה".</p>
+
+    <div class="verse-box">
+        <p>"וַהֲבֵאתָהּ אֶל תּוֹךְ בֵּיתֶךָ וְגִלְּחָה אֶת רֹאשָׁהּ וְעָשְׂתָה אֶת צִפָּרְנֶיהָ: וְהֵסִירָה אֶת שִׂמְלַת שִׁבְיָהּ מֵעָלֶיהָ וְיָשְׁבָה בְּבֵיתֶךָ וּבָכְתָה אֶת אָבִיהָ וְאֶת אִמָּהּ יֶרַח יָמִים וְאַחַר כֵּן תָּבוֹא אֵלֶיהָ וּבְעַלְתָּהּ וְהָיְתָה לְךָ לְאִשָּׁה..." (דברים כא, יב–יג)</p>
+    </div>
+
+    <div class="chapter-card">
+        <span class="num">3</span>
+        <span class="name">בן סורר ומורה ושלום בית</span>
+    </div>
+
+    <div class="chapter-divider">📖</div>
+    <span class="chapter-label">פרק 3</span>
+    <h2 id="section3">בן סורר ומורה ושלום בית</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>כוח האמון של ההורים בילדם, בשם הרב קובלסקי</li>
+            <li>מדוע נכתבה בתורה פרשה שלא הייתה ולא עתידה להיות — "דרוש וקבל שכר"</li>
+            <li>מחלוקת מקורות: העונש הוא על נשיאת יפת תואר, או על היות האם שנואה</li>
+            <li>קשה תרבות רעה מתוך הבית — יותר ממלחמת גוג ומגוג (ברכות ז ע"ב)</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"כִּי יִהְיֶה לְאִישׁ בֵּן סוֹרֵר וּמוֹרֶה אֵינֶנּוּ שֹׁמֵעַ בְּקוֹל אָבִיו וּבְקוֹל אִמּוֹ..." (דברים כא, יח)</p>
+    </div>
+
+    <h3 id="s3a">כוח האמון</h3>
+
+    <p>נפסק במשנה שרק אם שני ההורים גם יחד רוצים בהוצאתו להורג, הוא נהרג. ולכאורה קשה: אם הבן עשה מעשה שיש בו חשש שיגרום לו ללסטם את הבריות, מה משנה אם ההורים מסכימים לכך או מתנגדים לו — הרי הסכנה שווה בשני המצבים?</p>
+
+    <div class="highlight-box">
+        <p>שמעתי מהרב קובלסקי: כל עוד ההורים מאמינים בבנם שהוא יהיה טוב, אכן לא יהיה רוצח. רק כאשר ההורים איבדו את האמון שלהם בילד, וחושבים שהוא יהיה רוצח — אז באמת הוא יהיה רוצח. אמונת ההורים בילדיהם היא כוח מעצב, לא רק תגובה למציאות קיימת.</p>
+    </div>
+
+    <div class="verse-box">
+        <p>"וְאָמְרוּ אֶל זִקְנֵי עִירוֹ בְּנֵנוּ זֶה סוֹרֵר וּמֹרֶה אֵינֶנּוּ שֹׁמֵעַ בְּקֹלֵנוּ זוֹלֵל וְסֹבֵא: וּרְגָמֻהוּ כָּל אַנְשֵׁי עִירוֹ בָאֲבָנִים וָמֵת..." (דברים כא, כ–כא)</p>
+    </div>
+
+    <h3 id="s3b">שלום בית — הערובה לילדים צדיקים</h3>
+
+    <div class="quote-box">
+        <p>תניא, אמר רבי שמעון: "וכי מפני שאכל זה תרטימר בשר ושתה חצי לוג יין האיטלקי, אביו ואמו מוציאין אותו לסקלו? אלא לא היה ולא עתיד להיות, ולמה נכתב — דרוש וקבל שכר."</p>
+        <span class="source-tag">תלמוד בבלי, סנהדרין דף עא עמוד א</span>
+    </div>
+
+    <p>וקשה: וכי חסר דברים בתורה לדרוש, שנצטרך פרשה שלמה שאינה מציאותית כלל? אלא כוונת התורה שמפרשה זו יש הרבה מוסר השכל ללמוד. וכך כתב ה<span class="emphasis">כלי יקר</span>: חז"ל אמרו (סנהדרין עא, א) שבן סורר ומורה לא היה ולא יהיה, ולמה נכתב בתורה? אלא דרוש וקבל שכר. ומכל מקום מוטלת עלינו חובת ביאור: מדוע כתבה תורה דבר שאינו במציאות כלל? ויש להתבונן גם במה שנאמר כאן "וְכָל יִשְׂרָאֵל יִשְׁמְעוּ וְיִרָאוּ" — לשון חמורה יותר מבשאר מצוות פרטיות, ואם אכן זה לא היה מעולם, כיצד ניתן לומר "כל ישראל ישמעו ויראו"? ועוד: מדוע לא נאמר כאן "וְלֹא יְזִידוּן עוֹד", כפי שנאמר בזקן ממרה ("וְכָל הָעָם יִשְׁמְעוּ וְיִרָאוּ וְלֹא יְזִידוּן עוֹד") ובעדים זוממים ("וְהַנִּשְׁאָרִים יִשְׁמְעוּ וְיִרָאוּ וְלֹא יֹסִפוּ לַעֲשׂוֹת עוֹד")?</p>
+
+    <p>ומיישב הכלי יקר: טעמו של דבר, שבן סורר ומורה לא היה ולא יהיה, ולא נכתבה הפרשה אלא כדי שישמעו ויראו ולא יעשו כדבר הזה. ומה שאמר "וכל ישראל ישמעו" — הכוונה שישמעו פרשה זו ואת משפט הכתוב בה, ויראו הבנים מלמרות את עיני כבודם של אב ואם. ולכן לא נאמר "ולא יזידון עוד", כי לשון "עוד" מורה על דבר שכבר נעשה ולא יעשה עוד, וזה אינו כן — שהרי בן סורר ומורה לא היה דבר מעולם, ולא נכתבה פרשה זו אלא כדי להטיל אימה ופחד על הבנים. אך עדיין קשה: מדוע "וכל ישראל" ולא "וכל הבנים" בלבד, אם הפחד מיועד רק לבנים?</p>
+
+    <p>ולפי רשב"י, למדנו דבר נפלא: כל הפרשה נכתבה כדי שנלמד ממנה לקח מוסרי, ונירא לעשות כדבר הזה — בין הבנים ובין ההורים.</p>
+
+    <h3 id="s3c">מדוע יוצא בן סורר ומורה?</h3>
+
+    <p>נראה לומר שהסוף הזה, שאדם אינו אוהב את אשתו כראוי, הוא שגורם שיהיה להם בן סורר. הדבר הראשון והחשוב ביותר לילדים טובים הוא שלום בית. וכפי שאמרו חז"ל: "הרגיל בנר" — שמהותו שלום בית — "הווין ליה בנים תלמידי חכמים". ורמז לכך יש בפסוק: <span class="emphasis">"כִּי יִהְיֶה לְאִישׁ בֵּן סוֹרֵר וּמוֹרֶה אֵינֶנּוּ שֹׁמֵעַ בְּקוֹל אָבִיו וּבְקוֹל אִמּוֹ"</span> — מדוע הוא בן סורר? מפני שאביו ואמו מדברים בשני קולות, ולא בקול אחד.</p>
+
+    <div class="two-columns">
+        <div class="col-purple">
+            <h4>יפת תואר — יסוד הפרשה</h4>
+            <p>אמנם ברוב הספרים נכתב שהעונש הוא על נישואי אשת יפת תואר, וכל הנושא אישה שלא לשם שמים אלא לשם יופי בלבד, נענש בבן סורר. וכן אמרו בגמרא: "אמר [חושי לדוד]: מאי טעמא קנסיבת יפת תואר? אמר ליה: יפת תואר רחמנא שרייה. אמר ליה: לא דרשת סמוכין, דסמיך ליה 'כי יהיה לאיש בן סורר ומורה' — כל הנושא יפת תואר, יש לו בן סורר ומורה."</p>
+            <span class="source-tag">סנהדרין קז ע"א</span>
+        </div>
+        <div class="col-gold">
+            <h4>האם שנואה — יסוד חצי-סמוך</h4>
+            <p>ונראה שגם חצי סמוכים דורשים, וכן מצאתי בספר <span class="emphasis">מלמד התלמידים</span> על פרשת תזריע: "וכשיהיה זה העניין באישה, הוא סיבה שיהיה הבן סורר ומורה, כשתהיה האישה שנואה." ומשל לכך בספר "הבית היהודי": כעץ שיש בעיה בפירותיו מחמת שהעץ אינו מחובר היטב באדמה. וכן מצאתי מקורות רבים בעניין ראובן, שמעון ולוי. וכן בעל הטורים (דברים כא): "וְהָיָה הַבֵּן הַבְּכֹר לַשְּׂנִיאָה" — הכוונה לבני השנואה, שהוא מבני תשע המידות שמנה בנדרים (כ, ב), ולכך סמך לו בן סורר ומורה.</p>
+        </div>
+    </div>
+
+    <h3 id="s3d">קשה תרבות רעה</h3>
+
+    <div class="story-box">
+        <span class="story-title">קשה תרבות רעה — יותר ממלחמת גוג ומגוג</span>
+        <p>אמר רבי יוחנן משום רבי שמעון בר יוחאי: קשה תרבות רעה בתוך ביתו של אדם, יותר ממלחמת גוג ומגוג. שנאמר: "מִזְמוֹר לְדָוִד בְּבָרְחוֹ מִפְּנֵי אַבְשָׁלוֹם בְּנוֹ", וכתיב בתריה: "ה' מָה רַבּוּ צָרָי, רַבִּים קָמִים עָלָי". ואילו לגבי מלחמת גוג ומגוג כתיב: "לָמָּה רָגְשׁוּ גוֹיִם וּלְאֻמִּים יֶהְגּוּ רִיק" — ו"מה רבו צרי" לא כתיב שם.</p>
+        <span class="source-tag">מסכת ברכות דף ז עמוד ב</span>
+    </div>
+
+    <p>מכאן למדנו כמה קשה בן שאינו מתנהג כראוי. וכל זה — עונש על מה? על חוסר אחדות בבית. למדנו מכאן כמה נורא חוסר שלום בית, שהעונש עליו הוא, במידה זו כנגד זו, בן סורר ומורה.</p>
+
+    <div class="chapter-card">
+        <span class="num">4</span>
+        <span class="name">שילוח הקן</span>
+    </div>
+
+    <div class="chapter-divider">🕊️</div>
+    <span class="chapter-label">פרק 4</span>
+    <h2 id="section4">טעם מצוות שילוח הקן</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>דעת הרמב"ם והרמב"ן בטעם המצווה</li>
+            <li>פירוש הרקאנאטי — כיצד רחמים על ציפור מעוררים רחמי שמים על ישראל</li>
+            <li>היישום: המרחם על אשתו, ה' מרחם על "רעייתו" שהיא כנסת ישראל</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"כִּי יִקָּרֵא קַן צִפּוֹר לְפָנֶיךָ בַּדֶּרֶךְ... וְהָאֵם רֹבֶצֶת עַל הָאֶפְרֹחִים... שַׁלֵּחַ תְּשַׁלַּח אֶת הָאֵם וְאֶת הַבָּנִים תִּקַּח לָךְ, לְמַעַן יִיטַב לָךְ וְהַאֲרַכְתָּ יָמִים" (דברים כב, ו–ז)</p>
+    </div>
+
+    <p>דעת הרמב"ם היא שאין ראוי לנצל את רחמי האם, שאינה בורחת מחמת ילדיה. הרמב"ן מוסיף ומלמדנו כמה מקפידה התורה שיהיו לנו מידות טובות, עד שלא נצער אפילו ציפור — קל וחומר שאסור לאדם לצער יהודי. ועוד כותב הרמב"ן טעם לשמור על המין, ועל פי הסוד — מצווה זו מעוררת את רחמי ה' על בניו שגלו מביתם.</p>
+
+    <div class="quote-box">
+        <p>אותו הממונה על העופות מתעורר לגבי הקב"ה [שירחם על העוף]. והקב"ה מתעורר על בניו. אז יוצא קול ואומר: "כְּצִפּוֹר נוֹדֶדֶת מִן קִנָּהּ כֵּן אִישׁ נוֹדֵד מִמְּקוֹמוֹ" (משלי כז, ח). אז הוא מתעורר על כל אלו ההולכים נעים ונדים ממקום למקום, ממצב למצב אחר, שבורי הלב שבורי הכוח. והרחמים מתעוררים על כל העולמות ומרחם עליהם, וסולח עוונותיהם של הנודדים ממקומם, ומרחם עליהם ועל כל העולם. אמר הקב"ה: אשרי ששלח את הציפור לחוץ, והיא תעורר רחמים על כל העולם. מי גרם לרחם על העולם ולעורר רחמים עליהם? אותו אדם ששלח את הציפור, אף שציערה בשני אופנים — שאיבדה בניה ואין לה מקום לנוח בו — לעורר את הקב"ה. ומתמלא רחמים על כל בעלי הצער ועל כל הנודדים ממקומם. ומשום כך שכרו של אותו אדם מה כתוב בו? "לְמַעַן יִיטַב לָךְ וְהַאֲרַכְתָּ יָמִים".</p>
+        <span class="source-tag">פירוש הרקאנאטי על התורה (בתרגום מארמית)</span>
+    </div>
+
+    <div class="highlight-box">
+        <p>נתבונן: אם בזכות ששלח את הציפור, שגרם לממונה לבקש מה' שירחם על העוף, וזה גרם לה' לרחם על בניו — הוא מקבל שכר גדול כל כך, "למען ייטב לך והארכת ימים" — הרי מי שמרחם על אשתו, שכתוב בספרים שזה גורם לה' לרחם על בניו, שכשם שהוא מרחם על רעייתו, כך ה' מרחם על "רעייתו" שהיא כנסת ישראל — כמה שכר גדול הוא יקבל! רק "למען ייטב לך", כפול ומכופל. לכן אל יחשוב אדם "מגיע לה" או "לא מגיע לה", אלא יחשוב: <span class="emphasis">אני מרחם על רעייתי, ה' מרחם על רעייתו.</span></p>
+    </div>
+
+    <div class="chapter-divider">🐂</div>
+    <span class="chapter-label">פרק 5</span>
+    <h2 id="section5">לא תחרש בשור ובחמור יחדו — רגישות לחלש</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>הטעם לאיסור חרישה בשור וחמור יחד, ולקח לחינוך ילדים</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"לֹא תַחֲרֹשׁ בְּשׁוֹר וּבַחֲמֹר יַחְדָּו" (דברים כב, י)</p>
+    </div>
+
+    <p>טעם המצווה הוא שהשור הולך מהר והחמור לאט, וצירופם יחד לעול אחד יגרום צער לחמור, שנאלץ למאמץ מתמיד להדביק את קצב השור. והנה, אם כלפי בעל חיים חסה התורה על כך, קל וחומר בן בנו של קל וחומר שאדם צריך להיזהר שלא להציב ילד המתקשה יחד עם ילד מהיר ממנו, או בישיבה טובה מדי בשבילו — שאז יצטרך תמיד לרדוף אחריו ולהתאמץ להדביק את קצבו, במקום ללמוד לפי כוחו וקצבו הוא.</p>
+
+    <div class="chapter-card">
+        <span class="num">6</span>
+        <span class="name">שעטנז, ציצית ונישואין — סוד האחדות</span>
+    </div>
+
+    <div class="chapter-divider">🧵</div>
+    <span class="chapter-label">פרק 6</span>
+    <h2 id="section6">כלאים, ציצית ונישואין — סוד האחדות</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>למה אסור כלאים, וכיצד בכל זאת מותרים איש ואישה — שני "הפכים" — להתחבר</li>
+            <li>מנהג הטלית לחתן, ומקורו בסמיכות ציצית לפרשת "כי יקח איש אשה"</li>
+            <li>המהר"ל: קרבן תודה של חתן וכלה כדוגמת קרבן חמץ ומצה — איחוד ההפכים</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"לֹא תִלְבַּשׁ שַׁעַטְנֵז צֶמֶר וּפִשְׁתִּים יַחְדָּו: גְּדִלִים תַּעֲשֶׂה לָּךְ עַל אַרְבַּע כַּנְפוֹת כְּסוּתְךָ... כִּי יִקַּח אִישׁ אִשָּׁה וּבָא אֵלֶיהָ וּשְׂנֵאָהּ" (דברים כב, יא–יג)</p>
+    </div>
+
+    <h3 id="s6a">מדוע אסור כלאים — ואיך בכל זאת מותרים נישואין?</h3>
+
+    <p>יש להתבונן מה הקשר בין איסור כלאים לפרשת "כי יקח איש אשה ושנאה". וכשם שחז"ל דרשו את הסמיכות בין ציצית לשעטנז — להתיר שעטנז בציצית — כך מסתבר שיש לדרוש גם את הפסוק הבא.</p>
+
+    <p>ונראה לפרש דבר נפלא: איסור שעטנז וכלאים נובע מכך שאלו שני מינים שמטבעם אינם מתחברים יחדיו — צמר, בבחינת חסד, ופשתים, בבחינת דין.<sup><a href="#footnote-2" class="no-tts">[2]</a></sup> ולפי זה לכאורה היה צריך להיות אסור גם לאדם לקחת אישה, שהרי גם אלו שני מינים שמטבעם אינם מתחברים כלל — האיש מבחינת חסד, האישה מבחינת דין; האיש רוחניות, האישה גשמיות. וכפי שכתוב: "כִּי יִקַּח אִישׁ אִשָּׁה וּבָא אֵלֶיהָ וּשְׂנֵאָהּ" — רש"י מפרש שזהו סופו הטבעי של אדם הלוקח אישה (אף שאין זה פשט הכרחי ברש"י, ויש לעיין במקרא כפשוטו). ואם כן, מדוע ציוותה התורה לישא אישה?</p>
+
+    <div class="highlight-box">
+        <p>אלא שקודם לכן באה פרשת ציצית, שבה מותר כלאים. מדוע? נראה לומר: ציצית רומזת לה' יתברך, וכאשר ה' יתברך, אדון השלום, נמצא, אז גם כלאים מתחברים יחדיו. וכן כלאים מותרים לכהנים בעבודתם במקדש, מקום ששכינה שרויה בו. וכך ממש לגבי איש ואישה.</p>
+    </div>
+
+    <div class="quote-box">
+        <p>"והשם יתברך מאחד אותם, שהרי היו"ד באיש והה"א באישה — לומר כי השם מחבר אותם, אשר הם הפכים, ודבר זה נחשב כמו הקרבת תודה. כי החמץ והמצה שהם הפכים, כאשר מקריבים אותם אל השם יתברך, מורה כי הוא יתברך אחד. וכן כאשר משמח חתן וכלה, ובזה הזיווג שהם הפכים הוא אחד על ידי השם יתברך, אשר הוא מאחד אותם, ובזה השם יתברך הוא אחד" — דהיינו שבזה מתגלה אחדותו — "ודבר זה דומה לגמרי להקרבת תודה מחמץ ומצה אל השם יתברך."</p>
+        <span class="source-tag">מהר"ל, נתיבות עולם א, נתיב גמילות חסדים, פרק ד</span>
+    </div>
+
+    <p>אבל כאשר בני הזוג מתאחדים לשם הנאה גופנית בלבד, לשם "לקחת" ולא מתוך דבקות בקב"ה שהוא כולו טוב ומטיב — אז זה כלאים אסורים, ואין לו רשות ללובשו.</p>
+
+    <h3 id="s6b">מנהג הטלית לחתן</h3>
+
+    <div class="quote-box">
+        <p>"כי יקח איש אשה. מה כתיב למעלה — 'גדילים תעשה לך'. מכאן סמך למנהג העולם שלוקחין טלית לחתן כשישא אשה."</p>
+        <span class="source-tag">רא"ש, דברים כב, יג</span>
+    </div>
+
+    <p>ובמנהגי מהרי"ל, בהלכות נישואין, מובא שבארץ ריינוס נהגו שגם נערים גדולים אינם מתעטפים בציצית — בטלית גדול, ובזה סרה קושיית המשנה ברורה — עד שנושאים אישה, וסמכו זאת על הכתוב "גדילים תעשה לך" הסמוך ל"כי יקח איש אשה". וספר המנהגים (טירנא) מוסיף שנוהגים לפרוס טלית על ראש חתן וכלה, משום סמיכות פרשת גדילים לפרשת "כי יקח".</p>
+
+    <p>מה הקשר בין ציצית לחתונה? לפי דברינו הדברים נפלאים: משום שרק אז, בשעה שהקב"ה נמצא במקום, יש את המטרה האמיתית של הטלית — שבורא עולם מאחד את כל הנפרדים לאחד. וראה זה פלא: ציצית — שמונה חוטים וחמישה קשרים, בגימטרייה "אחד". וכן צורת הציצית עצמה מלמדת: יש בה ארבע כנפות היוצאות מגוף אחד, מן הבגד.</p>
+
+    <p>ובפרשת ציצית כתוב "וְלֹא תָתֻרוּ" — מדוע? שכן כל מטרת הטלית היא להיות אחד, ומהו הדבר ההפוך מהאחדות? לתור אחרי העיניים — זנות. וכן "אחרי לבבכם" — זו תאווה, וכתוב "לתאווה יבקש נפרד". על דרך הדרוש ניתן לומר כך:</p>
+
+    <div class="verse-box">
+        <p>"וְהָיָה לָכֶם לְצִיצִת וּרְאִיתֶם אֹתוֹ" — תראו את הציצית, ותזכרו שה' אוהב אחדות — "וּזְכַרְתֶּם אֶת כָּל מִצְוֹת ה'" — שכן אהבת ישראל היא כל התורה כולה — "וַעֲשִׂיתֶם אֹתָם וְלֹא תָתֻרוּ אַחֲרֵי לְבַבְכֶם וְאַחֲרֵי עֵינֵיכֶם" — שזה הפך האחדות — "אֲשֶׁר אַתֶּם זֹנִים אַחֲרֵיהֶם: לְמַעַן תִּזְכְּרוּ" — את האחדות, ובזה יחשב לכם ש — "וַעֲשִׂיתֶם אֶת כָּל מִצְוֹתָי וִהְיִיתֶם קְדֹשִׁים לֵאלֹהֵיכֶם" — שכן האחדות היא קדושה: אתה אחד לעומת אתה קדוש, שהרי מי שליבו אחד, קדושה שורה עליו.</p>
+    </div>
+
+    <div class="quote-box">
+        <p>"מצוות [ציצית] באה על הגוף, שיהיה גופו תחת עבודת השם יתברך, ואילו תפילין של ראש — שתהיה נשמתו תחת עבודת השם יתברך, עד שגופו ונשמתו משועבדים אל השם יתברך; כי הציצית מלבוש גופו, והתפילין מונחים על המוח ששם הנשמה. ...שהאדם יש לו לעשות תמיד שיהיה שם ה' נקרא עליו בכל מעשיו... וכן מצות ציצית היא המצווה שבבגדו שמתכסה בו, שיהיה האדם דבק בו יתברך בכל, שהבגד ששייך גם כן לאדם יהיה של מצווה, ובזה האדם דבק בבוראו כאשר על ראשו תפילין וציצית בבגדו... כלל הדבר, שיהיה האדם מצד עצמו ומה ששייך אליו דבק בו יתברך.</p>
+        <p>ולפיכך אמרו ז"ל (מנחות מג ב): אמר רבי אליעזר בן יעקב, מי שיש לו תפילין בראשו וציצית בבגדו ומזוזה בפתחו, לא במהרה הוא חוטא, שנאמר: 'וְהַחוּט הַמְשֻׁלָּשׁ לֹא בִמְהֵרָה יִנָּתֵק'. כאשר יש לאדם דבקות בו יתברך בשלושה דברים — כי התפילין הם דבקות בו יתברך, וכן הציצית, והמזוזה גם כן — כי כל אלו דברים שייכים לאדם: האדם עצמו, ומלבושיו, ודירתו — הרי בשלושה דברים יש לו דבקות בו, לא במהרה חוטא שיסיר עצמו מן השם יתברך."</p>
+        <span class="source-tag">מהר"ל, חידושי אגדות, מסכת שבת, מצוות ציצית</span>
+    </div>
+
+    <p>והדברים כנגד "בְּכָל לְבָבְךָ" — ציצית, על הגוף; "בְּכָל נַפְשְׁךָ" — תפילין, על הנפש; "בְּכָל מְאֹדֶךָ" — מזוזה, על הממון.</p>
+
+    <p>בספר <span class="emphasis">הבית היהודי</span>, במשנת הקבלה והחסידות, מבואר עוד יסוד: מדוע כלאי זרעים אסורים אפילו בהרכבה, בעוד שכלאי בגדים מותר ליצור את הבגד עצמו, ורק אסור ללובשו? ומבאר, שאצל זרעים, לאחר שנוצר הפרי אי אפשר עוד לפרקו — הוא נעשה אחד ממש. מה שאין כן בכלאי בגדים, שניתן לפרום את הבגד, ולכן אין זה נקרא עדיין איחוד. רק כאשר לובשים אותו — אז נוצר האיחוד אצל האדם הלובשו, הנהנה משניהם יחדיו.</p>
+
+    <h3 id="s6c">קרבן תודה של חתן וכלה</h3>
+
+    <p>בשנת תשע"ח נוסף לי דבר נפלא: לדעת רבים מהראשונים, התורה מעולם לא חייבה קרבן תודה, וגם ארבעת החייבים להודות (עולי ים, הולכי מדברות, פדויי שבי, ומחלים מחוליים) חייבים, לדעת רבים מהמפרשים, רק בברכת הגומל ולא בקרבן. קרבן תודה הוא קרבן נדבה שהאדם עצמו מחליט מתי להביא. ובכל זאת יש זמן אחד בלבד שבו הקב"ה עצמו אומר שראוי להביא בו קרבן תודה, והוא חתן וכלה. כך כתב רבנו בחיי:</p>
+
+    <div class="quote-box">
+        <p>"קורבן תודה בא על הנס, והוא לשון הודאה. אם היה חולה ונתרפא, מביא קורבן תודה; או שאר שמחות, כגון שמחת חתן וכלה, שנאמר: 'קוֹל חָתָן וְקוֹל כַּלָּה'... מביאים תודה בית ה'."</p>
+        <span class="source-tag">רבנו בחיי, ויקרא ו, ב; והפסוק בירמיה לג, יא</span>
+    </div>
+
+    <p>ובנבואת ה' לישראל, נאמר במפורש שחתן וכלה מביאים תודה לבית ה'. ויש להבין: מה נתייחד בחתן ובכלה יותר מכל מקום אחר? מצאנו בתורה שלושה פסוקים הסמוכים זה לזה בפרשת "כי תצא", וחז"ל דרשו את הסמיכות ביניהם: "לֹא תִלְבַּשׁ שַׁעַטְנֵז... גְּדִלִים תַּעֲשֶׂה לָּךְ... כִּי יִקַּח אִישׁ אִשָּׁה". וכך דרשו חז"ל: למה נסמך שעטנז לציצית — לומר לך שמותר לשים שעטנז בציצית. וכן מצאנו שדרשו: למה נסמכה ציצית לנישואין — מכאן למנהג הספרדים לקנות טלית לחתן, ולאשכנזים ללבוש טלית בחתונה.</p>
+
+    <p>מדוע אסור שעטנז? כי זו תערובת שאינה יכולה להתחבר יחדיו — צמר בבחינת חסד, פשתים בבחינת דין. ומדוע מותר ללבוש טלית שיש בה שעטנז? כי אף על פי שאין הם שווים בטבעם, כאשר הקב"ה נמצא באמצע — "ה' אחד ושמו אחד" — יכול הוא לאחד את הנפרדים.</p>
+
+    <p>לכן אומר המהר"ל שחתן וכלה מחוברים לתודה, שכן בקרבן תודה מצאנו חיבור של כלאים ממש: חמץ ומצה, שהם הפכים. כפי שהובא לעיל, "והשם יתברך מאחד אותם... אשר הם הפכים... כי החמץ והמצה שהם הפכים, כאשר מקריבין אותם אל השם יתברך, מורה כי הוא יתברך אחד; וכן כאשר משמח חתן וכלה, ובזה הזיווג שהם הפכים הוא אחד על ידי השם יתברך."</p>
+
+    <p>כאשר מודים לה' — השכינה שורה במקום, כנאמר "וְאַתָּה קָדוֹשׁ יוֹשֵׁב תְּהִלּוֹת יִשְׂרָאֵל". לכן במקום שיש בו קרבן תודה, ניתן להקריב את ההפכים: החתן והכלה, המבקשים להתאחד ביניהם, מקריבים קרבן תודה, וכך השכינה שורה במקום ומאחדת אותם. ולפי זה נבין כמה נפלא הדבר שהחתן לובש טלית: החתן בא להצהיר כיצד הוא נושא אישה שהיא, לכאורה, כמו כלאים ביחס אליו — אלא שכאשר יש שכינה, ניתן לאחד את הפירודים, כפי שהטלית מאחדת את פירודי חוטיה.</p>
+
+    <div class="chapter-card">
+        <span class="num">7</span>
+        <span class="name">מוציא שם רע, ועל דבר אשר לא צעקה</span>
+    </div>
+
+    <div class="chapter-divider">🕯️</div>
+    <span class="chapter-label">פרק 7</span>
+    <h2 id="section7">מוציא שם רע, ועל דבר אשר לא צעקה</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>הפתרון בעת קושי לעמוד בניסיון — התפילה, על פי אור החיים הקדוש</li>
+            <li>דרשת חז"ל על "על דבר אשר לא צעקה" — משל הרופא שלא צלצל בפעמון</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"...אֶת הַנַּעֲרָ עַל דְּבַר אֲשֶׁר לֹא צָעֲקָה בָעִיר..." (דברים כב, כד)</p>
+    </div>
+
+    <p>למדנו כאן יסוד גדול: כאשר קשה לאדם לקיים מצווה, מהו הפתרון? להתפלל לה' שיעזור לו. וכפי שכתב <span class="emphasis">אור החיים</span> הקדוש:</p>
+
+    <div class="quote-box">
+        <p>"ואומרו 'ונצעק אל ה'' — כאן רמז שצריך האדם להתפלל לה' בכל יום שיצילהו מיצר הרע... הגם שה' הוא שברא יצר הרע לבחון האדם בעבודת בוראו, אף על פי כן כשצועקים אליו, שומע קולם... מטעם שראה את הרשום שהוא עניינו ועמלנו ולחצנו: העוני הוא אפיסת כוח הלוחם, שאין בנו כוח מספיק להילחם בו לגרשו ממנו; העמל הוא שאנו צריכים לעמול במלחמתו; הלחץ הוא הדוחק שדוחק היצר את האדם לחטוא בעל כורחו. ולשלוש סיבות אלו שמע ה' את קולנו."</p>
+        <span class="source-tag">אור החיים, דברים כו (על "ונצעק אל ה'"); ועיין עוד באור החיים, שופטים כ, א</span>
+    </div>
+
+    <p>וכן דרשו על הפסוק בפרשת "כי תצא": "אֶת הַנַּעֲרָ עַל דְּבַר אֲשֶׁר לֹא צָעֲקָה" — כתוב כאן דבר מדהים: למה הורגים את הנערה שנאנסה? בגלל שלא צעקה — זהו חטאה. מכאן מביא בעל "ספר השכל וידוע אותי", בסוף ההקדמה: אדם שיבוא לשמים ויאמר "לא הצלחתי נגד היצר" — יאמרו לו: לא, אבל למה לא צעקת? למה לא ביקשת עזרה משמים? הדבר מראה שלא כל כך רצית. ומשל נפלא על כך יש בספר "האמנתי כי אדבר" — משל הרופא שהיה בבית לילה שלם, ולא צלצל בפעמון לקרוא לעזרה.</p>
+
+    <div class="quote-box">
+        <p>"על דבר אשר לא צעקה בעיר" — דבר זה מוכיח שנתרצית לעבירה, שהרי לא הייתה יראה פן יהרגנה אם הייתה צועקת, הואיל והוא בעיר.</p>
+        <span class="source-tag">חזקוני</span>
+    </div>
+
+    <p>והוא הדין אצל אדם: אם הוא רואה שהוא חוטא, ואינו צועק לה' — זה מראה שאין בו רצון אמיתי להיחלץ מן החטא.</p>
+
+    <div class="chapter-card">
+        <span class="num">8</span>
+        <span class="name">עמוני ומואבי — חיוב הכרת הטוב</span>
+    </div>
+
+    <div class="chapter-divider">🙏</div>
+    <span class="chapter-label">פרק 8</span>
+    <h2 id="section8">חיוב הכרת הטוב</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מדוע חייבים הכרת טוב גם למי שעשה גם רעה וגם טובה</li>
+            <li>ההשוואה בין הכרת הטוב לאדם, לבין דרך ה' עם עושי הרע והטוב גם יחד</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"לֹא תְתַעֵב אֲדֹמִי כִּי אָחִיךָ הוּא, לֹא תְתַעֵב מִצְרִי כִּי גֵר הָיִיתָ בְאַרְצוֹ" (דברים כג, ח)</p>
+    </div>
+
+    <p>מפסוק זה רואים שאף על פי שהמצרים שיעבדו את ישראל וגזרו עליהם גזירות קשות, מכל מקום, על הטוב שעשו — שקיבלו את יעקב ובניו בשעת הרעב — יש להכיר להם טובה. יסוד זה מלמד שאפילו אדם שעשה לך גם רעה וגם טובה, צריך אתה להכיר לו טובה על הטוב שבו.</p>
+
+    <div class="highlight-box">
+        <p>יתכן שהטעם לכך אינו רק "מגיע" לצד השני, אלא שהאדם צריך לדאוג להפנים בעצמו את רגש הכרת הטוב — להתרגל תמיד להסתכל רק על הטוב שהזולת עשה לך, ולא על הרע (שיטת "אזמרה"). והטעם: הרע שהוא עשה לך, למעשה אינו רע — הוא טוב מאת ה', שהרי הכל מאיתו יתברך; אבל על הטוב שבו, יש לך לדאוג להפנים בעצמך את רגש הכרת הטוב. וגם כאן, כל גלות מצרים הייתה לטובה, כדי שנדע אחר כך לחיות בהכרת הטוב לה' שהוציאנו משם — כמשל האדם שהוציא את הילד שגידל לכמה ימים, כדי שידע להודות לו.</p>
+    </div>
+
+    <p>עוד יש לומר שכך הוא גם אצל בורא עולם: אינו מקזז את המצוות כנגד העבירות, ואפילו רשע שחטא הרבה משלם לו הקב"ה שכר טוב על המצוות שעשה, כמו שכתוב: "וּמְשַׁלֵּם לְשֹׂנְאָיו אֶל פָּנָיו לְהַאֲבִידוֹ" — כלומר, משלם לו כבר בעולם הזה את שכר מעשיו הטובים. ולכן גם אנחנו צריכים כך להתנהג — לא להתייחס לרע שעשה לנו הזולת, אלא רק לטוב.</p>
+
+    <div class="chapter-card">
+        <span class="num">9</span>
+        <span class="name">גט כריתות</span>
+    </div>
+
+    <div class="chapter-divider">💔</div>
+    <span class="chapter-label">פרק 9</span>
+    <h2 id="section9">גט כריתות — ניתוק שבין נשמות</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>מדוע נקרא הגט "ספר כריתות", ומה הקשר ללשון "כרת"</li>
+            <li>יישום: חסרון באהבה בין בני זוג הוא כריתה מסוימת, גם בלא גירושין ממש</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"כִּי יִקַּח אִישׁ אִשָּׁה וּבְעָלָהּ וְהָיָה אִם לֹא תִמְצָא חֵן בְּעֵינָיו כִּי מָצָא בָהּ עֶרְוַת דָּבָר וְכָתַב לָהּ סֵפֶר כְּרִיתֻת..." (דברים כד, א)</p>
+    </div>
+
+    <p>מדוע נקרא הגט "ספר כריתות"? לשון "כריתות" מצאנו בעיקר לגבי מי שה' מחליט לאבד את נפשו לנצח, ענש כרת. מה הקשר בין זה לגט? אלא, מבאר <span class="emphasis">נפש החיים</span> מהו כרת: ניתוק החוט המחבר בין הנשמה לבין בוראה — כאשר אין הכוונה שכל החוטים נותקים, אלא חוט אחד בלבד. לפי זה זהו גם ביאור עניין הגט: הנותן גט מנתק את החיבור שבין שתי הנשמות — נשמתו ונשמת אשתו.</p>
+
+    <div class="quote-box">
+        <p>ועיין כעין זה בחתם סופר, בקובץ "כיצד ישיג אדם אהבת אשתו".</p>
+    </div>
+
+    <div class="highlight-box">
+        <p>וצריך לדעת: לא צריך בשביל כך להתגרש ממש. כל חסרון באהבה בין איש לאשתו הוא כריתה מסוימת בחיבור שבין שתי הנשמות. ומי יודע — אולי כל חסרון באהבת איש ואישה חמור, במידה מסוימת, כמו עבירה שיש בה עונש כרת, כדוגמת אכילת חמץ בפסח. יש בזה כדי לעורר את הלב לחשוב פעמיים לפני שמזלזלים, ולו במעט, באהבה שבין בני הזוג.</p>
+    </div>
+
+    <div class="chapter-card">
+        <span class="num">10</span>
+        <span class="name">אשה חדשה, ולשמוח כל החיים</span>
+    </div>
+
+    <div class="chapter-divider">💐</div>
+    <span class="chapter-label">פרק 10</span>
+    <h2 id="section10">אשה חדשה, שנת ההודיה, ולשמוח כל החיים</h2>
+
+    <div class="in-this-chapter">
+        <h4>📖 בפרק זה:</h4>
+        <ul>
+            <li>הוורט של הגרש"ז אוירבך על מבנה הפסוק "נקי יהיה לביתו שנה אחת ושמח את אשתו"</li>
+            <li>מדוע פוטרת התורה מן הצבא גם את הנוטע כרם ובונה בית — שנת ההודיה</li>
+            <li>הקשר בין מצוות ישוב ארץ ישראל, ובין החובה לשמוח בה כל החיים</li>
+        </ul>
+    </div>
+
+    <div class="verse-box">
+        <p>"כִּי יִקַּח אִישׁ אִשָּׁה חֲדָשָׁה, לֹא יֵצֵא בַּצָּבָא וְלֹא יַעֲבֹר עָלָיו לְכָל דָּבָר; נָקִי יִהְיֶה לְבֵיתוֹ שָׁנָה אֶחָת, וְשִׂמַּח אֶת אִשְׁתּוֹ אֲשֶׁר לָקָח" (דברים כד, ה)</p>
+    </div>
+
+    <h3 id="s10a">לשמוח כל החיים</h3>
+
+    <p>ישנו וורט מפורסם מהגרש"ז אוירבך: כתוב "שנה אחת" באמצע הפסוק — והרי בלשון הקודש נוהגים לציין את הזמן או לפני הפועל או אחריו, ולא באמצע. ותירץ: באה התורה לומר, שנקי לביתו יהיה "שנה אחת" בלבד, אבל לשמח את אשתו — צריך כל החיים.</p>
+
+    <div class="quote-box">
+        <p>בספר "חרדים" (פרק כ), וכן היה רגיל הגרש"ז אוירבך זצ"ל לומר (מובא בספר "חכו ממתקים"), וכן כתוב בספר "יסוד ושורש העבודה" לכוון (שער ח, פרק ו): שהמצווה לשמח את האישה נוהגת לא רק בשנה הראשונה, אלא כל חייו. והדבר מדויק בלשון הפסוק: שהרי בלשון הקודש אומרים את ציון הזמן או לפני הדבר או אחריו — כגון "במשך שנה תלמד טור וגמרא", או "את הטור והגמרא תלמד במשך שנה" — אבל לא אומרים "תלמד את הטור שנה אחת ואת הגמרא". והנה כאן בפסוק כתוב: "נָקִי יִהְיֶה לְבֵיתוֹ שָׁנָה אֶחָת וְשִׂמַּח אֶת אִשְׁתּוֹ אֲשֶׁר לָקָח" — ציון הזמן מופיע בין שני הציוויים. היה ראוי לכתוב "נקי יהיה לביתו ושמח את אשתו שנה אחת". אלא ללמדך: "נקי יהיה לביתו", להתעסק בשמחה כל הזמן — זה שנה אחת; אבל המצווה לשמח את אשתו היא כל החיים.</p>
+    </div>
+
+    <p>על דרך זה יש לומר גם לגבי בונה בית בארץ ישראל, שהתורה הרחיבה בו בפרשה זו: שנה ראשונה נאמרה רק לגבי "נקי יהיה לביתו", אבל את השמחה על הזכות לגור בארץ ישראל, וקל וחומר על שיש לו בית מושב בה, צריכים לשמוח כל החיים.</p>
+
+    <div class="quote-box">
+        <p>"מצוות ישיבת ארץ ישראל — כל עת ורגע שהאדם בארץ ישראל, הוא מקיים המצוה הזאת... וידוע שעיקר שכר המצוה על השמחה הגדולה בה, כדכתיב 'תַּחַת אֲשֶׁר לֹא עָבַדְתָּ אֶת ה' אֱלֹהֶיךָ בְּשִׂמְחָה', אם כן צריך היושב בארץ ישראל להיות שמח תדיר במצווה התדירה, באהבתו אותה."</p>
+        <span class="source-tag">ספר חרדים, פרק כ; מובא גם בשל"ה, שער האותיות</span>
+    </div>
+
+    <p>כלומר, כל רגע שאנו נמצאים בארץ ישראל, אנו מקיימים מצוות עשה גדולה עד מאוד, וממילא ראוי שנהיה שמחים בה תמיד.</p>
+
+    <h3 id="s10b">שנת ההודיה</h3>
+
+    <p>רש"י כותב על הפסוק שיהיה לביתו, שבא לרבות שגם מי שנטע כרם וחיללו, ובנה בית וחנכו, חוזר מעורכי המלחמה שנה שלמה. ויש להבין את טעם הדבר: מדוע דווקא שנה שלמה?</p>
+
+    <p>הטעם הוא שצריך להודות לה' שנה שלמה על הבית ועל הכרם, כפי שכתוב בתורה על נטיעת הכרם: "וּבַשָּׁנָה הָרְבִיעִת יִהְיֶה כָּל פִּרְיוֹ קֹדֶשׁ הִלּוּלִים לַה'". והנה כל זה דווקא בארץ ישראל, שיש מצוות חינוך בית ומצוות חילול כרם — ואז שמחת המצווה וההודיה נמשכת שנה שלמה.</p>
+
+    <div class="highlight-box">
+        <p>ומאחר ששלושת הדברים — נטיעת כרם, בניית בית ונשיאת אישה — חייבים להיות בעלי טעם אחד, יש לומר שגם הטעם לכך שהנושא אישה פטור שנה שלמה מן הצבא, אינו רק כדי ליצור קשר טוב עם האישה, כדברי ה"חינוך", אלא כדי להודות לה' יתברך שזיכה אותו למצווה גדולה זו. וזהו חידוש עצום: אדם צריך שנה שלמה לשבת ולהודות — וכך מפורש: "וּבַשָּׁנָה הָרְבִיעִת יִהְיֶה כָּל פִּרְיוֹ קֹדֶשׁ הִלּוּלִים לַה'".</p>
+    </div>
+
+    <p>ויש להקשות: אם המטרה היא להודות, מדוע כתוב "ושמח"? אלא שגם לגבי כל הנהנה מסעודת חתן כתוב "ואינו משמחו" — למרות שהמצווה שלו היא להודות. אלא שצורת ההודיה היא כאשר משמח את החתן, דהיינו שמעורר את החתן להתבונן בחסדי הבורא שנתן לו, וזה נקרא "משמחו". כך גם יש להסביר ש"לשמח את האישה" פירושו לשבת איתה יחד, ולהתבונן בחסדי הבורא עלינו, ובכך לשמחה ולעורר אותה להודות לה'.</p>
+
+    <p>והנה כפי שהתבאר לעיל בשם הגרש"ז, מצוות "ושמח" חלה כל החיים — אם כן יש לומר שגם מצוות ההודיה לה' על האישה היא כל החיים: כל החיים צריך לעורר את האישה לראות את חסדי הבורא הגדולים עלינו, לשמחה בהם, ולהודות עליהם יחד.</p>
+
+    <div class="section-divider">✡ עד כאן עיקרי החידושים בפרשת כי תצא ✡</div>
+
+    <div class="sources">
+        <h3>📚 מקורות ומראי מקומות</h3>
+        <ol>
+            <li>רקאנטי, פרשת בראשית</li>
+            <li>מסילת ישרים, פרק יט</li>
+            <li>ליקוטי מוהר"ן, מהדורא קמא, סימן קמא</li>
+            <li>רמב"ן, דברים כט, יז (פרשת נצבים)</li>
+            <li>חובת הלבבות, שער יחוד המעשה, פרק ה</li>
+            <li>ספר קול אליהו על בראשית כט, יז; דרך אבות למהר"ם נכד הגר"א</li>
+            <li>מסכת ברכות דף ה עמוד ב</li>
+            <li>ספר עז והדר לבושה (ר' צדוק הכהן מלובלין)</li>
+            <li>רמב"ם, טעם מצוות שילוח הקן</li>
+            <li>רמב"ן, דברים כב, ו–ז</li>
+            <li>פירוש הרקאנאטי על התורה, פרשת כי תצא</li>
+            <li>משלי כז, ח</li>
+            <li>מסכת סנהדרין דף עא עמוד א</li>
+            <li>כלי יקר, דברים כא, יח</li>
+            <li>מסכת סנהדרין דף קז עמוד א</li>
+            <li>ספר מלמד התלמידים, פרשת תזריע</li>
+            <li>ספר הבית היהודי, במשנת הקבלה והחסידות</li>
+            <li>בעל הטורים, דברים כא (על "והיה הבן הבכר לשניאה")</li>
+            <li>מסכת נדרים דף כ עמוד ב</li>
+            <li>מסכת ברכות דף ז עמוד ב</li>
+            <li>אור החיים, דברים כו; ושופטים כ, א</li>
+            <li>ספר "השכל וידוע אותי" (בהקדמה)</li>
+            <li>ספר "האמנתי כי אדבר"</li>
+            <li>חזקוני, דברים כב, כד</li>
+            <li>מהר"ל, נתיבות עולם א, נתיב גמילות חסדים, פרק ד</li>
+            <li>רא"ש, דברים כב, יג</li>
+            <li>מנהגי מהרי"ל, הלכות נישואין</li>
+            <li>ספר המנהגים לר' איזיק טירנא</li>
+            <li>מהר"ל, חידושי אגדות, מסכת שבת (מצוות ציצית)</li>
+            <li>מסכת מנחות דף מג עמוד ב</li>
+            <li>רבנו בחיי, ויקרא ו, ב; ירמיה לג, יא</li>
+            <li>נפש החיים</li>
+            <li>חתם סופר, קובץ "כיצד ישיג אדם אהבת אשתו"</li>
+            <li>ספר חרדים, פרק כ; של"ה, שער האותיות</li>
+            <li>ספר "יסוד ושורש העבודה", שער ח, פרק ו</li>
+            <li>ספר "חכו ממתקים" (בשם הגרש"ז אוירבך זצ"ל)</li>
+            <li>ספר קהלת יעקב; זוהר תזריע דף נא עמוד א; מקדש מלך</li>
+            <li>מדרש תנחומא, פרשת חיי שרה, סימן ד</li>
+        </ol>
+    </div>
+
+    <div class="sources" style="margin-top: 25px;">
+        <h3>📝 הערות</h3>
+        <ol>
+            <li id="footnote-1">ליקוטי מוהר"ן, מהדורא קמא, סימן קמא: "שנימול לבב אביהם, אזי מרגישין היכן הם, ומתחילין לקונן ולהצטער, ונעשה שם רעש גדול ביניהם. וזהו (דברים ל) 'וּמָל ה' אֶת לְבָבְךָ, וְאֶת לְבַב זַרְעֲךָ' — היינו כשימול ה' את לבבו, ימול גם לבב זרעו... והזמן המסוגל לזה הוא חודש אלול, כי אלול ראשי תיבות 'אֶת לְבָבְךָ וְאֶת לְבַב'."</li>
+            <li id="footnote-2">ספר קהלת יעקב: צמר רומז על הבל, שהייתה מנחתו מבכורות צאנו, וקין הביא מנחתו מפשתים; ועל כן אסור לחבר צמר ופשתים, שהוא כעין חיבור קין והבל — צמר בחינת חסד, פשתים בחינת גבורה. וכן רמוז בזוהר, תזריע דף נא עמוד א, וכפי שכתב במקדש מלך שם. ובמדרש תנחומא (חיי שרה, סימן ד) מבואר שאברהם, בקוננו על שרה, דרש את איסור צמר ופשתים ביחס לגירוש ישמעאל: מדוע אסרה תורה לערב צמר ופשתים? כדי שלא נערבב קרבן חוטא (קין) עם קרבן צדיק (הבל). ואם את קרבנם אסור לחבר, קל וחומר שאסור לחבר אותם עצמם — ולכן אמרה שרה "גרש האמה הזאת ואת בנה".</li>
+            <li>אור החיים, דברים כו: "ואומרו 'ונצעק אל ה'' — כאן רמז שצריך האדם להתפלל לה' בכל יום שיצילהו מיצר הרע, והוא אומרו 'ונצעק אל ה' וגו'', ואומרו 'וישמע ה' את קולנו וגו'' — פירוש: הגם שה' הוא שברא יצר הרע לבחון האדם בעבודת בוראו, אף על פי כן כשצועקים אליו שומע קולם, מטעם שראה את הרשום שהוא ענינו ועמלנו ולחצנו: העוני הוא אפיסת כח הלוחם שאין כח בנו המספיק להלחם בו לגרשו ממנו; העמל הוא שאנו צריכין לעמול במלחמתו; הלחץ הוא הדחק שדוחק היצר את האדם לחטוא בעל כרחו — ולג' סיבות שמע ה' את קולנו (ועיין עוד באור החיים שופטים כ פסוק א)."</li>
+        </ol>
+    </div>
+
+    <!-- ===== חתימה ===== -->
+    <div class="footer">
+        <strong>נכתב ונערך על ידי:</strong><br>
+        <strong>הרב יהודה טאוב</strong><br>
+        קרית אתא<br>
+        📞 <strong>ליצירת קשר:</strong> 0527139520<br><br>
+
+        <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); border-radius: 10px; color: #1f2937;">
+            <h4>🎧 שיעורים נוספים של הרב</h4>
+            <p><strong>ניתן לשמוע עוד שיעורים נפלאים:</strong></p>
+            <p>📻 <strong>קול הלשון - קול תודה:</strong> 03-6171190</p>
+            <p>🌐 <strong>באתר:</strong> <a href="https://www.kol-toda.co.il/">www.kol-toda.co.il</a></p>
+        </div>
+    </div>
+
+</div>
+
+<a href="#top" class="scroll-top" id="scrollTop" aria-label="חזרה לראש העמוד">▲</a>
+
+<script>
+/* ===== גלילה חלקה + כפתור חזרה למעלה ===== */
+document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+        var t = document.querySelector(this.getAttribute('href'));
+        if (!t) return;
+        e.preventDefault();
+        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+});
+window.addEventListener('scroll', function () {
+    document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+</script>
+
+<script>
+/* =============================================================================
+   קול תודה — מנוע הקראה למאמרים תורניים   |   tts.js   v2.0
+   ============================================================================= */
+(function () {
+    'use strict';
+
+    var bar = document.querySelector('.listen-bar');
+    if (!('speechSynthesis' in window)) {
+        if (bar) bar.innerHTML = '<span class="listen-status">הדפדפן שלך אינו תומך בהקראה קולית. נסה Chrome, Edge או Safari.</span>';
+        return;
+    }
+    var synth = window.speechSynthesis;
+
+    /* ---------- הגדרות ---------- */
+    var NS       = 'koltoda.tts.';
+    var POS_KEY  = NS + 'pos.' + (document.title || location.pathname);
+    var MAX_CHUNK = 180;
+    var SKIP     = '.footer, .toc, .sources, .listen-bar, .book-nav, .in-this-chapter, .chapter-card, .chapter-grid, .no-tts';
+
+    /* ---------- מצב ---------- */
+    var chunks = [], elCount = 0, idx = 0, built = false, selfAdvancing = false;
+    var isOn = false, paused = false, autoPaused = false;
+    var token = 0, watchdog = null;
+    var rate = 1, voices = [], voice = null, userPickedVoice = false;
+    var clickToRead = true;
+
+    /* ---------- אלמנטים ---------- */
+    var $btn    = document.getElementById('listenBtn');
+    var $status = document.getElementById('listenStatus');
+    var $rate   = document.getElementById('rateRange');
+    var $rateVal= document.getElementById('rateValue');
+    var $voice  = document.getElementById('voiceSelect');
+    var $prog   = document.getElementById('listenProgress');
+    var BTN_LABEL = ($btn && $btn.textContent.trim()) || '🔊 האזן למאמר';
+
+    function store(k, v) { try { if (v === undefined) return localStorage.getItem(NS + k); localStorage.setItem(NS + k, v); } catch (e) { return null; } }
+
+    /* =========================================================================
+       1. עיבוד הטקסט להקראה
+       ========================================================================= */
+
+    var G = '["\\u05f4\\u201d\\u2033]';
+    var R = "['\\u05f3\\u2019]";
+
+    function ab(pattern, replacement) {
+        return [new RegExp('(^|[^\\u05d0-\\u05ea])([ובלכמשהד]{0,2})' + pattern + '(?![\\u05d0-\\u05ea])', 'g'),
+                '$1$2' + replacement];
+    }
+    var ABBREV = [
+        ab('זצוק' + G + 'ל', 'זכר צדיק וקדוש לברכה'),
+        ab('זצ' + G + 'ל', 'זכר צדיק לברכה'),
+        ab('ז' + G + 'ל', 'זכרונו לברכה'),
+        ab('ע' + G + 'ה', 'עליו השלום'),
+        ab('שליט' + G + 'א', 'שליטא'),
+        ab('הקב' + G + 'ה', 'הקדוש ברוך הוא'),
+        ab('בס' + G + 'ד', 'בסייעתא דשמיא'),
+        ab('בעז' + G + 'ה', 'בעזרת השם'),
+        ab('ב' + G + 'ה', 'ברוך השם'),
+        ab('אע' + G + 'פ', 'אף על פי'),
+        ab('אע' + G + 'ג', 'אף על גב'),
+        ab('עפ' + G + 'י', 'על פי'),
+        ab('ע' + G + 'פ', 'על פי'),
+        ab('ע' + G + 'י', 'על ידי'),
+        ab('עפ' + G + 'ר', 'על פי רוב'),
+        ab('כמו' + G + 'כ', 'כמו כן'),
+        ab('א' + G + 'כ', 'אם כן'),
+        ab('מ' + G + 'מ', 'מכל מקום'),
+        ab('כ' + G + 'ש', 'כל שכן'),
+        ab('ק' + G + 'ו', 'קל וחומר'),
+        ab('י' + G + 'ל', 'יש לומר'),
+        ab('צ' + G + 'ל', 'צריך לומר'),
+        ab('צ' + G + 'ע', 'צריך עיון'),
+        ab('עיי' + G + 'ש', 'עיין שם'),
+        ab('וע' + G + 'ע', 'ועיין עוד'),
+        ab('ד' + G + 'ה', 'דיבור המתחיל'),
+        ab('ס' + G + 'ק', 'סעיף קטן'),
+        ab('שו' + G + 'ע', 'שולחן ערוך'),
+        ab('שו' + G + 'ת', 'שאלות ותשובות'),
+        ab('או' + G + 'ח', 'אורח חיים'),
+        ab('יו' + G + 'ד', 'יורה דעה'),
+        ab('אה' + G + 'ע', 'אבן העזר'),
+        ab('חו' + G + 'מ', 'חושן משפט'),
+        ab('משנ' + G + 'ב', 'משנה ברורה'),
+        ab('ע' + G + 'א', 'עמוד א'),
+        ab('ע' + G + 'ב', 'עמוד ב'),
+        ab('וכו' + R, 'וכולי'),
+        ab('וכד' + R, 'וכדומה'),
+        ab('וגו' + R, 'וגומר'),
+        ab('עמ' + R, 'עמוד'),
+        ab('סי' + R, 'סימן'),
+        ab('סע' + R, 'סעיף'),
+        ab('הל' + R, 'הלכות'),
+        ab('ר' + R, 'רבי')
+    ];
+
+    var INWORD_G = /([א-ת])["״”″]([א-ת])/g;
+
+    var NUM_CTX = /(?:פרק|פרקים|יום|בימי|סימן|סעיף|עמוד|דף|אות|שנת|שנה|כרך|חלק|שער|מזמור|פסוק|הלכה|משנה|מספר|סי|עמ)\s*$/;
+    var HASHEM = /(^|[^א-ת])([ובלכמש]?)ה['׳’](?![א-ת])/g;
+
+    function hashem(t) {
+        return t.replace(HASHEM, function (m, pre, prefix, off, str) {
+            if (NUM_CTX.test(str.slice(0, off + pre.length))) return m;
+            return pre + prefix + 'השם';
+        }).replace(/יקוו?ק/g, 'השם');
+    }
+
+    function forSpeech(text) {
+        var t = text;
+        for (var i = 0; i < ABBREV.length; i++) t = t.replace(ABBREV[i][0], ABBREV[i][1]);
+        t = hashem(t);
+        t = t.replace(INWORD_G, '$1$2').replace(INWORD_G, '$1$2');
+        t = t.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, ' ');
+        t = t.replace(/[←-⇿⌀-➿⬀-⯿️‍⃣]/g, ' ');
+        t = t.replace(/־/g, ' ');
+        t = t.replace(/\s*[–—]\s*/g, ', ');
+        t = t.replace(/([.,!?:;])(?=\S)/g, '$1 ');
+        return t.replace(/\s+/g, ' ').trim();
+    }
+
+    function splitSentences(text) {
+        var out = [], re = /[^.!?…׃]*[.!?…׃]+\s*|[^.!?…׃]+$/g, m;
+        while ((m = re.exec(text)) !== null) {
+            if (m[0] === '') { re.lastIndex++; continue; }
+            out.push(m[0]);
+        }
+        return out.length ? out : [text];
+    }
+
+    function splitLong(s) {
+        var out = [], cur = '';
+        function pushWord(w) {
+            while (w.length > MAX_CHUNK) {
+                if (cur) { out.push(cur); cur = ''; }
+                out.push(w.slice(0, MAX_CHUNK));
+                w = w.slice(MAX_CHUNK);
+            }
+            if (cur && (cur + ' ' + w).length > MAX_CHUNK) { out.push(cur); cur = ''; }
+            cur += (cur ? ' ' : '') + w;
+        }
+        s.split(/([,;])/).forEach(function (b) {
+            if (b.length > MAX_CHUNK) b.split(' ').forEach(pushWord);
+            else {
+                if (cur && (cur + b).length > MAX_CHUNK) { out.push(cur); cur = ''; }
+                cur += b;
+            }
+        });
+        if (cur) out.push(cur);
+        return out;
+    }
+
+    function chunkText(text) {
+        var out = [], cur = '';
+        splitSentences(text).forEach(function (s) {
+            if (s.length > MAX_CHUNK) {
+                if (cur) { out.push(cur); cur = ''; }
+                splitLong(s).forEach(function (p) { out.push(p); });
+            } else if (cur && (cur + s).length > MAX_CHUNK) { out.push(cur); cur = s; }
+            else cur += s;
+        });
+        if (cur) out.push(cur);
+        return out.map(function (s) { return s.trim(); }).filter(function (s) { return s.length > 0; });
+    }
+
+    /* =========================================================================
+       2. בניית תור ההקראה
+       ========================================================================= */
+
+    function isBook() { return !!document.getElementById('book'); }
+    function scopeRoot() {
+        return document.querySelector('#book .page.active') || document.querySelector('.container') || document.body;
+    }
+    function invalidate() { built = false; }
+    window.ttsRebuild = function () {
+        invalidate();
+        if (selfAdvancing) return;
+        if (isOn && !paused) { build(); if (chunks.length) startFrom(0); else stopListen(); }
+    };
+
+    function build() {
+        if (built) return;
+        var nodes = scopeRoot().querySelectorAll('h1, h2, h3, h4, p, li');
+        chunks = []; elCount = 0; built = true;
+        Array.prototype.forEach.call(nodes, function (n) {
+            if (n.closest(SKIP)) return;
+            if (n.tagName === 'LI' && n.parentElement && n.parentElement.closest('li')) return;
+            var raw = n.textContent.replace(/\s+/g, ' ').trim();
+            if (!raw) return;
+            var spoken = forSpeech(raw);
+            if (!spoken) return;
+            var e = elCount++;
+            chunkText(spoken).forEach(function (t) { chunks.push({ el: n, e: e, text: t }); });
+        });
+    }
+
+    function firstChunkOfEl(e) {
+        for (var i = 0; i < chunks.length; i++) if (chunks[i].e === e) return i;
+        return -1;
+    }
+
+    /* =========================================================================
+       3. ממשק
+       ========================================================================= */
+
+    function hint() {
+        return clickToRead
+            ? 'לחץ כדי להתחיל האזנה, או לחץ על כל פסקה כדי להתחיל להקריא ממנה'
+            : 'לחץ כדי להתחיל האזנה. לחיצה על הטקסט לא תפעיל הקראה.';
+    }
+
+    function say(msg) { if ($status) $status.textContent = msg; }
+
+    function setBtn(label, pressed) {
+        if (!$btn) return;
+        $btn.textContent = label;
+        $btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+    }
+
+    function progress() {
+        if (!$prog) return;
+        if (!isOn || !chunks.length) { $prog.textContent = ''; return; }
+        var cur = chunks[Math.min(idx, chunks.length - 1)];
+        $prog.textContent = 'פסקה ' + (cur.e + 1) + ' מתוך ' + elCount;
+    }
+
+    function highlight(el) {
+        var prev = document.querySelector('.reading-highlight');
+        if (prev === el) return;
+        if (prev) prev.classList.remove('reading-highlight');
+        if (!el) return;
+        el.classList.add('reading-highlight');
+        var r = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+        var h = window.innerHeight || 800;
+        if (!r || r.top < 60 || r.bottom > h - 60) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function clearHighlight() {
+        var prev = document.querySelector('.reading-highlight');
+        if (prev) prev.classList.remove('reading-highlight');
+    }
+
+    function reset(keepBookmark) {
+        stopWatchdog();
+        isOn = false; paused = false; autoPaused = false; idx = 0;
+        setBtn(BTN_LABEL, false);
+        clearHighlight();
+        if (!keepBookmark) { try { localStorage.removeItem(POS_KEY); } catch (e) {} }
+        say(hint());
+        if ($prog) $prog.textContent = '';
+    }
+
+    function savePos() { if (isBook()) return; try { localStorage.setItem(POS_KEY, String(idx)); } catch (e) {} }
+
+    /* =========================================================================
+       4. הקראה
+       ========================================================================= */
+
+    function speak() {
+        stopWatchdog();
+        if (idx >= chunks.length) {
+            if (isOn && typeof window.bookNext === 'function') {
+                selfAdvancing = true;
+                var found = false, tries = 0;
+                while (tries++ < 200 && window.bookNext()) {
+                    invalidate(); build();
+                    if (chunks.length) { found = true; break; }
+                }
+                selfAdvancing = false;
+                if (found) { idx = 0; speak(); return; }
+            }
+            reset(false); say('ההקראה הסתיימה. 🎉'); return;
+        }
+        var item = chunks[idx], my = token, advanced = false;
+        highlight(item.el);
+        progress();
+
+        var u = new SpeechSynthesisUtterance(item.text);
+        u.lang = 'he-IL';
+        if (voice) u.voice = voice;
+        u.rate = rate;
+
+        function advance() {
+            if (my !== token || advanced) return;
+            advanced = true;
+            stopWatchdog();
+            idx++; savePos();
+            if (!paused) speak();
+        }
+        u.onend = advance;
+        u.onerror = function (ev) {
+            if (my !== token) return;
+            if (ev && (ev.error === 'canceled' || ev.error === 'interrupted')) return;
+            advance();
+        };
+
+        synth.speak(u);
+        startWatchdog(my);
+    }
+
+    function startWatchdog(my) {
+        stopWatchdog();
+        var silent = 0;
+        watchdog = setInterval(function () {
+            if (my !== token) { stopWatchdog(); return; }
+            if (!isOn || paused) return;
+            if (synth.speaking || synth.pending || synth.paused) { silent = 0; return; }
+            if (++silent >= 2) { stopWatchdog(); idx++; savePos(); speak(); }
+        }, 1000);
+    }
+    function stopWatchdog() { if (watchdog) { clearInterval(watchdog); watchdog = null; } }
+
+    function startFrom(i) {
+        token++;
+        stopWatchdog();
+        synth.cancel();
+        build();
+        idx = Math.max(0, Math.min(i, chunks.length - 1));
+        isOn = true; paused = false; autoPaused = false;
+        setBtn('⏸ השהה', true);
+        say('מקריא...');
+        savePos();
+        speak();
+    }
+
+    /* =========================================================================
+       5. פקדים
+       ========================================================================= */
+
+    window.toggleListen = function () {
+        if (!isOn && !synth.speaking && !synth.paused) {
+            build();
+            var saved = parseInt(localStorage.getItem(POS_KEY) || '0', 10);
+            startFrom(saved > 0 && saved < chunks.length ? saved : 0);
+            return;
+        }
+        if (paused || synth.paused) {
+            paused = false; isOn = true;
+            setBtn('⏸ השהה', true);
+            say('מקריא...');
+            if (synth.paused) {
+                synth.resume();
+                setTimeout(function () { if (isOn && !paused && !synth.speaking && !synth.pending) { token++; speak(); } }, 350);
+            } else {
+                token++; speak();
+            }
+        } else {
+            paused = true;
+            synth.pause();
+            setBtn('▶ המשך', false);
+            say('בהשהיה');
+        }
+    };
+
+    window.stopListen = function () { token++; stopWatchdog(); synth.cancel(); reset(false); };
+
+    window.skipListen = function (dir) {
+        build();
+        if (!chunks.length) return;
+        var cur = chunks[Math.min(idx, chunks.length - 1)];
+        var target = cur.e + dir;
+        if (dir < 0 && idx > firstChunkOfEl(cur.e)) target = cur.e;
+        target = Math.max(0, Math.min(elCount - 1, target));
+        startFrom(firstChunkOfEl(target));
+    };
+
+    window.skipChapter = function (dir) {
+        build();
+        if (!chunks.length) return;
+        var cur = chunks[Math.min(idx, chunks.length - 1)];
+        var best = -1;
+        for (var i = 0; i < chunks.length; i++) {
+            if (chunks[i].el.tagName !== 'H2') continue;
+            if (dir > 0 && chunks[i].e > cur.e) { best = i; break; }
+            if (dir < 0 && chunks[i].e < cur.e) best = i;
+        }
+        if (best < 0) { if (typeof window.bookJump === 'function') window.bookJump(dir); return; }
+        startFrom(best);
+    };
+
+    window.setListenRate = function (val) {
+        rate = parseFloat(val);
+        store('rate', String(rate));
+        if ($rateVal) $rateVal.textContent = rate.toFixed(1) + '×';
+        if ($rate) $rate.setAttribute('aria-valuetext', 'מהירות ' + rate.toFixed(1));
+    };
+    window.applyListenRate = function (val) {
+        window.setListenRate(val);
+        if (isOn && !paused) { token++; synth.cancel(); speak(); }
+    };
+
+    window.setListenVoice = function (name) {
+        var found = voices.filter(function (v) { return v.name === name; })[0];
+        if (!found) return;
+        voice = found; userPickedVoice = true;
+        store('voice', name);
+        if (isOn && !paused) { token++; synth.cancel(); speak(); }
+    };
+
+    /* =========================================================================
+       6. קולות
+       ========================================================================= */
+
+    var FEMALE = ['female', 'hila', 'naayah', 'carmit', 'zira', 'noa', 'sharon', 'ivy', 'nicole'];
+    function isHe(v) { return v.lang && v.lang.toLowerCase().indexOf('he') === 0; }
+    function isFemale(v) {
+        var n = v.name.toLowerCase();
+        return FEMALE.some(function (h) { return n.indexOf(h) !== -1; });
+    }
+
+    function populate() {
+        if (!$voice) return;
+        $voice.innerHTML = '';
+        var he = voices.filter(isHe), other = voices.filter(function (v) { return !isHe(v); });
+        function group(label, list) {
+            if (!list.length) return;
+            var g = document.createElement('optgroup');
+            g.setAttribute('label', label);
+            list.forEach(function (v) {
+                var o = document.createElement('option');
+                o.value = v.name;
+                o.textContent = v.name.replace(/^Microsoft\s+/, '').replace(/\s*-\s*Hebrew.*$/i, '');
+                g.appendChild(o);
+            });
+            $voice.appendChild(g);
+        }
+        group('עברית', he);
+        group('שפות אחרות', other);
+        if (voice) $voice.value = voice.name;
+    }
+
+    function loadVoices() {
+        var all = synth.getVoices();
+        if (!all.length) return;
+        var he = all.filter(isHe);
+        voices = he.concat(all.filter(function (v) { return !isHe(v); }));
+        if (!userPickedVoice) {
+            var saved = store('voice');
+            voice = (saved && voices.filter(function (v) { return v.name === saved; })[0])
+                 || he.filter(isFemale)[0] || he[0] || all[0] || null;
+        }
+        populate();
+    }
+    synth.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    /* =========================================================================
+       7. לחיצה על פסקה = התחל להקריא מכאן
+       ========================================================================= */
+
+    function readableNodes() {
+        var nodes = document.querySelectorAll(
+            '.container h1, .container h2, .container h3, .container h4, .container p, .container li');
+        return Array.prototype.filter.call(nodes, function (el) { return !el.closest(SKIP); });
+    }
+
+    function applyClickMode() {
+        readableNodes().forEach(function (el) { el.classList.toggle('tts-clickable', clickToRead); });
+        var b = document.getElementById('clickReadBtn');
+        if (!b) return;
+        b.textContent = clickToRead ? '👆 לחיצה: פעילה' : '👆 לחיצה: כבויה';
+        b.setAttribute('aria-pressed', clickToRead ? 'true' : 'false');
+        b.title = clickToRead
+            ? 'לחיצה על פסקה מתחילה להקריא ממנה. לחץ כאן כדי לכבות.'
+            : 'לחיצה על פסקה לא תפעיל הקראה. לחץ כאן כדי להפעיל.';
+    }
+
+    window.toggleClickRead = function () {
+        clickToRead = !clickToRead;
+        store('clickRead', clickToRead ? '1' : '0');
+        applyClickMode();
+        if (!isOn) say(hint());
+    };
+
+    function attachClicks() {
+        readableNodes().forEach(function (el) {
+            el.addEventListener('click', function (e) {
+                if (!clickToRead) return;
+                if (e.target.closest('a')) return;
+                if (window.getSelection && String(window.getSelection()).length) return;
+                build();
+                var i = -1;
+                for (var k = 0; k < chunks.length; k++) if (chunks[k].el === el) { i = k; break; }
+                if (i >= 0) startFrom(i);
+            });
+        });
+        applyClickMode();
+    }
+
+    /* =========================================================================
+       8. מעבר לשונית / נעילת מסך
+       ========================================================================= */
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            if (isOn && !paused) {
+                autoPaused = true; token++; stopWatchdog(); synth.cancel();
+            }
+        } else if (autoPaused) {
+            autoPaused = false; token++;
+            setBtn('⏸ השהה', true);
+            say('מקריא...');
+            speak();
+            setTimeout(function () {
+                if (isOn && !paused && !synth.speaking && !synth.pending && !synth.paused) {
+                    token++; stopWatchdog(); synth.cancel();
+                    paused = true;
+                    setBtn('▶ המשך', false);
+                    say('ההקראה הופסקה כשהמסך ננעל — הקש ▶ המשך');
+                }
+            }, 1000);
+        } else if (isOn && !paused && !synth.speaking && !synth.pending && !synth.paused) {
+            token++; speak();
+        }
+    });
+
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) { token++; stopWatchdog(); synth.cancel(); reset(true); }
+    });
+    window.addEventListener('pagehide', function () { token++; stopWatchdog(); synth.cancel(); });
+
+    /* =========================================================================
+       9. אתחול
+       ========================================================================= */
+
+    function init() {
+        clickToRead = store('clickRead') !== '0';
+        attachClicks();
+        var savedRate = parseFloat(store('rate') || '1');
+        if (savedRate >= 0.5 && savedRate <= 2) rate = savedRate;
+        if ($rate) { $rate.value = rate; $rate.setAttribute('aria-valuetext', 'מהירות ' + rate.toFixed(1)); }
+        if ($rateVal) $rateVal.textContent = rate.toFixed(1) + '×';
+        var saved = parseInt(localStorage.getItem(POS_KEY) || '0', 10);
+        if (saved > 0) say('יש סימנייה שמורה — לחיצה על "האזן" תמשיך מהמקום שבו הפסקת');
+        else say(hint());
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
+</script>
+
+</body>
+</html>

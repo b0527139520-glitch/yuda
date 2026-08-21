@@ -1,0 +1,181 @@
+---
+name: candy-pop-storybook
+description: >
+  Build a colorful Hebrew HTML story book (ספר סיפורים) — many short stories in one
+  self-contained page, "Candy Pop" style for children: sticky sidebar contents, live
+  search, and a permanent shareable link to every story (#story-N) with a copy-link
+  button. Publishes to GitHub Pages or as a Claude Artifact. Use whenever someone wants
+  a story book, סיפורי צדיקים, סיפורי חז"ל, a children's Hebrew reader, an anthology or
+  collection of stories, a colorful HTML book for kids, a sidebar table of contents, a
+  direct link or permalink per story or chapter, a "copy link" button, or an existing
+  HTML book put on GitHub Pages — even without naming this skill. NOT
+  torah-html-article-v2, which builds a Torah study book (ספר לימוד תורני) — shiurim,
+  parasha, halacha — in a rabbinic style with text-to-speech and page-turning. Study
+  material goes there; stories for children come here.
+---
+
+# Candy Pop story book
+
+A story book is not a study book. It is read aloud, one story at a time, and the reader
+almost never starts at the beginning — someone hands them a link to *one* story. That is
+the whole design: the sidebar tells you what is inside, and every story has a permanent
+address you can paste into a message.
+
+Build these with `scripts/build_book.py` rather than by hand. Not because writing HTML is
+hard, but because a book has five things that must agree with each other — the story ids,
+the table of contents, the copy-link buttons, the prev/next chain, and the search index —
+and hand-editing is where they silently drift apart.
+
+## How to build one
+
+**1. Turn the source material into story bodies.** Each story needs a title and an HTML
+body: `<p>` for paragraphs, `<h3 class="section-heading">` for scene headings,
+`<ul class="story-list">` for lists, `<p class="bold-para">` for a line that should land
+hard. If the source is Markdown, `scripts/md_to_html.py` converts it and repairs the
+mangled-letter artifacts that AI-exported Hebrew often carries.
+
+**2. Write a spec** — one JSON file describing the whole book:
+
+```json
+{
+  "title": "🍭 12 סיפורים חדשים",
+  "subtitle": "סיפורי חינוך והשראה",
+  "start_id": 1,
+  "chapters": [
+    {
+      "name": "רבי עקיבא",
+      "icon": "🌿",
+      "stories": [
+        {"title": "ההתחלה בגיל ארבעים", "body_html": "<p>מַיִם שָׁחֲקוּ אֲבָנִים.</p>"}
+      ]
+    }
+  ]
+}
+```
+
+A chapter is usually one sage or one theme, and holds one or more stories. `icon` should
+suit the story — 🐑 for sheep, ✉️ for a secret letter, 🏠 for hospitality — because in a
+long sidebar the icon is what readers actually navigate by. Colors are assigned from the
+house palette automatically; pass `"color": ["#ff6b9d", "#c62b6b"]` to choose.
+
+**3. Build and validate:**
+
+```bash
+python scripts/build_book.py spec.json book.html          # standalone document
+python scripts/validate_book.py book.html
+```
+
+Never hand over a book that has not passed the validator. Every check in it corresponds to
+a failure that actually shipped once, and most of them are invisible on a casual look — a
+story that reached the search index but never the page looks perfect until a reader clicks
+a result and lands nowhere.
+
+**4. Adding stories later** — add them to the spec and rebuild. Keep `start_id` and the
+existing order fixed so that links already sent to people keep working. A story id is a
+promise: someone has it in a WhatsApp message. Renumbering breaks it.
+
+## Story ids are numeric on purpose
+
+Use `story-1`, `story-2`. Never derive an id from the title — titles get reworded, and
+every link anyone shared then breaks silently. Chapter anchors may use the readable name,
+since those are for in-page navigation rather than for pasting around.
+
+## Two targets, two shapes
+
+The same book has to be emitted differently depending on where it lands, and getting this
+backwards fails quietly:
+
+- **Claude Artifact** — `--fragment`. Page content only, no `<!DOCTYPE>`/`<html>`/`<head>`/
+  `<body>`; the publisher supplies those, and a whole document nested inside another one is
+  malformed. Direction moves into CSS plus a two-line script.
+- **Anywhere else** (GitHub Pages, Drive, a normal web host) — the default: a complete
+  document.
+
+In both, `<meta charset="UTF-8">` must stay at the top. Drop it and a host that sends no
+encoding header will decode the Hebrew as latin-1: the page fills with mojibake *and*
+search stops matching, because the query and the index no longer agree on what a letter is.
+
+For publishing steps — enabling GitHub Pages, the private-repo trap, what goes public and
+when — read `references/publishing.md`.
+
+## Things that look fine and are not
+
+These cost real debugging time. The bundled `assets/book.js` already handles all of them;
+this is here so you recognise the symptoms if you ever write the JavaScript yourself.
+
+**A copied link that nobody else can open.** Inside a viewer's iframe, `location.href` is
+the iframe's internal address, not the page the reader sees. Copying that produces a link
+that works for no one. Prefer `document.referrer` when the page is framed.
+
+**Copy silently doing nothing.** `navigator.clipboard` is denied in sandboxed viewers and
+rejects without a visible error, so the button appears dead. Fall back to a hidden textarea
+with `execCommand('copy')`, and finally to a prompt the reader can copy from by hand.
+
+**Landing hundreds of pixels from the story.** `scroll-behavior: smooth` makes the browser
+run its *own* animation toward the anchor when a shared link opens. Scrolling again
+mid-flight fights it and lands far off — a long book overshot by thousands of pixels. Turn
+scroll-behavior off *before* that animation can start when the page opens with a hash, then
+restore it so in-page clicks stay smooth.
+
+**Search that finds nothing in a vocalized book.** The stories carry nikud; nobody types it.
+Comparing raw strings means `אבנים` never matches `אֲבָנִים`. Match on text with the points
+stripped, keeping a map back to the original so the highlight still covers the vowels. And
+never build a `RegExp` from what the reader typed — a single `(` throws and takes the whole
+search down.
+
+**And stripping the points is only half of it.** Pointed Hebrew is written *defectively*:
+`סיפור` is pointed `סִפּוּר`, the yod gone once the hiriq carries the vowel. So a reader
+typing the everyday spelling still misses a pointed title letter for letter — a book whose
+titles were pointed stopped finding its own titles, `כפות הידיים` no longer reaching
+`כַּפּוֹת הַיָּדַיִם`, and no structural check noticed. `book.js` answers this with a second
+pass that drops vav and yod from *both* sides when the direct comparison fails. Do not
+simplify `fold()` back to a single pass to tidy it up.
+
+## A book that has grown long
+
+Past a couple of hundred stories the weight stops being the download and becomes the
+layout. Measured on a real book of 318 full stories:
+
+| | |
+|---|---|
+| raw file | 8.2 MB |
+| what the reader actually downloads (gzip) | **2.0 MB** |
+| elements in the page | 35,858 |
+| height of the document on a phone | **3.3 million pixels** |
+
+The browser measures and places every one of those stories before the reader has seen a
+word, and 99.9% of it is never looked at. Minifying does not touch this — it saves about
+3% raw and almost nothing after gzip, because compression already handles the repetition.
+What does touch it is telling the browser to skip what is off screen:
+
+```css
+.story-card { content-visibility: auto; contain-intrinsic-size: auto 5000px; }
+@media (max-width: 900px) { .story-card { contain-intrinsic-size: auto 10300px; } }
+@media print { .story-card { content-visibility: visible; } }
+```
+
+On that book this erased the entire layout penalty — load came back to the same figure as
+a book fourteen times smaller.
+
+Three things to get right, each learned by getting it wrong:
+
+- **Measure the placeholder height, never guess it.** A guess of 900px against a real
+  median of 10,300px made the page grow under the reader as cards rendered, and left an
+  in-page jump nearly two thousand pixels off target. Load the book and read the real
+  heights: they differ between phone and desktop, so set both.
+- **Exempt printing.** On paper every card is off screen; without the `@media print` rule
+  the book prints blank.
+- **Re-check the anchor landing.** Scrolling into content the browser has not laid out is
+  exactly where this technique frays. A shared `#story-N` link must still land on the top
+  of its story, and settling that reliably wants a bounded `requestAnimationFrame` loop
+  that re-asserts until the target stops moving — not a fixed timer.
+
+## Files
+
+- `assets/template.html` — page shell with `{{PLACEHOLDERS}}`
+- `assets/book.css` — the Candy Pop styling
+- `assets/book.js` — search, copy-link, anchor landing, TOC toggle
+- `scripts/build_book.py` — spec → book
+- `scripts/validate_book.py` — pre-publish checks
+- `scripts/md_to_html.py` — Markdown → story body, with Hebrew repair
+- `references/publishing.md` — GitHub Pages and Artifact publishing

@@ -176,17 +176,36 @@ const deadLinks = [...new Set([...markup.matchAll(/href="#([^"]+)"/g)].map(m => 
   .filter(h => h && h !== 'toc' && !allIds.has(h) && !allIds.has(decodeURIComponent(h)));
 check('every internal link resolves', deadLinks.length === 0, list(deadLinks));
 
-// ── navigation chain, reported as a warning: broken arrows are annoying but
-//    they do not hide a story the way a missing index entry does ────────────
+// ── the reading chain ─────────────────────────────────────────────────────
+// A link that is simply absent counts the same as one aiming at the wrong
+// card. Only checking the links that exist is how ten missing ones piled up
+// here unnoticed while the report spoke of fourteen wrong ones: a story added
+// without updating its neighbour's "next" left no trace at all.
 const navBad = [];
 cards.forEach((c, i) => {
   const nav = (c[0].match(/<div class="story-navigation">([\s\S]*?)<\/div>/) || [])[1] || '';
-  const prev = (nav.match(/href="#(story-\d+)"[^>]*>→ הקודם/) || [])[1];
-  const next = (nav.match(/href="#(story-\d+)"[^>]*>הבא ←/) || [])[1];
-  if (prev && prev !== bodyIds[i - 1]) navBad.push(c[1] + ' prev → ' + prev + ' (before it: ' + (bodyIds[i - 1] || 'none') + ')');
-  if (next && next !== bodyIds[i + 1]) navBad.push(c[1] + ' next → ' + next + ' (after it: ' + (bodyIds[i + 1] || 'none') + ')');
+  const prev = (nav.match(/href="#(story-\d+)"[^>]*>→ הקודם/) || [])[1] || null;
+  const next = (nav.match(/href="#(story-\d+)"[^>]*>הבא ←/) || [])[1] || null;
+  const wantPrev = i > 0 ? bodyIds[i - 1] : null;
+  const wantNext = i < bodyIds.length - 1 ? bodyIds[i + 1] : null;
+  if (prev !== wantPrev) navBad.push(c[1] + ' prev → ' + (prev || 'missing') + ' (should be ' + (wantPrev || 'absent') + ')');
+  if (next !== wantNext) navBad.push(c[1] + ' next → ' + (next || 'missing') + ' (should be ' + (wantNext || 'absent') + ')');
 });
-navBad.length ? warn('previous/next links follow the reading order', list(navBad, 6)) : pass('previous/next links follow the reading order');
+check('previous/next links follow the reading order', navBad.length === 0, list(navBad, 6));
+
+// ── the pointing ──────────────────────────────────────────────────────────
+// Every title and sage line carries nikud, so one that arrives without it is
+// a card written to the old style. This asks only whether marks are there --
+// whether they are the right marks is for a person and docs/ניקוד-לבדיקה.md.
+const NIKUD = /[֑-ׇ]/;
+const unpointed = [];
+for (const c of cards) {
+  const title = (c[0].match(/<h3 class="story-title">([\s\S]*?)<\/h3>/) || [])[1] || '';
+  const who = (c[0].match(/<span class="who">([\s\S]*?)<\/span>/) || [])[1] || '';
+  if (!NIKUD.test(title)) unpointed.push(c[1] + ' title');
+  if (!NIKUD.test(who)) unpointed.push(c[1] + ' who');
+}
+check('titles and sage lines are pointed', unpointed.length === 0, list(unpointed));
 
 const firstNoPrev = cards.length && !/→ הקודם/.test(cards[0][0]);
 const lastNoNext = cards.length && !/הבא ←/.test(cards[cards.length - 1][0]);
